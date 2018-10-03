@@ -1,2 +1,7 @@
 # ignore build directory
 build/
+.vscode/launch.json
+.vscode/settings.json
+.vscode/c_cpp_properties.json
+pm/*.o
+pm/cib
