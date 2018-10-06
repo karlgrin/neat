@@ -37,12 +37,14 @@ typedef struct CIBNode_s {
     //TODO
 } CIBNode_t;
 
-bool match_entry(CIBNode_t *self, json_t entry){
+bool
+match_entry(CIBNode_t *self, json_t entry){
     //TODO
     return false;
 }
 
-bool update_links_from_match(CIBNode_t *self){
+bool
+update_links_from_match(CIBNode_t *self){
     //TODO
     return false;
 }
@@ -67,7 +69,8 @@ CIBNode_t *CIBNode_init(){
 
 /*----- END CIBNode -----*/
 
-int main(int argc, char **argv) {
+int
+main(int argc, char **argv) {
     // Testing the list with linked nodes
     CIBNode_t *node = CIBNode_init();
 
