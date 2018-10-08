@@ -6,6 +6,8 @@
 #include "jansson.h"
 #include <sys/queue.h>
 
+int CIB_DEFAULT_TIMEOUT = 10*60;
+
 /*----- START cib_node -----*/
 
 typedef struct cib_node_s cib_node_t;
@@ -59,7 +61,7 @@ cib_node_init()
     node->root = false;
     node->link = false;
     node->priority = 0;
-    node->expire = time(NULL);
+    node->expire = time(NULL) + CIB_DEFAULT_TIMEOUT;
     node->filename = "";
     node->description = "";
     node->properties = malloc(sizeof(json_array));
@@ -86,5 +88,7 @@ main(int argc, char **argv)
     linked_cib_node *linked_node2 = malloc(sizeof(linked_cib_node));
     LIST_INSERT_HEAD(&node->linked_nodes.self, linked_node, pointers);
     LIST_INSERT_HEAD(&node->linked_nodes.self, linked_node2, pointers);
+    LIST_REMOVE(linked_node, pointers);
+    LIST_REMOVE(linked_node2, pointers);
     return 0;
 }
