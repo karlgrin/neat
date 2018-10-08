@@ -28,8 +28,8 @@ typedef struct cib_node_s {
     time_t expire;
     char *filename;
     char *description;
-    json_t *properties;
-    json_t *match;
+    json_t *properties; //PropertyMultiArray
+    json_t *match;      //List of PropertyArrays
     struct list linked_nodes;
 
     bool (*match_entry)(cib_node_t *, json_t);
@@ -38,18 +38,22 @@ typedef struct cib_node_s {
 } cib_node_t;
 
 bool
-match_entry(cib_node_t *self, json_t entry){
+match_entry(cib_node_t *self, json_t entry)
+{
     //TODO
     return false;
 }
 
 bool
-update_links_from_match(cib_node_t *self){
+update_links_from_match(cib_node_t *self)
+{
     //TODO
     return false;
 }
 
-cib_node_t *cib_node_init(){
+cib_node_t *
+cib_node_init()
+{
     cib_node_t *node = malloc(sizeof(cib_node_t));
     node->uid = "";
     node->root = false;
@@ -70,7 +74,8 @@ cib_node_t *cib_node_init(){
 /*----- END cib_node -----*/
 
 int
-main(int argc, char **argv) {
+main(int argc, char **argv)
+{
     // Testing the list with linked nodes
     cib_node_t *node = cib_node_init();
 
