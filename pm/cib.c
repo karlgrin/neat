@@ -6,21 +6,21 @@
 #include "jansson.h"
 #include <sys/queue.h>
 
-/*----- START CIBNode -----*/
+/*----- START cib_node -----*/
 
-typedef struct CIBNode_s CIBNode_t;
+typedef struct cib_node_s cib_node_t;
 
-typedef struct linked_CIBNode {
-    CIBNode_t *inner_node;
-    LIST_ENTRY(linked_CIBNode) pointers;
-} linked_CIBNode;
+typedef struct linked_cib_node {
+    cib_node_t *inner_node;
+    LIST_ENTRY(linked_cib_node) pointers;
+} linked_cib_node;
 
 struct list {
-    linked_CIBNode node;
-    LIST_HEAD(linked_nodes, linked_CIBNode) self;
+    linked_cib_node node;
+    LIST_HEAD(linked_nodes, linked_cib_node) self;
 };
 
-typedef struct CIBNode_s {
+typedef struct cib_node_s {
     char *uid;
     bool root;
     bool link;
@@ -32,25 +32,25 @@ typedef struct CIBNode_s {
     json_t *match;
     struct list linked_nodes;
 
-    bool (*match_entry)(CIBNode_t *, json_t);
-    bool (*update_links_from_match)(CIBNode_t *);
+    bool (*match_entry)(cib_node_t *, json_t);
+    bool (*update_links_from_match)(cib_node_t *);
     //TODO
-} CIBNode_t;
+} cib_node_t;
 
 bool
-match_entry(CIBNode_t *self, json_t entry){
+match_entry(cib_node_t *self, json_t entry){
     //TODO
     return false;
 }
 
 bool
-update_links_from_match(CIBNode_t *self){
+update_links_from_match(cib_node_t *self){
     //TODO
     return false;
 }
 
-CIBNode_t *CIBNode_init(){
-    CIBNode_t *node = malloc(sizeof(CIBNode_t));
+cib_node_t *cib_node_init(){
+    cib_node_t *node = malloc(sizeof(cib_node_t));
     node->uid = "";
     node->root = false;
     node->link = false;
@@ -67,18 +67,18 @@ CIBNode_t *CIBNode_init(){
     return node;
 }
 
-/*----- END CIBNode -----*/
+/*----- END cib_node -----*/
 
 int
 main(int argc, char **argv) {
     // Testing the list with linked nodes
-    CIBNode_t *node = CIBNode_init();
+    cib_node_t *node = cib_node_init();
 
-    linked_CIBNode *linked_node = &(linked_CIBNode) {
-        .inner_node = malloc(sizeof(CIBNode_t))
+    linked_cib_node *linked_node = &(linked_cib_node) {
+        .inner_node = malloc(sizeof(cib_node_t))
     };
 
-    linked_CIBNode *linked_node2 = malloc(sizeof(linked_CIBNode));
+    linked_cib_node *linked_node2 = malloc(sizeof(linked_cib_node));
     LIST_INSERT_HEAD(&node->linked_nodes.self, linked_node, pointers);
     LIST_INSERT_HEAD(&node->linked_nodes.self, linked_node2, pointers);
     return 0;
