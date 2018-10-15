@@ -35,7 +35,7 @@ typedef struct property
 } property_t;
 
 property_t* property_init();      
-void free_property(property_t * p);
+void free_property(property_t *p);
 void free_properties(property_t  *head);
 
 type_t json_to_type_t(json_t *json);

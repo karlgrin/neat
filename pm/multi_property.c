@@ -30,8 +30,7 @@ free_multi_property(multi_property_t *mp)
     if(mp != NULL) {
         free_properties(mp->property);
     }
-    free(mp);   
-    mp = NULL; 
+    free(mp);
 }
 
 void
@@ -49,6 +48,8 @@ free_multi_properties(multi_property_t *head)
 multi_property_t*
 json_array_to_multi_property(multi_property_t* current,json_t *json)
 {
+    if(json == NULL || current == NULL) { return current; }
+
     size_t n = json_array_size(json);
     size_t index;
     json_t *value;

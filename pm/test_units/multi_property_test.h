@@ -6,7 +6,11 @@
 
 void test_add_multi_property(void);
 void test_add_multi_property_2(void);
+
 void test_has_a_property(void);
 void test_has_a_property_2(void);
+
+void test_get_a_property(void);
+void test_get_a_property_2(void);
 
 #endif

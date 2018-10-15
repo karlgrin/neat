@@ -51,15 +51,13 @@ property_init() {
 }
 
 void
-free_property(property_t * p) 
+free_property(property_t *p) 
 {
-    if(p->value != NULL) { 
+    if(p != NULL) { 
         free(p->value);
         p->value = NULL; 
     }
     free(p);   
-    p = NULL; 
-
 }
 
 void 
@@ -70,7 +68,7 @@ free_properties(property_t  *head)
    while (head != NULL) {
        tmp = head;
        head = head->next;
-       free(tmp);
+       free_property(tmp);
     }
 }
 
@@ -230,7 +228,7 @@ overwrite_property(property_t **head, const char *key, property_t *p)
                 p->next = current->next;
             }
             free_property(current);
-            break;
+            return;
         }
         previous = current;
         current = current->next;
