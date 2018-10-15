@@ -1,6 +1,9 @@
 #include <stdio.h>
-#include <jansson.h>
 #include <stdbool.h>
+#include <string.h>
+#include <jansson.h>
+
+#include "pmhelper.h"
 
 typedef enum type 
 {
@@ -28,16 +31,47 @@ typedef struct property
     struct property *next;
 } property_t;
 
-typedef struct property_list
-{
-    property_t *property;
-    struct property_list *next;
-} property_list_t;
-
 property_t*
-json_prop_to_propt_t(json_t *json_prop)
+property_init() {
+    property_t *p = (property_t*) calloc(1, sizeof(property_t));
+
+    if(p == NULL) { 
+        write_log(__FILE__, __func__, "Failed to malloc..."); 
+        return NULL;
+    }
+    
+    p->key = NULL;
+    p->precedence = 0;
+    p->score = 0;
+    p->value = NULL;
+    p->type = NULL_VALUE;
+    p-> next= NULL;
+
+    return p;
+}
+
+void
+free_property(property_t * p) 
 {
-    return NULL;
+    if(p->value != NULL) { 
+        free(p->value);
+        p->value = NULL; 
+    }
+    free(p);   
+    p = NULL; 
+
+}
+
+void 
+free_properties(property_t  *head)
+{
+   property_t  *tmp;
+
+   while (head != NULL) {
+       tmp = head;
+       head = head->next;
+       free(tmp);
+    }
 }
 
 type_t
@@ -93,7 +127,7 @@ json_to_property_t(json_t * json)
 {
     if(json == NULL || !json_is_object(json)) { return NULL; }
 
-    property_t *head = malloc(sizeof(property_t));
+    property_t *head = property_init();
     property_t *current = head;
     
     void *iter = json_object_iter(json);
@@ -107,7 +141,7 @@ json_to_property_t(json_t * json)
         current->value = json_to_value_t(json_object_get(json_object_iter_value(iter), "value"));            
 
         if(json_object_iter_next(json,iter) != NULL) {    
-            current-> next =  malloc(sizeof(property_t));
+            current-> next =  property_init();
             current = current->next;    
         }    
         iter = json_object_iter_next(json, iter);       
@@ -117,68 +151,90 @@ json_to_property_t(json_t * json)
     return head;
 }
 
-property_list_t*
-json_array_to_property_list(property_list_t* current,json_t *json)
+bool
+has_property(property_t *head, const char *key)
 {
-    size_t n = json_array_size(json);
-    size_t index;
-    json_t *value;
-    
-    json_array_foreach(json, index, value) {
-        if(json_is_array(value)) {
-            current = json_array_to_property_list(current, value);      
+    property_t *current = head;
+    while(current != NULL) {
+        if(strcmp(current->key, key) == 0) {  //key unique?
+            return true;
         }
-        else {
-            current->property = json_to_property_t(value);
-        }
-        if(index < n - 1) {
-            current->next =  malloc(sizeof(property_list_t));
-            current = current->next;
-        }      
+        current = current->next;
     }
-    current->next = NULL;
-
-    return current;    
+    return false;
 }
 
-property_list_t*
-json_to_property_list(json_t *json) 
+property_t*
+get_property(property_t *head, const char *key)
 {
-    if(json == NULL) { return NULL; }
-
-    property_list_t *properties = NULL;
-   
-    if(json_is_object(json)) {
-        properties = malloc(sizeof(property_list_t));
-        properties->property = json_to_property_t(json);
-        properties->next = NULL;
+    property_t *current = head;
+    while(current != NULL) {
+        if(strcmp(current->key, key)== 0) {  //key unique?
+            return current;
+        }
+        current = current->next;
     }
-    else if(json_is_array(json) && json_array_size(json) > 0) {
-        properties = malloc(sizeof(property_list_t));
-        json_array_to_property_list(properties, json);
-    }
-
-    return properties;
+    return NULL;
 }
 
+property_t*
+add_property(property_t *head, property_t *p)
+{
+    if(p == NULL) { return head; }
 
+    property_t *new_head = p;
+    p->next = head;
+    return new_head;
+}
 
 bool
-has_property(property_t *list, property_t check)
+remove_property(property_t **head, const char *key)
 {
-    return true;
+    if(head == NULL || key == NULL) { return false; }
+
+    property_t *current = *head;
+    property_t *previous = NULL;
+
+    while(current != NULL) {
+        if(strcmp(current->key,key) == 0) {
+            if(previous == NULL) {
+                *head = current->next;               
+            } 
+            else {
+                previous->next = current->next;
+            }   
+            free_property(current);
+            return true;
+        }
+        previous = current;
+        current = current->next;
+    }
+    return false;
 }
 
-property_t *
-add_property(property_t *list, property_t to_add)
+void
+overwrite_property(property_t **head, const char *key, property_t *p)
 {
-    return NULL;
-}
-
-property_t *
-overwrite_property_value(property_t *list, property_t check)
-{
-    return NULL;
+    if(head == NULL) { return; }
+    
+    property_t *current = *head;
+    property_t *previous = NULL;
+    while(current != NULL) {
+        if(strcmp(current->key,key)  == 0) {  //key unique?
+            if(previous == NULL) { //first element
+                p->next = current->next;
+                *head = p;
+            }
+            else {
+                previous->next = p;
+                p->next = current->next;
+            }
+            free_property(current);
+            break;
+        }
+        previous = current;
+        current = current->next;
+    }
 }
 
 //testing
@@ -200,18 +256,6 @@ print_property(property_t *head)
         if(current->type == NULL_VALUE) printf("value: %s", "null"); 
 
         printf("\n");
-        current = current->next;
-    }
-}
-
-
-//testing
-void 
-print_property_list(property_list_t *head) 
-{
-    property_list_t *current = head;
-    while(current != NULL) {
-        print_property(current->property);              
         current = current->next;
     }
 }

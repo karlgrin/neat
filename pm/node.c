@@ -3,20 +3,73 @@
 #include <time.h>
 #include <string.h>
 
-#include "property.h"
+#include "multi_property.h"
+#include "pmhelper.h"
 
 typedef struct node {
-    const char *filename;
+    const char *filename;           //unique
     time_t last_updated;
 
     const char *uid;
     int priority;
     bool replace_matched;        
     property_t *match;              //PropertyList
-    property_list_t *properties;    //PropertyMultiList
+    multi_property_t *properties;   //PropertyMultiList
 
     struct node *next;
 }node_t;
+
+static void
+free_node(node_t *node) {
+    if(node->match != NULL) { 
+        free(node->match); 
+        }
+    if(node->properties != NULL) { 
+        free(node->properties); 
+    }
+    free(node); 
+}
+
+void
+update_node_content(node_t *node, json_t *json) 
+{
+    if(json != NULL && node != NULL) {
+        node-> uid = json_string_value(json_object_get(json, "uid"));    
+        node->priority = json_real_value(json_object_get(json, "priority"));
+        node->replace_matched = json_boolean_value(json_object_get(json, "replace_matched"));
+        node-> match = json_to_property_t(json_object_get(json, "match")); 
+        node-> properties = json_to_multi_property(json_object_get(json, "properties"));
+    }
+}
+
+static node_t*
+node_init(const char *file_path) 
+{
+    node_t *node = malloc(sizeof(node_t));
+    node->filename = file_path;
+    node->last_updated = time(0);
+    node->priority = 0;
+    node->replace_matched = false;
+    node->uid = NULL;
+    node->match = NULL;
+    node->next = NULL;
+    
+    return node;
+}
+
+node_t*
+create_node(const char * file_path) 
+{
+    json_t *json = load_json_file(file_path);
+
+    if(json == NULL) { free(json); return NULL; }
+
+    node_t* node = node_init(file_path);
+    update_node_content(node, json);
+    free(json);
+
+    return node;
+}
 
 
 bool
@@ -61,7 +114,7 @@ remove_node(node_t **head, const char *file_path)
             else {
                 previous->next = current->next;
             }   
-            free(current);      
+            free_node(current);     
             break;
         }
         previous = current;
@@ -101,7 +154,7 @@ void print_node(node_t* head)
         }
         if(current->properties != NULL) {
             printf("properties: \n");
-            print_property_list(current->properties);
+            print_multi_property(current->properties);
         }
         printf("\n");
         current= current->next;

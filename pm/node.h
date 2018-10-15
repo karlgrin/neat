@@ -6,7 +6,8 @@
 #include <time.h>
 #include <string.h>
 
-#include "property.h"
+#include "multi_property.h"
+#include "pmhelper.h"
 
 typedef struct node {
     const char *filename;
@@ -16,22 +17,17 @@ typedef struct node {
     int priority;
     bool replace_matched;        
     property_t *match;              //PropertyList
-    property_list_t *properties;    //PropertyMultiList
+    multi_property_t *properties;   //PropertyMultiList
 
     struct node *next;
 }node_t;
 
-
+void update_node_content(node_t *node, json_t *json);
+node_t* create_node(const char * file_path);
 bool contain(node_t *head, const char *file_path);
-
-//add at the start of the list
 node_t* add_node(node_t *head, node_t *node);
-
 void remove_node(node_t **head, const char *file_path);
-
 node_t* get_node(node_t *head, const char *file_path);
-
-//testing 
 void print_node(node_t* head);
 
 #endif
