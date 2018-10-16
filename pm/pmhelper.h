@@ -5,7 +5,7 @@
 #include <time.h>
 #include <jansson.h>
 
-#define FILENAME "ErrorLog.txt"
+#define FILENAME "log-error.txt"
 
 char* concat(const char *s1, const char *s2);
 int file_exist(const char * file_path);
