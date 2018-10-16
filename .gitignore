@@ -6,5 +6,5 @@ build/
 pm/*.o
 pm/cib
 pm/pib
-pm/log_error.txt
+pm/log-error.txt
 pm/test
