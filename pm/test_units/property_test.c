@@ -20,7 +20,6 @@ void test_add_property(void)
     head = add_property(head,p);
 
     TEST_ASSERT_EQUAL(p, head);
-
     free_property(p);
 }
 
