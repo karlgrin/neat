@@ -1,15 +1,11 @@
 #include <stdio.h>
-#include <jansson.h>
 #include <stdbool.h>
+#include <jansson.h>
 
-#include "property.h"
 #include "pmhelper.h"
+#include "property.h"
+#include "multi_property.h"
 
-typedef struct multi_property
-{
-    property_t *property;
-    struct multi_property *next;
-} multi_property_t;
 
 multi_property_t*
 multi_property_init() {

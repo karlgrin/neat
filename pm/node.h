@@ -5,9 +5,11 @@
 #include <stdbool.h>
 #include <time.h>
 #include <string.h>
+#include <jansson.h>
 
-#include "multi_property.h"
 #include "pmhelper.h"
+#include "property.h"
+#include "multi_property.h"
 
 typedef struct node {
     const char *filename;
