@@ -5,6 +5,8 @@
 
 #include "property.h"
 
+//what functions are needed?
+
 property_t*
 property_init() {
     property_t *p = (property_t*) calloc(1, sizeof(property_t));
