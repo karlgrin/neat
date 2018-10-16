@@ -44,7 +44,7 @@ read_modified_pib_files(const char *dir_path)
         }
         closedir (dir);
     } else {
-        write_log(__FILE__, __func__, concat("Error: Can't read the directoty ", dir_path));    
+        write_log(__FILE__, __func__, concat("Error: Can't read the directory ", dir_path));    
     }
 }
 

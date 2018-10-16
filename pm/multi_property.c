@@ -59,7 +59,7 @@ json_array_to_multi_property(multi_property_t* current,json_t *json)
             current = json_array_to_multi_property(current, value);      
         }
         else {
-            current->property = json_to_property_t(value);
+            current->property = json_to_property(value);
         }
         if(index < n - 1) {
             current->next =  multi_property_init();
@@ -80,7 +80,7 @@ json_to_multi_property(json_t *json)
    
     if(json_is_object(json)) {
         properties = multi_property_init();
-        properties->property = json_to_property_t(json);
+        properties->property = json_to_property(json);
         properties->next = NULL;
     }
     else if(json_is_array(json) && json_array_size(json) > 0) {

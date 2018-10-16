@@ -38,9 +38,9 @@ property_t* property_init();
 void free_property(property_t *p);
 void free_properties(property_t  *head);
 
-type_t json_to_type_t(json_t *json);
-value_t* json_to_value_t(json_t *json);
-property_t* json_to_property_t(json_t * json);
+type_t json_to_type(json_t *json);
+value_t* json_to_value(json_t *json);
+property_t* json_to_property(json_t * json);
 
 bool has_property(property_t *head, const char *key);
 property_t* get_property(property_t *head, const char *key);

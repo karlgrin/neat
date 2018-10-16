@@ -13,7 +13,7 @@ void test_concat(void)
 
 void test_file_exit(void)
 {
-    if(file_exist("pmhelper_test.c") == 0)
+    if(file_exist(__FILE__) == 0)
         TEST_FAIL();
 
     if(file_exist("Does not exist") != 0)

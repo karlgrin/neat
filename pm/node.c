@@ -37,7 +37,7 @@ update_node_content(node_t *node, json_t *json)
         node-> uid = json_string_value(json_object_get(json, "uid"));    
         node->priority = json_real_value(json_object_get(json, "priority"));
         node->replace_matched = json_boolean_value(json_object_get(json, "replace_matched"));
-        node-> match = json_to_property_t(json_object_get(json, "match")); 
+        node-> match = json_to_property(json_object_get(json, "match")); 
         node-> properties = json_to_multi_property(json_object_get(json, "properties"));
     }
 }

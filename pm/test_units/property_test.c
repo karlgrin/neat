@@ -1,6 +1,14 @@
 #include "../../../Unity/src/unity.h"
 #include "../property.h"
 
+char *FILE_PATH_JSON = "json_files/test.profile";
+
+void test_property_init(void) 
+{
+    property_t *p = property_init();
+    TEST_ASSERT_NOT_NULL(p);
+}
+
 void test_add_property(void)
 {
     property_t *head = NULL;
@@ -237,4 +245,66 @@ void test_overwrite_property_2(void)
     TEST_ASSERT_EQUAL(p4, head->next->next);
 
     free_properties(head); 
+}
+
+void test_json_to_property(void)
+{
+    json_t *json = load_json_file(FILE_PATH_JSON);
+
+    if(json != NULL) {
+        property_t * p = json_to_property(json_object_get(json, "properties"));
+        if(p != NULL) {
+            TEST_ASSERT_EQUAL_STRING("RTT", p->key);
+            TEST_ASSERT_EQUAL_INT(1, p->precedence);
+            TEST_ASSERT_EQUAL_INT(5, p->score);
+            TEST_ASSERT_EQUAL_UINT(0, p->value->range.low_thresh);
+            TEST_ASSERT_EQUAL_UINT(50, p->value->range.high_thresh);
+            TEST_ASSERT_EQUAL_STRING("low_latency_interface", p->next->key); 
+            TEST_ASSERT_EQUAL(true, p->next->value->boolean);
+            TEST_ASSERT_EQUAL_STRING("is_wired_interface", p->next->next->key);
+            TEST_ASSERT_EQUAL_INT(1, p->next->next->precedence);
+        }
+        else {
+            TEST_FAIL();
+        }
+    }
+}
+
+
+void test_json_to_value(void)
+{
+    json_t *json = load_json_file(FILE_PATH_JSON);
+
+    if(json != NULL) {
+        json_t *json1 = json_object_get(json, "priority");
+        value_t *t1 = json_to_value(json1);
+        TEST_ASSERT_EQUAL_INT(1,t1->integer);
+
+        json_t *json2 = json_object_get(json, "uid");
+        value_t *t2 = json_to_value(json2);
+        TEST_ASSERT_EQUAL_STRING("low_latency",t2->string);
+
+        json_t *json3 = json_object_get(json, "replace_matched");
+        value_t *t3 = json_to_value(json3);
+        TEST_ASSERT_EQUAL_STRING(false,t3->boolean);
+    }
+}
+
+void test_json_to_type(void)
+{
+    json_t *json = load_json_file(FILE_PATH_JSON);
+
+    if(json != NULL) {
+        json_t *json1 = json_object_get(json, "priority");
+        type_t t1 = json_to_type(json1);
+        TEST_ASSERT_EQUAL_INT(INTEGER,t1);
+
+        json_t *json2 = json_object_get(json, "uid");
+        type_t t2 = json_to_type(json2);
+        TEST_ASSERT_EQUAL_INT(STRING,t2);
+
+        json_t *json3 = json_object_get(json, "replace_matched");
+        type_t t3 = json_to_type(json3);
+        TEST_ASSERT_EQUAL_INT(BOOLEAN,t3);
+    }
 }

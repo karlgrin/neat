@@ -73,7 +73,7 @@ free_properties(property_t  *head)
 }
 
 type_t
-json_to_type_t(json_t *json) 
+json_to_type(json_t *json) 
 {
     if(json_is_null(json))
         return NULL_VALUE;
@@ -92,7 +92,7 @@ json_to_type_t(json_t *json)
 }
 
 value_t*
-json_to_value_t(json_t *json) 
+json_to_value(json_t *json) 
 {
     value_t *my_value = malloc(sizeof(value_t));
     if(json_is_null(json)) {
@@ -116,12 +116,12 @@ json_to_value_t(json_t *json)
         r.high_thresh = json_integer_value(json_object_get(json, "end"));
         my_value->range = r;
     }
-    //mo error handling, just return null
+    //no error handling, just return null
     return my_value;
 }
 
 property_t*
-json_to_property_t(json_t * json)
+json_to_property(json_t * json)
 {
     if(json == NULL || !json_is_object(json)) { return NULL; }
 
@@ -135,8 +135,8 @@ json_to_property_t(json_t * json)
         current->key = json_object_iter_key(iter);
         current->precedence = json_integer_value(json_object_get(json_object_iter_value(iter), "precedence"));
         current->score = json_integer_value(json_object_get(json_object_iter_value(iter), "score"));
-        current->type = json_to_type_t(json_object_get(json_object_iter_value(iter), "value"));
-        current->value = json_to_value_t(json_object_get(json_object_iter_value(iter), "value"));            
+        current->type = json_to_type(json_object_get(json_object_iter_value(iter), "value"));
+        current->value = json_to_value(json_object_get(json_object_iter_value(iter), "value"));            
 
         if(json_object_iter_next(json,iter) != NULL) {    
             current-> next =  property_init();
@@ -144,7 +144,7 @@ json_to_property_t(json_t * json)
         }    
         iter = json_object_iter_next(json, iter);       
     }
-    current->next = NULL; //last item in the linked is null
+    current->next = NULL; //last item in list is null
 
     return head;
 }
@@ -194,7 +194,7 @@ remove_property(property_t **head, const char *key)
     property_t *previous = NULL;
 
     while(current != NULL) {
-        if(strcmp(current->key,key) == 0) {
+        if(strcmp(current->key,key) == 0) {  //key unique?
             if(previous == NULL) {
                 *head = current->next;               
             } 

@@ -17,6 +17,7 @@ int main(void)
     RUN_TEST(test_file_edit_time);
 
     printf("\n-----property.c------\n");
+    RUN_TEST(test_property_init);
     RUN_TEST(test_add_property);
     RUN_TEST(test_add_property_2);
     RUN_TEST(test_get_property);
@@ -27,6 +28,9 @@ int main(void)
     RUN_TEST(test_has_property_2);
     RUN_TEST(test_overwrite_property);
     RUN_TEST(test_overwrite_property_2);
+    RUN_TEST(test_json_to_property);
+    RUN_TEST(test_json_to_value);
+    RUN_TEST(test_json_to_type);
 
     printf("\n-----multi_property.c------\n");
     RUN_TEST(test_add_multi_property);
