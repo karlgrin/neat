@@ -33,6 +33,7 @@ int main(void)
     RUN_TEST(test_json_to_type);
 
     printf("\n-----multi_property.c------\n");
+      RUN_TEST(test_multi_property_init);
     RUN_TEST(test_add_multi_property);
     RUN_TEST(test_add_multi_property_2);
     RUN_TEST(test_has_a_property);

@@ -4,6 +4,8 @@
 #include "../../../Unity/src/unity.h"
 #include "../multi_property.h"
 
+void test_multi_property_init(void);
+
 void test_add_multi_property(void);
 void test_add_multi_property_2(void);
 

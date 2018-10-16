@@ -1,6 +1,13 @@
 #include "../../../Unity/src/unity.h"
 #include "../multi_property.h"
 
+
+void test_multi_property_init(void) 
+{
+    multi_property_t *mp = multi_property_init();
+    TEST_ASSERT_NOT_NULL(mp);
+}
+
 void test_add_multi_property(void)
 {
     multi_property_t *head = NULL;
