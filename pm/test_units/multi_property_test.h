@@ -1,5 +1,5 @@
-#ifndef NEAT_MULTI_PROPERTY_TEST
-#define NEAT_MULTI_PROPERTY_TEST
+#ifndef MULTI_PROPERTY_TEST
+#define MULTI_PROPERTY_TEST
 
 #include "../../../Unity/src/unity.h"
 #include "../multi_property.h"

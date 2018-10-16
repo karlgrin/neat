@@ -3,7 +3,7 @@
     "expire": -1.0,
     "filename": "enp0s3.cib",
     "link": false,
-    "priority": 0,
+    "priority": 3,
     "match":{
         "low_latency": {
             "value": true

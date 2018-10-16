@@ -1,10 +1,8 @@
-#ifndef NEAT_PMHELPER_TEST
-#define NEAT_PMHELPER_TEST
+#ifndef PMHELPER_TEST
+#define PMHELPER_TEST
 
 #include "../../../Unity/src/unity.h"
 #include "../pmhelper.h"
-
-char *JSON_FILE_PATH = "json_files/test.profile";
 
 void test_concat(void);
 void test_file_exit(void);

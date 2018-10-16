@@ -2,6 +2,7 @@
 #include "pmhelper_test.h"
 #include "property_test.h"
 #include "multi_property_test.h"
+#include "node_test.h"
 
 int main(void)
 {
@@ -33,13 +34,26 @@ int main(void)
     RUN_TEST(test_json_to_type);
 
     printf("\n-----multi_property.c------\n");
-      RUN_TEST(test_multi_property_init);
+    RUN_TEST(test_multi_property_init);
     RUN_TEST(test_add_multi_property);
     RUN_TEST(test_add_multi_property_2);
     RUN_TEST(test_has_a_property);
     RUN_TEST(test_has_a_property_2);
     RUN_TEST(test_get_a_property);
     RUN_TEST(test_get_a_property_2);
+
+    printf("\n-----node.c------\n");
+    RUN_TEST(test_node_init);
+    RUN_TEST(test_update_node_content);
+    RUN_TEST(test_create_node);
+    RUN_TEST(test_add_node);
+    RUN_TEST(test_add_node_2);
+    RUN_TEST(test_has_node);
+    RUN_TEST(test_has_node_2);
+    RUN_TEST(test_get_node);
+    RUN_TEST(test_get_node_2);
+    RUN_TEST(test_remove_node);
+    RUN_TEST(test_remove_node_2);
 
     return UNITY_END();
 }

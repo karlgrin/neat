@@ -2,8 +2,8 @@
     "uid": "low_latency",
     "policy_type": "profile",
     "description": "generic low latency profile",
-    "priority": 2,
-    "replace_matched": true,
+    "priority": 1,
+    "replace_matched": false,
     "match": {
         "low_latency": {
             "value": true
