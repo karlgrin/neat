@@ -1,4 +1,5 @@
 #include "../../../Unity/src/unity.h"
+#include "test_constant.h"
 #include "../multi_property.h"
 
 

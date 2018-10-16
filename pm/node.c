@@ -8,15 +8,25 @@
 #include "multi_property.h"
 #include "node.h"
 
-static void
+void
 free_node(node_t *node) {
-    if(node->match != NULL) { 
+    if(node != NULL) { 
         free_properties(node->match); 
-        }
-    if(node->properties != NULL) { 
         free_multi_properties(node->properties); 
     }
     free(node); 
+}
+
+void
+free_nodes(node_t *head) 
+{
+    node_t  *tmp;
+
+    while (head != NULL) {
+       tmp = head;
+       head = head->next;
+       free_node(tmp);
+    } 
 }
 
 void
@@ -24,17 +34,23 @@ update_node_content(node_t *node, json_t *json)
 {
     if(json != NULL && node != NULL) {
         node-> uid = json_string_value(json_object_get(json, "uid"));    
-        node->priority = json_real_value(json_object_get(json, "priority"));
+        node->priority = json_number_value(json_object_get(json, "priority"));
         node->replace_matched = json_boolean_value(json_object_get(json, "replace_matched"));
         node-> match = json_to_property(json_object_get(json, "match")); 
         node-> properties = json_to_multi_property(json_object_get(json, "properties"));
     }
 }
 
-static node_t*
+node_t*
 node_init(const char *file_path) 
 {
-    node_t *node = malloc(sizeof(node_t));
+    node_t *node = calloc(1,sizeof(node_t));
+
+    if(node == NULL) { 
+        write_log(__FILE__, __func__, "Failed to malloc..."); 
+        return NULL;
+    }
+
     node->filename = file_path;
     node->last_updated = time(0);
     node->priority = 0;
@@ -62,9 +78,9 @@ create_node(const char * file_path)
 
 
 bool
-contain(node_t *head, const char *file_path)
+has_node(node_t *head, const char *file_path)
 {
-    if(file_path == NULL) { return NULL; }
+    if(file_path == NULL) { return false; }
 
     node_t *current = head;
     while(current != NULL) {
@@ -76,21 +92,23 @@ contain(node_t *head, const char *file_path)
     return false;
 }
 
-//add at the start of the list
 node_t*
 add_node(node_t *head, node_t *node)
 {
     if(node == NULL) { return head; }
+    if(head == NULL) { return node; }
 
-    node_t *new_head = node; 
-    new_head->next = head;
-    return new_head;
+    node_t *current = head;
+    while(current->next != NULL) { current = current->next; }
+
+    current->next = node;
+    return head;
 }
 
 void
 remove_node(node_t **head, const char *file_path)
 {
-    if(head == NULL || file_path == NULL) { return ; }
+    if(head == NULL || file_path == NULL) { return; }
 
     node_t *current = *head;
     node_t *previous = NULL;
@@ -104,7 +122,7 @@ remove_node(node_t **head, const char *file_path)
                 previous->next = current->next;
             }   
             free_node(current);     
-            break;
+            return;
         }
         previous = current;
         current = current->next;

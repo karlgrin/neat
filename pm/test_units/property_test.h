@@ -1,5 +1,5 @@
-#ifndef NEAT_PROPERTY_TEST
-#define NEAT_PROPERTY_TEST
+#ifndef PROPERTY_TEST
+#define PROPERTY_TEST
 
 #include "../../../Unity/src/unity.h"
 #include "../property.h"

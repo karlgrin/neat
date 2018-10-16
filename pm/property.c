@@ -153,10 +153,13 @@ property_t*
 add_property(property_t *head, property_t *p)
 {
     if(p == NULL) { return head; }
+    if(head == NULL) { return p; }
 
-    property_t *new_head = p;
-    p->next = head;
-    return new_head;
+    property_t *current = head;
+    while(current->next != NULL) { current = current->next; }
+
+    current->next = p;
+    return head;
 }
 
 bool

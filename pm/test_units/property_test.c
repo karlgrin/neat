@@ -1,4 +1,5 @@
 #include "../../../Unity/src/unity.h"
+#include "test_constant.h"
 #include "../property.h"
 
 char *JSON_FILE_PATH_2 = "json_files/test.profile";
@@ -40,12 +41,11 @@ void test_add_property_2(void)
     head = add_property(head,p2);
     head = add_property(head,p3);
 
-    TEST_ASSERT_EQUAL(p3, head);
+    TEST_ASSERT_EQUAL(p1, head);
     TEST_ASSERT_EQUAL(p2, head->next);
-    TEST_ASSERT_EQUAL(p1, head->next->next);
+    TEST_ASSERT_EQUAL(p3, head->next->next);
     
     free_properties(head);
-
 }
 
 void test_get_property(void)
@@ -240,16 +240,20 @@ void test_overwrite_property_2(void)
     overwrite_property(&head, p2->key, p5);
     overwrite_property(&head, p3->key, p6);
 
-    TEST_ASSERT_EQUAL(p6, head);
+    TEST_ASSERT_EQUAL(p4, head);
     TEST_ASSERT_EQUAL(p5, head->next);
-    TEST_ASSERT_EQUAL(p4, head->next->next);
+    TEST_ASSERT_EQUAL(p6, head->next->next);
 
     free_properties(head); 
 }
 
 void test_json_to_property(void)
 {
+<<<<<<< HEAD
     json_t *json = load_json_file(JSON_FILE_PATH_2);
+=======
+    json_t *json = load_json_file(TEST_FILE_PATH);
+>>>>>>> tobbe/unity
 
     if(json != NULL) {
         property_t * p = json_to_property(json_object_get(json, "properties"));
@@ -273,12 +277,16 @@ void test_json_to_property(void)
 
 void test_json_to_value(void)
 {
+<<<<<<< HEAD
     json_t *json = load_json_file(JSON_FILE_PATH_2);
+=======
+    json_t *json = load_json_file(TEST_FILE_PATH);
+>>>>>>> tobbe/unity
 
     if(json != NULL) {
         json_t *json1 = json_object_get(json, "priority");
         value_t *t1 = json_to_value(json1);
-        TEST_ASSERT_EQUAL_INT(1,t1->integer);
+        TEST_ASSERT_EQUAL_INT(2,t1->integer);
 
         json_t *json2 = json_object_get(json, "uid");
         value_t *t2 = json_to_value(json2);
@@ -286,13 +294,17 @@ void test_json_to_value(void)
 
         json_t *json3 = json_object_get(json, "replace_matched");
         value_t *t3 = json_to_value(json3);
-        TEST_ASSERT_EQUAL_STRING(false,t3->boolean);
+        TEST_ASSERT_EQUAL(true,t3->boolean);
     }
 }
 
 void test_json_to_type(void)
 {
+<<<<<<< HEAD
     json_t *json = load_json_file(JSON_FILE_PATH_2);
+=======
+    json_t *json = load_json_file(TEST_FILE_PATH);
+>>>>>>> tobbe/unity
 
     if(json != NULL) {
         json_t *json1 = json_object_get(json, "priority");
