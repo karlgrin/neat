@@ -134,7 +134,7 @@ print_multi_property(multi_property_t *head)
 {
     multi_property_t *current = head;
     while(current != NULL) {
-        printf("---property---\n");
+        printf("---properties---\n");
         print_property(current->property);              
         current = current->next;
     }
