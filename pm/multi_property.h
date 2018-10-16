@@ -2,11 +2,12 @@
 #define HEADER_MULTI_PROPERTY
 
 #include <stdio.h>
-#include <jansson.h>
 #include <stdbool.h>
+#include <jansson.h>
 
 #include "pmhelper.h"
 #include "property.h"
+
 
 typedef struct multi_property
 {

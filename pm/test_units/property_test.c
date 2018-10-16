@@ -1,8 +1,6 @@
 #include "../../../Unity/src/unity.h"
 #include "../property.h"
 
-char *FILE_PATH_JSON = "json_files/test.profile";
-
 void test_property_init(void) 
 {
     property_t *p = property_init();
@@ -249,7 +247,7 @@ void test_overwrite_property_2(void)
 
 void test_json_to_property(void)
 {
-    json_t *json = load_json_file(FILE_PATH_JSON);
+    json_t *json = load_json_file(JSON_FILE_PATH);
 
     if(json != NULL) {
         property_t * p = json_to_property(json_object_get(json, "properties"));
@@ -273,7 +271,7 @@ void test_json_to_property(void)
 
 void test_json_to_value(void)
 {
-    json_t *json = load_json_file(FILE_PATH_JSON);
+    json_t *json = load_json_file(JSON_FILE_PATH);
 
     if(json != NULL) {
         json_t *json1 = json_object_get(json, "priority");
@@ -292,7 +290,7 @@ void test_json_to_value(void)
 
 void test_json_to_type(void)
 {
-    json_t *json = load_json_file(FILE_PATH_JSON);
+    json_t *json = load_json_file(JSON_FILE_PATH);
 
     if(json != NULL) {
         json_t *json1 = json_object_get(json, "priority");

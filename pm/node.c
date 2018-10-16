@@ -1,31 +1,20 @@
-#include <stdio.h>
 #include <stdbool.h>
 #include <time.h>
 #include <string.h>
+#include <jansson.h>
 
-#include "multi_property.h"
 #include "pmhelper.h"
-
-typedef struct node {
-    const char *filename;           //unique
-    time_t last_updated;
-
-    const char *uid;
-    int priority;
-    bool replace_matched;        
-    property_t *match;              //PropertyList
-    multi_property_t *properties;   //PropertyMultiList
-
-    struct node *next;
-}node_t;
+#include "property.h"
+#include "multi_property.h"
+#include "node.h"
 
 static void
 free_node(node_t *node) {
     if(node->match != NULL) { 
-        free(node->match); 
+        free_properties(node->match); 
         }
     if(node->properties != NULL) { 
-        free(node->properties); 
+        free_multi_properties(node->properties); 
     }
     free(node); 
 }
@@ -101,7 +90,7 @@ add_node(node_t *head, node_t *node)
 void
 remove_node(node_t **head, const char *file_path)
 {
-    if(head == NULL || *head == NULL || file_path == NULL) { return ; }
+    if(head == NULL || file_path == NULL) { return ; }
 
     node_t *current = *head;
     node_t *previous = NULL;

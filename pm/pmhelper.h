@@ -2,11 +2,7 @@
 #define HEADER_PMHELPER
 
 #include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/stat.h>
 #include <time.h>
-#include <string.h>
 #include <jansson.h>
 
 #define FILENAME "ErrorLog.txt"
