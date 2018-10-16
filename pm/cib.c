@@ -75,6 +75,7 @@ cib_node_init()
 
 /*----- END cib_node -----*/
 
+/*
 int
 main(int argc, char **argv)
 {
@@ -92,3 +93,4 @@ main(int argc, char **argv)
     LIST_REMOVE(linked_node2, pointers);
     return 0;
 }
+*/

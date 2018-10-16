@@ -1,0 +1,5 @@
+cmake_minimum_required (VERSION 3.7.2)
+project (policy_manager)
+set (CMAKE_C_FLAGS "-ljansson -luv -g")
+file (GLOB SOURCES "*.c")
+add_executable (pm ${SOURCES})

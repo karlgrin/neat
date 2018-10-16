@@ -1,19 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include <unistd.h>
 #include <sys/types.h>
-
 #include <limits.h>
 #include <pwd.h>
 #include <sys/stat.h>
+#include <uv.h>
+#include <jansson.h>
 
-#include<uv.h>
+// TODO
+// should provide lookup functions
+// maybe also initalization of main pib/cib objects
+// #include "pib.h"
+// #include "cib.h"
 
 #define PM_BACKLOG 128
 #define BUFSIZE 65536
-
 #define PM_SOCK_DIR ".neat"
 #define PM_SOCK_NAME "pm_socket"
 
@@ -49,35 +52,55 @@ make_pm_socket_path()
 }
 
 void
+handle_request(uv_stream_t *client)
+{
+    client_req_t *client_req = (client_req_t *) client->data;
+    uv_buf_t response_buf;
+    uv_write_t *write_req;
+    json_t *request_json;
+    json_error_t json_error;
+
+    printf("finished reading\n");
+    printf("buffer = %s\n", client_req->buffer);
+
+    request_json = json_loads(client_req->buffer, 0, &json_error);
+
+    if (!request_json) {
+        fprintf(stderr, "error: on line %d: %s\n", json_error.line, json_error.text);
+        return;
+    }
+    response_buf.base = "no candidates yet";
+    response_buf.len = strlen(response_buf.base);
+
+    // TODO
+    /* json_t *candidates = pib_lookup(cib_lookup(profile_lookup(req))); */
+    /* response_buf.base = json_dumps(candidates); */
+    /* response_buf.len = strlen(response_buf.base); */
+    /* free(response_buf.base); */
+    /* json_decref(candidates); */
+
+    write_req = malloc(sizeof(uv_write_t));
+    uv_write(write_req, client, &response_buf, 1, NULL);
+
+    printf("sent candidate list\n");
+
+    free(write_req);
+}
+
+void
 alloc_buffer(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buffer)
 {
-    buffer->base = malloc(suggested_size);
+    buffer->base = calloc(suggested_size, sizeof(char));
     buffer->len = suggested_size;
 }
 
 void
 on_client_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buffer)
 {
-    uv_write_t *write_req;
-    uv_buf_t req_buf;
     client_req_t *c_req = (client_req_t *) client->data;
 
     if (nread == UV_EOF) { /* -4095? */
-        printf("finished reading\n");
-
-        printf("nread = %zu\n", nread);
-        printf("buffer = %s\n", c_req->buffer);
-
-        write_req = malloc(sizeof(uv_write_t));
-        // TODO req.base = candidates(c_req->buffer);
-        req_buf.base = "no candidates yet";
-        req_buf.len = strlen(req_buf.base);
-
-        uv_write(write_req, client, &req_buf, 1, NULL);
-
-        printf("sent candidate list\n");
-
-        free(write_req);
+        handle_request(client);
     }
     else if (nread < 0) {
         printf("error on client read\n");
@@ -94,11 +117,6 @@ on_client_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buffer)
     }
     free(buffer->base);
 
-}
-
-void
-on_client_write(uv_write_t *req, int status)
-{
 }
 
 void
@@ -139,6 +157,7 @@ int
 main(int argc, char **argv)
 {
     uv_pipe_t pm_server;
+    int r;
 
     pm_socket_path = make_pm_socket_path();
 
@@ -149,7 +168,6 @@ main(int argc, char **argv)
 
     signal(SIGINT, remove_sock);
 
-    int r;
     if ((r = uv_pipe_bind(&pm_server, pm_socket_path)) != 0) {
         fprintf(stderr, "Bind error %s\n", uv_err_name(r));
         return 1;
