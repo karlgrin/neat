@@ -4,8 +4,6 @@
 #include "../../../Unity/src/unity.h"
 #include "../pmhelper.h"
 
-char *JSON_FILE_PATH = "json_files/test.profile";
-
 void test_concat(void);
 void test_file_exit(void);
 void test_load_json_file(void);
