@@ -1,11 +1,20 @@
 #include "../../../Unity/src/unity.h"
+#include "pmhelper_test.h"
 #include "property_test.h"
 #include "multi_property_test.h"
 
 int main(void)
 {
     UNITY_BEGIN();
-    printf("\n   Start Unit Tests!\n");
+    printf("   Start Unit Tests!\n");
+
+    printf("\n-----pmhelper.c------\n");
+    RUN_TEST(test_concat);
+    RUN_TEST(test_file_exit);
+    RUN_TEST(test_load_json_file);
+    RUN_TEST(test_write_json_file);
+    RUN_TEST(test_file_is_modified);
+    RUN_TEST(test_file_edit_time);
 
     printf("\n-----property.c------\n");
     RUN_TEST(test_add_property);

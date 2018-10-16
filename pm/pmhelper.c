@@ -67,7 +67,7 @@ file_is_modified(const char *path, time_t oldTime)
     struct stat file_stat;
     int err = stat(path, &file_stat);
     if (err != 0) {
-        write_log("Pib.c" , "file_is_modified", "Error when  reading file " FILENAME);
+        write_log(__FILE__ , __func__, concat("Error when reading file: ", path));
     }
     return file_stat.st_mtime > oldTime;
 }
@@ -83,7 +83,7 @@ load_json_file(const char *file_path)
     json = json_load_file(file_path, 0, &error);
 
     if(!json) {
-        write_log(__FILE__, __func__, error.text);
+        write_log(__FILE__, __func__, concat("Error: failed to read json file: ", file_path));
     }
     return json;
 }
