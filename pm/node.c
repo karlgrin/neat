@@ -4,15 +4,13 @@
 #include <jansson.h>
 
 #include "pmhelper.h"
-#include "property.h"
-#include "multi_property.h"
 #include "node.h"
 
 void
 free_node(node_t *node) {
-    if(node != NULL) { 
-        free_properties(node->match); 
-        free_multi_properties(node->properties); 
+    if(node != NULL) {
+        free(node->filename);
+        json_decref(node->json);
     }
     free(node); 
 }
@@ -33,11 +31,8 @@ void
 update_node_content(node_t *node, json_t *json) 
 {
     if(json != NULL && node != NULL) {
-        node-> uid = json_string_value(json_object_get(json, "uid"));    
-        node->priority = json_number_value(json_object_get(json, "priority"));
-        node->replace_matched = json_boolean_value(json_object_get(json, "replace_matched"));
-        node-> match = json_to_property(json_object_get(json, "match")); 
-        node-> properties = json_to_multi_property(json_object_get(json, "properties"));
+       node->json = json;
+       node->last_updated = time(0);
     }
 }
 
@@ -47,18 +42,12 @@ node_init(const char *file_path)
     node_t *node = calloc(1,sizeof(node_t));
 
     if(node == NULL) { 
-        write_log(__FILE__, __func__, "Failed to malloc..."); 
+        write_log(__FILE__, __func__, "Failed to calloc..."); 
         return NULL;
     }
 
-    node->filename = file_path;
-    node->last_updated = time(0);
-    node->priority = 0;
-    node->replace_matched = false;
-    node->uid = NULL;
-    node->match = NULL;
-    node->next = NULL;
-    
+    node->filename = concat(file_path, "");
+    node->last_updated = 0;
     return node;
 }
 
@@ -67,11 +56,10 @@ create_node(const char * file_path)
 {
     json_t *json = load_json_file(file_path);
 
-    if(json == NULL) { free(json); return NULL; }
+    if(json == NULL) { return NULL; }
 
     node_t* node = node_init(file_path);
     update_node_content(node, json);
-    free(json);
 
     return node;
 }
@@ -145,25 +133,25 @@ get_node(node_t *head, const char *file_path)
 }
 
 //testing
-void print_node(node_t* head) 
+void 
+print_nodes(node_t* head) 
 {
     node_t *current = head;
     while(current != NULL) {   
-        printf("--------NODE----------\n");
-        if(current->uid != NULL) { printf("uid: %s\n", current->uid); }
-        printf("priority: %d\n", current->priority);
-        printf("replace_matched: %d\n", current->replace_matched);
-        printf("last_updated: %s",ctime(&current->last_updated));
-        if(current->filename != NULL) { printf("filename: %s\n", current->filename); }
-        if(current->match != NULL) {
-            printf("match: \n");
-            print_property(current->match);
-        }
-        if(current->properties != NULL) {
-            printf("properties: \n");
-            print_multi_property(current->properties);
-        }
-        printf("\n");
+        print_node(current);
         current= current->next;
+    }
+}
+
+void 
+print_node(node_t *node) 
+{
+    if(node != NULL) {
+     printf("--------NODE----------\n");
+        if(node->filename != NULL) { 
+            printf("filename: %s\n", node->filename); 
+        }
+        printf("last_updated: %s",ctime(&node->last_updated));
+        printf("json: %s\n" , json_dumps(node->json, JSON_INDENT(4)));
     }
 }

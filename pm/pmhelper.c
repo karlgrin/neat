@@ -12,13 +12,24 @@ concat(const char *s1, const char *s2)
 {
     const size_t len1 = strlen(s1);
     const size_t len2 = strlen(s2);
-    char *result = malloc(len1 + len2 + 1); // +1 for the null-terminator
+    char *result = calloc(1, len1 + len2 + 1); // +1 for the null-terminator
     
-    if(result == NULL)
-        return ""; //error, should never happen
+    if(result == NULL) {
+         write_log(__FILE__, __func__, "Error: failed to callloc..");
+         return NULL;
+    }
 
     memcpy(result, s1, len1);
     memcpy(result + len1, s2, len2 + 1);
+    return result;
+}
+
+char*
+concat_3(const char *s1, const char *s2, const char *s3)
+{
+    char *tmp = concat(s1,s2);
+    char *result = concat(tmp,s3);
+    free(tmp);
     return result;
 }
 
@@ -76,10 +87,9 @@ json_t*
 load_json_file(const char *file_path) 
 {
     if(file_path == NULL) { return NULL; }
-    json_t *json = malloc(sizeof(json_t));
-    json_error_t error;
 
-    json = json_load_file(file_path, 0, &error);
+    json_error_t error;
+    json_t *json = json_load_file(file_path, 0, &error);
 
     if(!json) {
         write_log(__FILE__, __func__, concat("Error: failed to read json file: ", file_path));

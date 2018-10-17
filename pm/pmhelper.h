@@ -8,6 +8,7 @@
 #define FILENAME "ErrorLog.txt"
 
 char* concat(const char *s1, const char *s2);
+char* concat_3(const char *s1, const char *s2, const char *s3);
 int file_exist(const char * file_path);
 void write_log(const char* module, const char* func, const char* desc);
 time_t file_edit_time(const char *file_path);

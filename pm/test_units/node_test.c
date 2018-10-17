@@ -16,66 +16,34 @@ void test_update_node_content(void)
     node_t *node = node_init(TEST_FILE_PATH);
     if(json != NULL) {
         update_node_content(node, json);
-        TEST_ASSERT_EQUAL_INT(2, node->priority);
-        TEST_ASSERT_EQUAL_STRING("low_latency", node->uid);
-        TEST_ASSERT_EQUAL(true,node->replace_matched);
-        TEST_ASSERT_NOT_NULL(node->match);
-        TEST_ASSERT_NOT_NULL(node->properties);
+        TEST_ASSERT_EQUAL(json, node->json);
+        TEST_ASSERT_GREATER_THAN_INT(0, node->last_updated);
     }
-    free(json);free_node(node);
+    free_node(node);
 }
 
 void test_create_node(void) 
 {
     node_t *node = create_node(TEST_FILE_PATH);
     if(node != NULL) {
-        TEST_ASSERT_EQUAL_STRING("low_latency", node->uid);
-        TEST_ASSERT_EQUAL_INT(2, node->priority);     
-        TEST_ASSERT_EQUAL(true, node->replace_matched);
-        
-        if(node->match != NULL) {
-            TEST_ASSERT_EQUAL_STRING("low_latency", node->match->key);
-            TEST_ASSERT_EQUAL(true, node->match->value->boolean);
-        
-            if(node->properties != NULL) {
-                TEST_ASSERT_EQUAL_STRING("RTT", node->properties->property->key);
-                TEST_ASSERT_EQUAL_INT(1, node->properties->property->precedence);
-                TEST_ASSERT_EQUAL_INT(0, node->properties->property->value->range.low_thresh);
-                TEST_ASSERT_EQUAL_INT(50, node->properties->property->value->range.high_thresh);
-                TEST_ASSERT_EQUAL_INT(RANGE, node->properties->property->type);
-                TEST_ASSERT_EQUAL_INT(5, node->properties->property->score);
-
-                if(node->properties->property->next != NULL) {
-                    TEST_ASSERT_EQUAL_STRING("low_latency_interface", node->properties->property->next->key);
-                    TEST_ASSERT_EQUAL_INT(1, node->properties->property->next->precedence);
-                    TEST_ASSERT_EQUAL(true, node->properties->property->next->value->boolean);
-                    TEST_ASSERT_EQUAL_INT(BOOLEAN, node->properties->property->next->type);
-
-                    if(node->properties->property->next != NULL) {
-                        TEST_ASSERT_EQUAL_STRING("is_wired_interface", node->properties->property->next->next->key);
-                        TEST_ASSERT_EQUAL_INT(1, node->properties->property->next->next->precedence);
-                        TEST_ASSERT_EQUAL(true, node->properties->property->next->next->value->boolean);
-                        TEST_ASSERT_EQUAL_INT(BOOLEAN, node->properties->property->next->next->type);
-
-                        if(node->properties->property->next->next->next == NULL) {
-                                free_node(node);
-                                return;
-                        }
-                    }
-                }
-            }
-        }
+        TEST_ASSERT_EQUAL_STRING(TEST_FILE_PATH, node->filename);
+        TEST_ASSERT_GREATER_THAN_INT(0, node->last_updated);
+        TEST_ASSERT_NOT_NULL(node->json)
+    }
+    else {
+        TEST_FAIL();
     }
     free_node(node);
-    TEST_FAIL();
 }
 
 void test_add_node(void) 
 {
     node_t *head = NULL;
     node_t *node = node_init("file");
+
     head = add_node(head, node);
     TEST_ASSERT_EQUAL_STRING(node,head);
+
     free_node(head);
 }
 
