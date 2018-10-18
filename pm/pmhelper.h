@@ -1,7 +1,6 @@
 #ifndef HEADER_PMHELPER
 #define HEADER_PMHELPER
 
-#include <stdio.h>
 #include <time.h>
 #include <jansson.h>
 

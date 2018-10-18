@@ -1,10 +1,8 @@
 #ifndef HEADER_MODIFIED_FILE
 #define HEADER_MODIFIED_FILE
 
-#include <stdio.h>
 #include <stdbool.h>
 #include <time.h>
-#include <string.h>
 #include <jansson.h>
 
 #include "pmhelper.h"
