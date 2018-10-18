@@ -8,8 +8,7 @@ int main(void)
     printf("   Start Unit Tests!\n");
 
     printf("\n-----pmhelper.c------\n");
-    RUN_TEST(test_concat);
-    RUN_TEST(test_concat_3);
+    RUN_TEST(test_new_string);
     RUN_TEST(test_file_exist);
     RUN_TEST(test_load_json_file);
     RUN_TEST(test_write_json_file);

@@ -190,7 +190,7 @@ read_modified_ib_files(node_t *ib_node_head, const char *ib_dir)
     if ((dir = opendir (ib_dir)) != NULL) {
         while ((ent = readdir (dir)) != NULL) {
             if (ent->d_type == file_type) {
-                char *file_path = concat_3(ib_dir, "/", ent->d_name);
+                char *file_path = new_string("%s/%s", dir_path, ent->d_name);
                 ib_node_head = update_ib_node(ib_node_head, file_path);
                 free(file_path);
             }
@@ -198,7 +198,7 @@ read_modified_ib_files(node_t *ib_node_head, const char *ib_dir)
         closedir (dir);
         return ib_node_head;
     } else {
-        write_log(__FILE__, __func__, concat("Error: Can't read the directory ", ib_dir));
+        write_log(__FILE__, __func__, "Error: Can't read the directory %s", ib_dir);
     }
     return NULL;
 }
