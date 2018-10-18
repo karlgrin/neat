@@ -20,8 +20,8 @@ node_t* node_init(const char *file_path);
 void free_node(node_t *node);
 void free_nodes(node_t *head);
 
-void update_node_content(node_t *node, json_t *json);
 node_t* create_node(const char * file_path);
+void update_node_content(node_t *node, json_t *json);
 
 bool has_node(node_t *head, const char *file_path);
 node_t* add_node(node_t *head, node_t *node);

@@ -2,8 +2,9 @@
 #define NODE_TEST
 
 void test_node_init(void);
-void test_update_node_content(void);
 void test_create_node(void);
+void test_update_node_content(void);
+
 void test_add_node(void);
 void test_add_node_2(void);
 void test_has_node(void);

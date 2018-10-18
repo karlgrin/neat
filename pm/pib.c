@@ -7,13 +7,13 @@
 
 #include "node.h"
 
-node_t *head_pib_node = NULL;
+node_t *pib_head_node = NULL;
 
 
 void
 update_pib_node(char * file_path)
 {
-    node_t *node = get_node(head_pib_node, file_path);
+    node_t *node = get_node(pib_head_node, file_path);
 
     if(node != NULL) {
         if(node->last_updated <= file_edit_time(file_path)) {
@@ -23,7 +23,7 @@ update_pib_node(char * file_path)
         }
     }
     else {  //node does not exist, create it
-        head_pib_node = add_node(head_pib_node, create_node(file_path));
+        pib_head_node = add_node(pib_head_node, create_node(file_path));
     }
 }
 
@@ -52,5 +52,6 @@ int
 main () 
 {
     read_modified_pib_files("/home/free/Downloads/neat/pm/json_examples/pib");
-    print_nodes(head_pib_node);
+    print_nodes(pib_head_node);
+    free_nodes(pib_head_node);
 }

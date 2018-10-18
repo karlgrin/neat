@@ -152,6 +152,8 @@ print_node(node_t *node)
             printf("filename: %s\n", node->filename); 
         }
         printf("last_updated: %s",ctime(&node->last_updated));
-        printf("json: %s\n" , json_dumps(node->json, JSON_INDENT(4)));
+        char *json_string = json_dumps(node->json, JSON_INDENT(4));
+        printf("json: %s\n" , json_string);
+        free(json_string);
     }
 }
