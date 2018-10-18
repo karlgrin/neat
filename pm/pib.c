@@ -36,7 +36,7 @@ read_modified_pib_files(const char *dir_path)
     if ((dir = opendir (dir_path)) != NULL) {
         while ((ent = readdir (dir)) != NULL) {
             if (ent->d_type == file_type) {
-                char *s = concat_3(dir_path, "/", ent->d_name);
+                char *s = new_string("%s/%s", dir_path, ent->d_name);
                 update_pib_node(s);
                 free(s);
             }

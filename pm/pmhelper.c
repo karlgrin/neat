@@ -8,32 +8,24 @@
 #define FILENAME "ErrorLog.txt"
 
 char*
-concat(const char *s1, const char *s2)
+new_string(char *string, ...)
 {
-    if(s1 == NULL && s2 == NULL) { return strdup(""); }
-    if(s1 == NULL) { return strdup(s2); }
-    if(s2 == NULL) { return strdup(s1); }
+    char buffer[100];
+	va_list arglist;
 
-    const size_t len1 = strlen(s1);
-    const size_t len2 = strlen(s2);
-    char *result = calloc(1, len1 + len2 + 1); // +1 for the null-terminator
+	va_start(arglist, string);
+	vsprintf(buffer, string, arglist);
+	va_end(arglist);
+
+    const size_t len = strlen(buffer);
+    char *result = calloc(1, len + 1); // +1 for the null-terminator
     
     if(result == NULL) {
          write_log(__FILE__, __func__, "Error: failed to callloc..");
          return NULL;
     }
 
-    memcpy(result, s1, len1);
-    memcpy(result + len1, s2, len2 + 1);
-    return result;
-}
-
-char*
-concat_3(const char *s1, const char *s2, const char *s3)
-{
-    char *tmp = concat(s1,s2);
-    char *result = concat(tmp,s3);
-    free(tmp);
+    memcpy(result, buffer, len);
     return result;
 }
 
@@ -60,14 +52,14 @@ void ps(const char *str, ...)
 void 
 write_log(const char* module, const char* func, const char *desc, ...) 
 {
-    char buffer[100];
+    char desc_buffer[100];
 	va_list arglist;
 
 	if(!desc)
 	  return;
 
-	va_start( arglist, desc );
-	vsprintf( buffer, desc, arglist );
+	va_start(arglist, desc);
+	vsprintf(desc_buffer, desc, arglist);
 	va_end(arglist);
 
     char time_buffer[100];
@@ -76,7 +68,7 @@ write_log(const char* module, const char* func, const char *desc, ...)
     
     FILE *fp = fopen(FILENAME, "a");  
     if(fp != NULL) {
-        fprintf(fp, "Time: %s  \nModule: %s\nFunction: %s\nDescription: %s\n\n", time_buffer, module, func, buffer);  
+        fprintf(fp, "Time: %s  \nModule: %s\nFunction: %s\nDescription: %s\n\n", time_buffer, module, func, desc_buffer);  
         fclose(fp);
     }
 }

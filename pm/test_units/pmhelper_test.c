@@ -2,44 +2,34 @@
 #include "test_constant.h"
 #include "../pmhelper.h"
 
-void test_concat(void)
+void test_new_string(void)
 {
-    char *s1 = "Hello ";
-    char *s2 = "World";
+    char *s1 = "Hello";
+    char *s2 = "big";
+    char *s3 = "World";
     char *s_null = NULL;
 
-    char *r1 = concat(s1, s2);
-    char *r2 = concat(s1, s_null);
-    char *r3 = concat(s_null, s2);
-    char *r4 = concat(s_null, s_null);
+    char *r1 = new_string("%s %s %s", s1, s2, s3);
+    char *r2 = new_string("test %s %s test %s test", s1, s2, s3);
+    char *r3 = new_string(s_null);
+    char *r4 = new_string("%s %s %s", s1, s2, s_null);
+    char *r5 = new_string("%s %s %s", s_null, s2, s3);
+    char *r6 = new_string("%s", s1);
+    char *r7 = new_string("");
+    
 
-    TEST_ASSERT_EQUAL_STRING("Hello World", r1);
-    TEST_ASSERT_EQUAL_STRING(s1, r2);   
-    TEST_ASSERT_EQUAL_STRING(s2, r3); 
-    TEST_ASSERT_EQUAL_STRING("", r4);
-
-    free(r1); free(r2); free(r3); free(r4);
-}
-
-void test_concat_3(void)
-{
-    char *s1 = "Hello ";
-    char *s2 = "big ";
-    char *s3 = "World";
-    char* s_null = NULL;
-
-    char *r1 = concat_3(s1, s2, s3);
-    char *r2 = concat_3(s_null,s2, s3);
-    char *r3 = concat_3(s1, s_null, s3);
-    char *r4 = concat_3(s1, s2, s_null);
 
     TEST_ASSERT_EQUAL_STRING("Hello big World", r1);
-    TEST_ASSERT_EQUAL_STRING("big World", r2);
-    TEST_ASSERT_EQUAL_STRING("Hello World", r3);
-    TEST_ASSERT_EQUAL_STRING("Hello big ", r4);
-
-    free(r1); free(r2); free(r3); free(r4);
+    TEST_ASSERT_EQUAL_STRING("test Hello big test World test", r2); 
+    TEST_ASSERT_EQUAL_STRING("", r3);
+    TEST_ASSERT_EQUAL_STRING("Hello big (null)", r4); 
+    TEST_ASSERT_EQUAL_STRING("(null) big World", r5);
+    TEST_ASSERT_EQUAL_STRING(s1, r6);
+    TEST_ASSERT_EQUAL_STRING("", r7);
+    
+    free(r1); free(r2); free(r3); free(r4); free(r5); free(r6); free(r7);
 }
+
 
 void test_file_exist(void)
 {
