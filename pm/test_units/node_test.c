@@ -3,14 +3,14 @@
 #include "../node.h"
 
 
-void test_node_init(void) 
+void test_node_init(void)
 {
     node_t *node = node_init(TEST_FILE_PATH);
     TEST_ASSERT_NOT_NULL(node);
     free_node(node);
 }
 
-void test_update_node_content(void) 
+void test_update_node_content(void)
 {
     json_t *json  = load_json_file(TEST_FILE_PATH);
     node_t *node = node_init(TEST_FILE_PATH);
@@ -22,7 +22,7 @@ void test_update_node_content(void)
     free_node(node);
 }
 
-void test_create_node(void) 
+void test_create_node(void)
 {
     node_t *node = create_node(TEST_FILE_PATH);
     if(node != NULL) {
@@ -36,7 +36,7 @@ void test_create_node(void)
     free_node(node);
 }
 
-void test_add_node(void) 
+void test_add_node(void)
 {
     node_t *head = NULL;
     node_t *node = node_init("file");
@@ -48,7 +48,7 @@ void test_add_node(void)
 }
 
 
-void test_add_node_2(void) 
+void test_add_node_2(void)
 {
     node_t *head = NULL;
 
@@ -72,7 +72,7 @@ void test_add_node_2(void)
     TEST_ASSERT_EQUAL_STRING(node2->filename,head->next->filename);
     TEST_ASSERT_EQUAL_STRING(node3->filename,head->next->next->filename);
     TEST_ASSERT_EQUAL_STRING(node4->filename,head->next->next->next->filename);
-    
+
     free_nodes(head);
 }
 
@@ -143,7 +143,7 @@ void test_get_node_2(void)
     free_node(node_no);
 }
 
-void test_remove_node(void) 
+void test_remove_node(void)
 {
     node_t *head = NULL;
     node_t *node = node_init("file");
@@ -154,7 +154,7 @@ void test_remove_node(void)
     TEST_ASSERT_NULL(head);
 }
 
-void test_remove_node_2(void) 
+void test_remove_node_2(void)
 {
     node_t *head = NULL;
 
@@ -181,4 +181,35 @@ void test_remove_node_2(void)
 
     TEST_ASSERT_NULL(head);
     free_node(node_no);
+}
+
+void
+test_node_update_property (void)
+{
+    node_t *node = NULL;
+
+    /* read in node properties */
+    node = update_ib_node(node, "../json_examples/pib/profile//low_latency.profile");
+
+    TEST_ASSERT_NOT_NULL(node);
+    TEST_ASSERT_NOT_NULL(node_has_property(node, "low_latency_interface"));
+
+    /* test updating low_latency_interface property value */
+    json_t *new_value = json_loads("{ \"value\" : false, \"precedence\": 7 }", 0, NULL);
+    node_set_property(node, "low_latency_interface", new_value);
+
+    json_t *prop = node_has_property(node, "low_latency_interface");
+
+    TEST_ASSERT_NOT_NULL(prop);
+
+    TEST_ASSERT_TRUE(json_is_false(json_object_get(prop, "value")));
+
+    json_t *json_precedence_value = json_object_get(prop, "precedence");
+
+    TEST_ASSERT_NOT_NULL(json_precedence_value);
+
+    json_int_t precedence_int_value = json_integer_value(json_precedence_value);
+
+    TEST_ASSERT_EQUAL(precedence_int_value, 7);
+
 }

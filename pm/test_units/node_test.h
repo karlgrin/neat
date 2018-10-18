@@ -13,5 +13,6 @@ void test_get_node(void);
 void test_get_node_2(void);
 void test_remove_node(void);
 void test_remove_node_2(void);
+void test_node_update_property (void);
 
 #endif
