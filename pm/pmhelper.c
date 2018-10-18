@@ -43,16 +43,40 @@ file_exist(const char * file_path)
    return access(file_path, F_OK) != -1; 
 }
 
-void 
-write_log(const char* module, const char* func, const char* desc) 
+void ps(const char *str, ...)
 {
+    va_list arg;
+
+    va_start(arg, str);
+
+    while (str) {
+        puts(str);
+        str = va_arg(arg, const char *);
+    }
+
+    va_end(arg);
+}
+
+void 
+write_log(const char* module, const char* func, const char *desc, ...) 
+{
+    char buffer[100];
+	va_list arglist;
+
+	if(!desc)
+	  return;
+
+	va_start( arglist, desc );
+	vsprintf( buffer, desc, arglist );
+	va_end(arglist);
+
     char time_buffer[100];
     time_t now = time (0);
     strftime (time_buffer, 100, "%Y-%m-%d %H:%M:%S.000", localtime (&now));
     
     FILE *fp = fopen(FILENAME, "a");  
     if(fp != NULL) {
-        fprintf(fp, "Time: %s  \nModule: %s\nFunction: %s\nDescription: %s\n\n", time_buffer, module, func, desc);  
+        fprintf(fp, "Time: %s  \nModule: %s\nFunction: %s\nDescription: %s\n\n", time_buffer, module, func, buffer);  
         fclose(fp);
     }
 }
@@ -81,7 +105,7 @@ file_is_modified(const char *path, time_t oldTime)
     struct stat file_stat;
     int err = stat(path, &file_stat);
     if (err != 0) {
-        write_log(__FILE__ , __func__, concat("Error when reading file: ", path));
+        write_log(__FILE__ , __func__, "Error when reading file: %s", path);
     }
     return file_stat.st_mtime > oldTime;
 }
@@ -96,7 +120,7 @@ load_json_file(const char *file_path)
     json_t *json = json_load_file(file_path, 0, &error);
 
     if(!json) {
-        write_log(__FILE__, __func__, concat("Error: failed to read json file: ", file_path));
+        write_log(__FILE__, __func__, "Error: failed to read json file: %s", file_path);
     }
     return json;
 }
@@ -105,7 +129,6 @@ void
 write_json_file(const char* filePath, json_t *json) 
 {
     if(json_dump_file(json, filePath, JSON_INDENT(4)) == -1) {
-        write_log(__FILE__, __func__, concat("Error: Unable to generate a Json file, ", filePath));
+        write_log(__FILE__, __func__, "Error: Unable to generate a Json file, ", filePath);
     }
-}
-                                                                                                                                                                                            
+}                                                                                                                                                                              

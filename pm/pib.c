@@ -43,7 +43,7 @@ read_modified_pib_files(const char *dir_path)
         }
         closedir (dir);
     } else {
-        write_log(__FILE__, __func__, concat("Error: Can't read the directory ", dir_path));
+        write_log(__FILE__, __func__, "Error: Can't read the directory: %s", dir_path);
     }
 }
 
@@ -54,4 +54,5 @@ main ()
     read_modified_pib_files("/home/free/Downloads/neat/pm/json_examples/pib");
     print_nodes(pib_head_node);
     free_nodes(pib_head_node);
+
 }
