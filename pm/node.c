@@ -31,8 +31,11 @@ void
 update_node_content(node_t *node, json_t *json) 
 {
     if(json != NULL && node != NULL) {
-       node->json = json;
-       node->last_updated = time(0);
+        if(node->json != NULL) {
+            json_decref(node->json);
+        }
+        node->json = json;
+        node->last_updated = time(0);
     }
 }
 
@@ -46,7 +49,7 @@ node_init(const char *file_path)
         return NULL;
     }
 
-    node->filename = concat(file_path, "");
+    node->filename = strdup(file_path);
     node->last_updated = 0;
     return node;
 }

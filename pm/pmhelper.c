@@ -10,6 +10,10 @@
 char*
 concat(const char *s1, const char *s2)
 {
+    if(s1 == NULL && s2 == NULL) { return strdup(""); }
+    if(s1 == NULL) { return strdup(s2); }
+    if(s2 == NULL) { return strdup(s1); }
+
     const size_t len1 = strlen(s1);
     const size_t len2 = strlen(s2);
     char *result = calloc(1, len1 + len2 + 1); // +1 for the null-terminator

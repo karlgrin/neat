@@ -19,7 +19,6 @@ update_pib_node(char * file_path)
         if(node->last_updated <= file_edit_time(file_path)) {
             json_t *json = load_json_file(file_path);
             update_node_content(node, json);
-            json_decref(json);
         }
     }
     else {  //node does not exist, create it
@@ -47,6 +46,7 @@ read_modified_pib_files(const char *dir_path)
         write_log(__FILE__, __func__, concat("Error: Can't read the directory ", dir_path));
     }
 }
+
 
 int 
 main () 
