@@ -5,8 +5,6 @@
 
 #include "pmhelper.h"
 
-#define FILENAME "ErrorLog.txt"
-
 char*
 concat(const char *s1, const char *s2)
 {
@@ -17,7 +15,7 @@ concat(const char *s1, const char *s2)
     const size_t len1 = strlen(s1);
     const size_t len2 = strlen(s2);
     char *result = calloc(1, len1 + len2 + 1); // +1 for the null-terminator
-    
+
     if(result == NULL) {
          write_log(__FILE__, __func__, "Error: failed to callloc..");
          return NULL;
@@ -37,46 +35,46 @@ concat_3(const char *s1, const char *s2, const char *s3)
     return result;
 }
 
-int 
-file_exist(const char * file_path) 
+int
+file_exist(const char * file_path)
 {
-   return access(file_path, F_OK) != -1; 
+   return access(file_path, F_OK) != -1;
 }
 
-void 
-write_log(const char* module, const char* func, const char* desc) 
+void
+write_log(const char* module, const char* func, const char* desc)
 {
     char time_buffer[100];
     time_t now = time (0);
     strftime (time_buffer, 100, "%Y-%m-%d %H:%M:%S.000", localtime (&now));
-    
-    FILE *fp = fopen(FILENAME, "a");  
+
+    FILE *fp = fopen(FILENAME, "a");
     if(fp != NULL) {
-        fprintf(fp, "Time: %s  \nModule: %s\nFunction: %s\nDescription: %s\n\n", time_buffer, module, func, desc);  
+        fprintf(fp, "Time: %s  \nModule: %s\nFunction: %s\nDescription: %s\n\n", time_buffer, module, func, desc);
         fclose(fp);
     }
 }
 
 time_t
-file_edit_time(const char *file_path) 
+file_edit_time(const char *file_path)
 {
     struct stat attr;
     stat(file_path, &attr);
     return attr.st_mtime;
 }
 
-void 
-clear_log() 
+void
+clear_log()
 {
-    FILE *fp = fopen(FILENAME, "w");  
+    FILE *fp = fopen(FILENAME, "w");
     if(fp != NULL) {
         fclose(fp);
     }
 }
 
 //Returns 0 if file is not found
-int 
-file_is_modified(const char *path, time_t oldTime) 
+int
+file_is_modified(const char *path, time_t oldTime)
 {
     struct stat file_stat;
     int err = stat(path, &file_stat);
@@ -87,8 +85,8 @@ file_is_modified(const char *path, time_t oldTime)
 }
 
 
-json_t* 
-load_json_file(const char *file_path) 
+json_t*
+load_json_file(const char *file_path)
 {
     if(file_path == NULL) { return NULL; }
 
@@ -101,11 +99,10 @@ load_json_file(const char *file_path)
     return json;
 }
 
-void 
-write_json_file(const char* filePath, json_t *json) 
+void
+write_json_file(const char* filePath, json_t *json)
 {
     if(json_dump_file(json, filePath, JSON_INDENT(4)) == -1) {
         write_log(__FILE__, __func__, concat("Error: Unable to generate a Json file, ", filePath));
     }
 }
-                                                                                                                                                                                            

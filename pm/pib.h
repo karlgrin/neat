@@ -5,8 +5,5 @@
 
 extern node_t *pib_head_node;
 
-void update_pib_node(char * file_path);
-void ead_modified_pib_files(const char *dir_path);
-
 
 #endif

@@ -29,5 +29,11 @@ node_t* get_node(node_t *head, const char *file_path);
 void print_nodes(node_t* head);
 void print_node(node_t *node);
 
-#endif
+node_t* update_ib_node(node_t *ib_node_head, char * file_path);
+node_t* read_modified_ib_files(node_t *ib_node_head, const char *ib_dir);
 
+json_t * get_node_properties (node_t *node);
+json_t * node_has_property (node_t *node, const char *text_prop);
+void node_set_property (node_t *node, const char *text_prop, json_t *new_value);
+
+#endif

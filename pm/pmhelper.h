@@ -6,6 +6,11 @@
 
 #define FILENAME "ErrorLog.txt"
 
+#define IB_DIR      "json_examples/"
+#define PROFILE_DIR IB_DIR "pib/profile/"
+#define POLICY_DIR  IB_DIR "pib/policy/"
+#define CIB_DIR     IB_DIR "cib/"
+
 char* concat(const char *s1, const char *s2);
 char* concat_3(const char *s1, const char *s2, const char *s3);
 int file_exist(const char * file_path);
