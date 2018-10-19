@@ -13,7 +13,7 @@
 // should provide lookup functions
 // maybe also initalization of main pib/cib objects
 #include "pib.h"
-// #include "cib.h"
+#include "cib.h"
 
 #define PM_BACKLOG 128
 #define BUFSIZE 65536
@@ -164,6 +164,7 @@ main(int argc, char **argv)
 
     pib_start();
     //print_nodes(pib_profiles);
+    generate_cib_from_ifaces();
     //cib_start();
     uv_pipe_t pm_server;
     int r;
