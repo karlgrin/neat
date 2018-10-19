@@ -9,3 +9,4 @@ pm/pib
 pm/build
 pm/ErrorLog.txt
 pm/test.out
+*.cib
