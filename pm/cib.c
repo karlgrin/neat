@@ -16,7 +16,7 @@ int CIB_DEFAULT_TIMEOUT = 10*60;
 void
 generate_cib_from_ifaces()
 {
-    struct ifaddrs *ifaddr, *ifa;
+    struct ifaddrs *ifaddr, *interface;
     struct if_nameindex *if_nidxs, *iface;
     int family, s, n;
     char address[NI_MAXHOST];
@@ -58,13 +58,13 @@ generate_cib_from_ifaces()
     }
 
     //For every iface name + ip version combination
-    for (ifa = ifaddr, n = 0; ifa != NULL; ifa = ifa->ifa_next, n++) {
-        if (ifa->ifa_addr == NULL || ifa->ifa_addr->sa_family == AF_PACKET)
+    for (interface = ifaddr, n = 0; interface != NULL; interface = interface->ifa_next, n++) {
+        if (interface->ifa_addr == NULL || interface->ifa_addr->sa_family == AF_PACKET)
             continue;
 
-        family = ifa->ifa_addr->sa_family;
+        family = interface->ifa_addr->sa_family;
 
-        s = getnameinfo(ifa->ifa_addr,
+        s = getnameinfo(interface->ifa_addr,
                     (family == AF_INET) ? sizeof(struct sockaddr_in) :
                                             sizeof(struct sockaddr_in6),
                     address, NI_MAXHOST,
@@ -76,8 +76,8 @@ generate_cib_from_ifaces()
 
         iter = json_object_iter(root);
         while(iter){
-            if(strcmp(json_object_iter_key(iter), ifa->ifa_name) == 0){
-                json_t *ip_array = json_array_get(json_object_get(json_object_get(root, ifa->ifa_name), "properties"), 1);
+            if(strcmp(json_object_iter_key(iter), interface->ifa_name) == 0){
+                json_t *ip_array = json_array_get(json_object_get(json_object_get(root, interface->ifa_name), "properties"), 1);
 
                 if(family == AF_INET){
                     json_array_append(ip_array, json_object());
