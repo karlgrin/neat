@@ -29,6 +29,19 @@ new_string(char *string, ...)
     return result;
 }
 
+char*
+get_exec_path(){
+    char buf[1024], *ptr;
+    ssize_t len;
+    if ((len = readlink("/proc/self/exe", buf, sizeof(buf)-1)) != -1){
+        buf[len] = '\0';
+    }
+    ptr = strstr(buf, "/test");
+    strcpy(ptr, "/");
+    char *ret_ptr = buf;
+    return ret_ptr;
+}
+
 int
 file_exist(const char * file_path)
 {

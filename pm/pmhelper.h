@@ -12,6 +12,7 @@
 #define CIB_DIR     IB_DIR "cib/"
 
 char* new_string(char *string, ...);
+char* get_exec_path();
 int file_exist(const char * file_path);
 void write_log(const char* module, const char* func, const char* desc, ...);
 time_t file_edit_time(const char *file_path);

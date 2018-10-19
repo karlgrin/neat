@@ -21,7 +21,7 @@ generate_cib_from_ifaces()
     struct ifaddrs *ifaddr, *interface;
     struct if_nameindex *if_nidxs, *iface;
     int family, s, n;
-    char address[NI_MAXHOST];
+    char address[NI_MAXHOST], *path;
     void *iter;
 
     json_t *root = json_object();
@@ -102,11 +102,14 @@ generate_cib_from_ifaces()
             iter = json_object_iter_next(root, iter);
         }
     }
+
     iter = json_object_iter(root);
     while(iter){
         json_object_set(json_object_get(root, json_object_iter_key(iter)), "root", json_boolean(true));
         json_object_set(json_object_get(root, json_object_iter_key(iter)), "uid", json_string(json_object_iter_key(iter)));
-        write_json_file(new_string("/home/samulars/%s%s", json_object_iter_key(iter), ".cib"), root); //TODO: CHange to working folder
+        path = get_exec_path();
+        strcat(path, "/json_examples/cib/");
+        write_json_file(new_string("%s%s%s", path, json_object_iter_key(iter), ".cib"), root);
         iter = json_object_iter_next(root, iter);
     }
     json_decref(root);
