@@ -3,7 +3,10 @@
 
 #include "node.h"
 
-extern node_t *pib_head_node;
+extern node_t *pib_policies;
+extern node_t *pib_profiles;
 
+void pib_start();
+void pib_close();
 
 #endif

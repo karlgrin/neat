@@ -12,7 +12,7 @@
 // TODO
 // should provide lookup functions
 // maybe also initalization of main pib/cib objects
-// #include "pib.h"
+#include "pib.h"
 // #include "cib.h"
 
 #define PM_BACKLOG 128
@@ -148,14 +148,23 @@ on_new_connection(uv_stream_t *pm_server, int status)
 void
 remove_sock(int sig)
 {
+    printf("Closing policy manager...\n");
     uv_fs_t req;
     uv_fs_unlink(loop, &req, pm_socket_path, NULL);
+
+    pib_close();
+    //cib_close();
     exit(0);
 }
+
 
 int
 main(int argc, char **argv)
 {
+
+    pib_start();
+    //print_nodes(pib_profiles);
+    //cib_start();
     uv_pipe_t pm_server;
     int r;
 
