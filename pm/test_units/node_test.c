@@ -221,10 +221,9 @@ test_node_set_property(void)
     json_t* new_value = json_integer(2);
 
     json_object_set(RTT, "precedence", new_value);
-    free(new_value);
-
+    
     TEST_ASSERT_EQUAL_INT(2, (int)json_number_value(json_object_get(json_object_get(get_node_properties(node), "RTT"), "precedence")));
-    free_node(node);  
+    free_node(node); free(new_value); 
 }
 
 void 
@@ -238,13 +237,8 @@ test_node_set_property_2(void)
 
     o = json_object();
     json_object_set(o, "value", value_v);
-    json_decref(value_v);
-
     json_object_set(o, "precedence", precedence_v);
-    json_decref(precedence_v);
-
     json_object_set(get_node_properties(node), "transport", o);
-    json_decref(o);
    
     TEST_ASSERT_NOT_NULL(json_object_get(get_node_properties(node), "transport")); 
     
@@ -254,5 +248,5 @@ test_node_set_property_2(void)
     TEST_ASSERT_NOT_NULL(json_object_get(json_object_get(get_node_properties(node), "transport"), "precedence"));
     TEST_ASSERT_EQUAL_INT(2, (int)json_number_value(json_object_get(json_object_get(get_node_properties(node), "transport"), "precedence")));      
     
-    free_node(node);
+    json_decref(value_v); json_decref(precedence_v); json_decref(o); free_node(node);
 }
