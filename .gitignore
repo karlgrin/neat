@@ -7,3 +7,4 @@ pm/*.o
 pm/cib
 pm/pib
 pm/build
+pm/ErrorLog.txt
