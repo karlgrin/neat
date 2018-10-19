@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <net/if.h>
 #include <ifaddrs.h>
 #include <netinet/in.h>
@@ -105,7 +106,7 @@ generate_cib_from_ifaces()
     while(iter){
         json_object_set(json_object_get(root, json_object_iter_key(iter)), "root", json_boolean(true));
         json_object_set(json_object_get(root, json_object_iter_key(iter)), "uid", json_string(json_object_iter_key(iter)));
-        write_json_file(new_string(new_string("/home/samulars/", json_object_iter_key(iter)), ".cib"), root); //TODO: CHange to working folder
+        write_json_file(new_string("/home/samulars/%s%s", json_object_iter_key(iter), ".cib"), root); //TODO: CHange to working folder
         iter = json_object_iter_next(root, iter);
     }
     json_decref(root);
