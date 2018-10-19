@@ -27,7 +27,10 @@ int main(void)
     RUN_TEST(test_get_node_2);
     RUN_TEST(test_remove_node);
     RUN_TEST(test_remove_node_2);
-    RUN_TEST(test_node_update_property);
+    RUN_TEST(test_get_node_properties);
+    RUN_TEST(test_node_has_property);
+    RUN_TEST(test_node_set_property);
+    RUN_TEST(test_node_set_property_2);
 
     return UNITY_END();
 }

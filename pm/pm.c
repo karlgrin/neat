@@ -146,9 +146,9 @@ on_new_connection(uv_stream_t *pm_server, int status)
 }
 
 void
-remove_sock(int sig)
+close_pm(int sig)
 {
-    printf("Closing policy manager...\n");
+    printf("\nClosing policy manager...\n");
     uv_fs_t req;
     uv_fs_unlink(loop, &req, pm_socket_path, NULL);
 
@@ -161,21 +161,21 @@ remove_sock(int sig)
 int
 main(int argc, char **argv)
 {
-
+    //cib_start();
     pib_start();
     //print_nodes(pib_profiles);
-    //cib_start();
+   
     uv_pipe_t pm_server;
     int r;
 
     pm_socket_path = make_pm_socket_path();
 
-    printf("socket created in %s\n", pm_socket_path);
+    printf("\nsocket created in %s\n\n", pm_socket_path);
 
     loop = uv_default_loop();
     uv_pipe_init(loop, &pm_server, 0);
 
-    signal(SIGINT, remove_sock);
+    signal(SIGINT, close_pm);
 
     if ((r = uv_pipe_bind(&pm_server, pm_socket_path)) != 0) {
         fprintf(stderr, "Bind error %s\n", uv_err_name(r));

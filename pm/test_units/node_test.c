@@ -184,32 +184,75 @@ void test_remove_node_2(void)
 }
 
 void
-test_node_update_property (void)
+test_get_node_properties(void)
 {
-    node_t *node = NULL;
+    node_t *node = create_node(TEST_FILE_PATH);
+    json_t* prop = json_object_get(node->json, "properties");
 
-    /* read in node properties */
-    node = update_ib_node(node, "../json_examples/pib/profile//low_latency.profile");
+    node_t *node_null = NULL;
 
-    TEST_ASSERT_NOT_NULL(node);
-    TEST_ASSERT_NOT_NULL(node_has_property(node, "low_latency_interface"));
+    TEST_ASSERT_EQUAL(prop, get_node_properties(node));
+    TEST_ASSERT_NULL(get_node_properties(node_null));
 
-    /* test updating low_latency_interface property value */
-    json_t *new_value = json_loads("{ \"value\" : false, \"precedence\": 7 }", 0, NULL);
-    node_set_property(node, "low_latency_interface", new_value);
+    free_node(node);
+}
 
-    json_t *prop = node_has_property(node, "low_latency_interface");
+void
+test_node_has_property(void)
+{
+    node_t *node = create_node(TEST_FILE_PATH);
+    json_t *RTT = node_has_property(node, "RTT");
+    json_t *low_latency_interface = node_has_property(node, "low_latency_interface");
+    json_t *is_wired_interface = node_has_property(node, "is_wired_interface");
 
-    TEST_ASSERT_NOT_NULL(prop);
+    TEST_ASSERT_EQUAL(RTT, node_has_property(node, "RTT"));
+    TEST_ASSERT_EQUAL(low_latency_interface, node_has_property(node, "low_latency_interface"));
+    TEST_ASSERT_EQUAL(is_wired_interface, node_has_property(node, "is_wired_interface"));
+    TEST_ASSERT_NULL(node_has_property(node, "does not exist"));
 
-    TEST_ASSERT_TRUE(json_is_false(json_object_get(prop, "value")));
+    free_node(node);
+}
 
-    json_t *json_precedence_value = json_object_get(prop, "precedence");
+void
+test_node_set_property(void)
+{
+    node_t *node = create_node(TEST_FILE_PATH);
+    json_t *RTT = node_has_property(node, "RTT");
+    json_t* new_value = json_integer(2);
 
-    TEST_ASSERT_NOT_NULL(json_precedence_value);
+    json_object_set(RTT, "precedence", new_value);
+    free(new_value);
 
-    json_int_t precedence_int_value = json_integer_value(json_precedence_value);
+    TEST_ASSERT_EQUAL_INT(2, (int)json_number_value(json_object_get(json_object_get(get_node_properties(node), "RTT"), "precedence")));
+    free_node(node);  
+}
 
-    TEST_ASSERT_EQUAL(precedence_int_value, 7);
+void 
+test_node_set_property_2(void) 
+{
+    node_t *node = create_node(TEST_FILE_PATH);
 
+    json_t* value_v = json_boolean(false);
+    json_t* precedence_v = json_integer(2);
+    json_t* o;
+
+    o = json_object();
+    json_object_set(o, "value", value_v);
+    json_decref(value_v);
+
+    json_object_set(o, "precedence", precedence_v);
+    json_decref(precedence_v);
+
+    json_object_set(get_node_properties(node), "transport", o);
+    json_decref(o);
+   
+    TEST_ASSERT_NOT_NULL(json_object_get(get_node_properties(node), "transport")); 
+    
+    TEST_ASSERT_NOT_NULL(json_object_get(json_object_get(get_node_properties(node), "transport"), "value"));
+    TEST_ASSERT_EQUAL(false, json_boolean_value(json_object_get(json_object_get(get_node_properties(node), "transport"), "value")));        
+    
+    TEST_ASSERT_NOT_NULL(json_object_get(json_object_get(get_node_properties(node), "transport"), "precedence"));
+    TEST_ASSERT_EQUAL_INT(2, (int)json_number_value(json_object_get(json_object_get(get_node_properties(node), "transport"), "precedence")));      
+    
+    free_node(node);
 }
