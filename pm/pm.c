@@ -153,7 +153,7 @@ close_pm(int sig)
     uv_fs_unlink(loop, &req, pm_socket_path, NULL);
 
     pib_close();
-    //cib_close();
+    cib_close();
     exit(0);
 }
 
@@ -161,8 +161,9 @@ close_pm(int sig)
 int
 main(int argc, char **argv)
 {
+    printf("--Start PM--\n\n");
     generate_cib_from_ifaces();
-    //cib_start();
+    cib_start();
     pib_start();
 
     //print_nodes(pib_profiles);

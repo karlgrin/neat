@@ -9,15 +9,18 @@
 #include <ifaddrs.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <jansson.h>
 
-#include "jansson.h"
 #include "pmhelper.h"
+#include "node.h"
 
 int CIB_DEFAULT_TIMEOUT = 10*60;
+node_t* cib_head = NULL;
 
 void
 generate_cib_from_ifaces()
-{
+{   
+    printf("Generate cib from interfaces: \n");
     struct ifaddrs *ifaddr, *interface;
     struct if_nameindex *if_nidxs, *iface;
     int family, s, n;
@@ -108,20 +111,23 @@ generate_cib_from_ifaces()
         json_object_set(json_object_get(root, json_object_iter_key(iter)), "root", json_boolean(true));
         json_object_set(json_object_get(root, json_object_iter_key(iter)), "uid", json_string(json_object_iter_key(iter)));
         path = get_exec_path();
-        strcat(path, "/json_examples/cib/");
+        strcat(path, CIB_DIR);
         write_json_file(new_string("%s%s%s", path, json_object_iter_key(iter), ".cib"), json_object_get(root, json_object_iter_key(iter)));
         iter = json_object_iter_next(root, iter);
     }
     json_decref(root);
     freeifaddrs(ifaddr);
-    return ;
+    printf("\n");
 }
 
-/*
-int
-main(int argc, char **argv)
+void
+cib_start() 
 {
-    generate_cib_from_ifaces();
-    return 0;
+    cib_head = read_modified_files(cib_head, CIB_DIR);
 }
-*/
+
+void
+cib_close() 
+{
+    free_nodes(cib_head);
+}

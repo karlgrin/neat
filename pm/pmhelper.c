@@ -105,14 +105,14 @@ clear_log()
 
 //Returns 0 if file is not found
 int
-file_is_modified(const char *path, time_t oldTime)
+file_is_modified(const char *path, time_t old_time)
 {
     struct stat file_stat;
     int err = stat(path, &file_stat);
     if (err != 0) {
         write_log(__FILE__ , __func__, "Error when reading file: %s", path);
     }
-    return file_stat.st_mtime > oldTime;
+    return file_stat.st_mtime > old_time;
 }
 
 
@@ -131,9 +131,12 @@ load_json_file(const char *file_path)
 }
 
 void
-write_json_file(const char* filePath, json_t *json)
+write_json_file(const char* file_path, json_t *json)
 {
-    if(json_dump_file(json, filePath, JSON_INDENT(4)) == -1) {
-        write_log(__FILE__, __func__, "Error: Unable to generate a Json file,", filePath);
+    if(json_dump_file(json, file_path, JSON_INDENT(4)) == -1) {
+        write_log(__FILE__, __func__, "Error: Unable to generate a Json file,", file_path);
+    }
+    else {
+        printf("Write file: %s\n", file_path);
     }
 }
