@@ -109,7 +109,7 @@ generate_cib_from_ifaces()
         json_object_set(json_object_get(root, json_object_iter_key(iter)), "uid", json_string(json_object_iter_key(iter)));
         path = get_exec_path();
         strcat(path, "/json_examples/cib/");
-        write_json_file(new_string("%s%s%s", path, json_object_iter_key(iter), ".cib"), root);
+        write_json_file(new_string("%s%s%s", path, json_object_iter_key(iter), ".cib"), json_object_get(root, json_object_iter_key(iter)));
         iter = json_object_iter_next(root, iter);
     }
     json_decref(root);
