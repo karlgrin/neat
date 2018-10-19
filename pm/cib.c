@@ -4,12 +4,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "jansson.h"
-#include "pmhelper.h"
 #include <net/if.h>
 #include <ifaddrs.h>
 #include <netinet/in.h>
 #include <netdb.h>
+
+#include "jansson.h"
+#include "pmhelper.h"
 
 int CIB_DEFAULT_TIMEOUT = 10*60;
 
@@ -107,8 +108,6 @@ generate_cib_from_ifaces()
         write_json_file(new_string(new_string("/home/samulars/", json_object_iter_key(iter)), ".cib"), root); //TODO: CHange to working folder
         iter = json_object_iter_next(root, iter);
     }
-
-    printf("%s\n",json_dumps(root, 4));
     json_decref(root);
     freeifaddrs(ifaddr);
     return ;
