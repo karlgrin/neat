@@ -164,41 +164,43 @@ print_node(node_t *node)
 
 
 node_t *
-update_ib_node(node_t *ib_node_head, char * file_path)
+update_node(node_t *head, char * file_path)
 {
-    node_t *node = get_node(ib_node_head, file_path);
+    node_t *node = get_node(head, file_path);
 
     if(node != NULL) {
         if(node->last_updated <= file_edit_time(file_path)) {
+            printf("Updating node content: %s \n", file_path);
             json_t *json = load_json_file(file_path);
             update_node_content(node, json);
         }
     }
     else {  //node does not exist, create it
-        ib_node_head = add_node(ib_node_head, create_node(file_path));
+        printf("Create node: %s \n", file_path);
+        head = add_node(head, create_node(file_path));
     }
-    return ib_node_head;
+    return head;
 }
 
 node_t *
-read_modified_ib_files(node_t *ib_node_head, const char *ib_dir)
+read_modified_files(node_t *head, const char *dir_path)
 {
     DIR *dir;
     struct dirent *ent;
     int file_type = 8;
 
-    if ((dir = opendir (ib_dir)) != NULL) {
+    if ((dir = opendir (dir_path)) != NULL) {
         while ((ent = readdir (dir)) != NULL) {
             if (ent->d_type == file_type) {
-                char *file_path = new_string("%s/%s", ib_dir, ent->d_name);
-                ib_node_head = update_ib_node(ib_node_head, file_path);
+                char *file_path = new_string("%s%s", dir_path, ent->d_name);
+                head = update_node(head, file_path);
                 free(file_path);
             }
         }
         closedir (dir);
-        return ib_node_head;
+        return head;
     } else {
-        write_log(__FILE__, __func__, "Error: Can't read the directory %s", ib_dir);
+        write_log(__FILE__, __func__, "Error: Can't read the directory %s", dir_path);
     }
     return NULL;
 }
@@ -206,19 +208,22 @@ read_modified_ib_files(node_t *ib_node_head, const char *ib_dir)
 json_t *
 get_node_properties (node_t *node)
 {
-    return json_object_get(node->json, "properties");
+    if(node != NULL) {
+        return json_object_get(node->json, "properties");
+    }
+    return NULL;
 }
 
 json_t *
-node_has_property (node_t *node, const char *text_prop)
+node_has_property (node_t *node, const char *prop)
 {
-    return json_object_get(get_node_properties(node), text_prop);
+    return json_object_get(get_node_properties(node), prop);
 }
 
 void
-node_set_property (node_t *node, const char *text_prop, json_t *new_value)
+node_set_property (node_t *node, const char *prop, json_t *new_value)
 {
-    if( json_object_set(get_node_properties(node), text_prop, new_value) == -1) { /* -1 on error, 0 on success */
-        // TODO log error
+    if(json_object_set(get_node_properties(node), prop, new_value) == -1) {
+        write_log(__FILE__,__func__, "Error: was unable to update property %s", prop);
     }
 }
