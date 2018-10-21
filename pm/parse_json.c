@@ -24,7 +24,7 @@ append_value(json_t *json, json_t *new_value)
 
 //json array in och returnerar en json array
 json_t*
-expand(json_t* in_properties)
+expand_json_arrays(json_t* in_properties)
 {
     json_t *result, *temp1, *temp2;
     result = json_array();
@@ -48,5 +48,33 @@ expand(json_t* in_properties)
         }      
         result = temp1;
     }
+    return result;
+}
+
+//any json in och returnerar en json array (2D eller 1D)
+json_t*
+expand_json(json_t* in_properties)
+{
+    json_t *result;  
+    result = json_array();
+
+    if(in_properties == NULL || json_is_null(in_properties)) {
+        return result; 
+    }
+    else if(json_is_object(in_properties)) {
+        json_array_append(result, in_properties);
+        return result;
+    }
+    else if(json_is_array(in_properties)) {
+        if( json_array_size(in_properties) > 0 && json_is_array(json_array_get(in_properties, 0))) {
+            json_decref(result);
+            return expand_json_arrays(in_properties);
+        }
+        else {
+            json_decref(result);
+            return in_properties;
+        }
+    }
+    write_log(__FILE__, __func__, "Error: unknown json structure");
     return result;
 }

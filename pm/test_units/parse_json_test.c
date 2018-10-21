@@ -20,14 +20,14 @@ void remove_symbol(char *str, char symbol)
     str[count] = '\0'; 
 }
 
-void test_expand(void)
+void test_expand_json_array(void)
 {
     json_t *json = load_json_file(TEST_FILE_PATH_CIB);
     
     json_t *properties = json_object_get(json, "properties");
 
     if(json_is_array(properties)) {
-        json_t *ex = expand(properties);
+        json_t *ex = expand_json_arrays(properties);
         char *s = json_dumps(ex, 0);
         remove_symbol(s, '\n');
         TEST_ASSERT_EQUAL_STRING(expand_result, s);
@@ -35,5 +35,29 @@ void test_expand(void)
     } else {
         TEST_FAIL();
     }
+}
+
+void test_expand_json(void)
+{
+    json_t *json = load_json_file(TEST_FILE_PATH);
+    json_t *ex = expand_json(json_object_get(json, "properties"));
+    
+    if(json_is_array(ex)) {
+        size_t index;
+        json_t *value;
+
+        json_array_foreach(ex, index, value) {
+            if(index == 0) { TEST_ASSERT_NOT_NULL(json_object_get(value, "RTT")); }
+            if(index == 1) { TEST_ASSERT_NOT_NULL(json_object_get(value, "low_latency_interface")); }
+            if(index == 2) { TEST_ASSERT_NOT_NULL(json_object_get(value, "is_wired_interface")); }
+        }
+
+        json_t *json_null = expand_json(NULL);
+        if(json_is_array(ex) && json_array_size(ex)) {
+            json_decref(json);json_decref(json_null);
+            return;
+        }
+    }
+    TEST_FAIL();
 }
  

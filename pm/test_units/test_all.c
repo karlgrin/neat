@@ -34,7 +34,8 @@ int main(void)
     RUN_TEST(test_node_set_property_2);
 
     printf("\n-----parse_json.c------\n");
-    RUN_TEST(test_expand);
+    RUN_TEST(test_expand_json_array);
+    RUN_TEST(test_expand_json);
 
     return UNITY_END();
 }
