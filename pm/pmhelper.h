@@ -6,11 +6,13 @@
 
 #define FILENAME "ErrorLog.txt"
 
-#define PROFILE_DIR "json_examples/pib/profile/"
-#define POLICY_DIR  "json_examples/pib/policy/"
-#define CIB_DIR     "json_examples/cib/"
+#define IB_DIR "infobase/"
+#define PROFILE_DIR IB_DIR "pib/profile/"
+#define POLICY_DIR  IB_DIR "pib/policy/"
+#define CIB_DIR     IB_DIR "cib/"
 
 char* new_string(char *string, ...);
+char* get_home_dir();
 char* get_exec_path();
 int file_exist(const char * file_path);
 void write_log(const char* module, const char* func, const char* desc, ...);

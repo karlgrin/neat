@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <stdlib.h>
+#include <pwd.h>
 
 #include "pmhelper.h"
 
@@ -30,15 +31,31 @@ new_string(char *string, ...)
 }
 
 char*
+get_home_dir()
+{
+    char *homedir;
+
+    homedir = getenv("HOME");
+
+    if (homedir == NULL) {
+        homedir = getpwuid(getuid())->pw_dir;
+    }
+
+    return homedir;
+}
+
+// TODO currently not used
+char*
 get_exec_path(){
     char buf[1024], *ptr;
     ssize_t len;
     if ((len = readlink("/proc/self/exe", buf, sizeof(buf)-1)) != -1){
         buf[len] = '\0';
     }
-    ptr = strstr(buf, "/test");
+    ptr = strstr(buf, "/pm");
     strcpy(ptr, "/");
     char *ret_ptr = buf;
+    printf("exec path: %s\n", buf);
     return ret_ptr;
 }
 
@@ -134,7 +151,7 @@ void
 write_json_file(const char* file_path, json_t *json)
 {
     if(json_dump_file(json, file_path, JSON_INDENT(4)) == -1) {
-        write_log(__FILE__, __func__, "Error: Unable to generate a Json file,", file_path);
+        write_log(__FILE__, __func__, "Error: Unable to generate JSON file %s", file_path);
     }
     else {
         printf("Write file: %s\n", file_path);

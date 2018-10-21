@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <limits.h>
-#include <pwd.h>
 #include <sys/stat.h>
 #include <uv.h>
 #include <jansson.h>
@@ -14,11 +13,12 @@
 // maybe also initalization of main pib/cib objects
 #include "pib.h"
 #include "cib.h"
+#include "pmhelper.h"
 
 #define PM_BACKLOG 128
 #define BUFSIZE 65536
 #define PM_SOCK_DIR ".neat"
-#define PM_SOCK_NAME "pm_socket"
+#define PM_SOCK_NAME "neat_pm_socket"
 
 uv_loop_t *loop;
 const char *pm_socket_path;
@@ -32,16 +32,9 @@ char *
 make_pm_socket_path()
 {
     char pm_socket_path[PATH_MAX];
-    char *homedir;
     struct stat st;
 
-    homedir = getenv("HOME");
-
-    if (homedir == NULL) {
-        homedir = getpwuid(getuid())->pw_dir;
-    }
-
-    snprintf(pm_socket_path, PATH_MAX, "%s/%s/", homedir, PM_SOCK_DIR);
+    snprintf(pm_socket_path, PATH_MAX, "%s/%s/", get_home_dir(), PM_SOCK_DIR);
 
     if (stat(pm_socket_path, &st) == -1) {
         mkdir(pm_socket_path, 0700);
@@ -69,21 +62,21 @@ handle_request(uv_stream_t *client)
         fprintf(stderr, "error: on line %d: %s\n", json_error.line, json_error.text);
         return;
     }
-    response_buf.base = "no candidates yet";
-    response_buf.len = strlen(response_buf.base);
 
-    // TODO
-    /* json_t *candidates = pib_lookup(cib_lookup(profile_lookup(req))); */
-    /* response_buf.base = json_dumps(candidates); */
-    /* response_buf.len = strlen(response_buf.base); */
-    /* free(response_buf.base); */
-    /* json_decref(candidates); */
+    json_t *candidates = profile_lookup(request_json);
+
+    // TODO CIB & PIB policy lookup
+
+    response_buf.base = json_dumps(candidates, 0);
+    response_buf.len = strlen(response_buf.base);
 
     write_req = malloc(sizeof(uv_write_t));
     uv_write(write_req, client, &response_buf, 1, NULL);
 
     printf("sent candidate list\n");
 
+    free(response_buf.base);
+    json_decref(candidates);
     free(write_req);
 }
 
@@ -132,6 +125,7 @@ on_new_connection(uv_stream_t *pm_server, int status)
     client = malloc(sizeof(uv_pipe_t));
     client->data = malloc(sizeof(client_req_t)); /* stores json request */
     ((client_req_t*) client->data)->buffer = malloc(BUFSIZE);
+    ((client_req_t*) client->data)->len = 0;
 
     uv_pipe_init(loop, client, 0);
 
@@ -167,7 +161,7 @@ main(int argc, char **argv)
     pib_start();
 
     //print_nodes(pib_profiles);
- 
+
     uv_pipe_t pm_server;
     int r;
 

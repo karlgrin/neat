@@ -6,6 +6,8 @@
 extern node_t *pib_policies;
 extern node_t *pib_profiles;
 
+json_t *profile_lookup(json_t *);
+json_t *policy_lookup(json_t *);
 void pib_start();
 void pib_close();
 

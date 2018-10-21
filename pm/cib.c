@@ -19,7 +19,7 @@ node_t* cib_head = NULL;
 
 void
 generate_cib_from_ifaces()
-{   
+{
     printf("Generate cib from interfaces: \n");
     struct ifaddrs *ifaddr, *interface;
     struct if_nameindex *if_nidxs, *iface;
@@ -110,10 +110,12 @@ generate_cib_from_ifaces()
     while(iter){
         json_object_set(json_object_get(root, json_object_iter_key(iter)), "root", json_boolean(true));
         json_object_set(json_object_get(root, json_object_iter_key(iter)), "uid", json_string(json_object_iter_key(iter)));
-        path = get_exec_path();
-        strcat(path, CIB_DIR);
+        /* path = get_exec_path(); */
+        /* strcat(path, CIB_DIR); */
+        path = new_string("%s/.neat/%s", get_home_dir(), CIB_DIR);
         write_json_file(new_string("%s%s%s", path, json_object_iter_key(iter), ".cib"), json_object_get(root, json_object_iter_key(iter)));
         iter = json_object_iter_next(root, iter);
+        free(path);
     }
     json_decref(root);
     freeifaddrs(ifaddr);
@@ -121,13 +123,15 @@ generate_cib_from_ifaces()
 }
 
 void
-cib_start() 
+cib_start()
 {
-    cib_head = read_modified_files(cib_head, CIB_DIR);
+    char *path = new_string("%s/%s/%s", get_home_dir(), ".neat", CIB_DIR);
+    cib_head = read_modified_files(cib_head, path);
+    free(path);
 }
 
 void
-cib_close() 
+cib_close()
 {
     free_nodes(cib_head);
 }
