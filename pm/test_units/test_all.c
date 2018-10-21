@@ -1,6 +1,7 @@
 #include "../../../Unity/src/unity.h"
 #include "pmhelper_test.h"
 #include "node_test.h"
+#include "parse_json_test.h"
 
 int main(void)
 {
@@ -31,6 +32,9 @@ int main(void)
     RUN_TEST(test_node_has_property);
     RUN_TEST(test_node_set_property);
     RUN_TEST(test_node_set_property_2);
+
+    printf("\n-----parse_json.c------\n");
+    RUN_TEST(test_expand);
 
     return UNITY_END();
 }

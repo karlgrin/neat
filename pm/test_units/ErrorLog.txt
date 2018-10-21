@@ -1,0 +1,10 @@
+Time: 2018-10-21 18:55:56.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: /home/free/Downloads/neat/policy/examples/cib/enp0s3.cib
+
+Time: 2018-10-21 18:56:09.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: /home/free/Downloads/neat/policy/examples/cib/enp0s3.cib
+
