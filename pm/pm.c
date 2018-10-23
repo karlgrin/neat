@@ -44,6 +44,26 @@ make_pm_socket_path()
     return strncat(pm_socket_path, PM_SOCK_NAME, PATH_MAX - strlen(pm_socket_path));
 }
 
+json_t *
+lookup(const json_t *requests)
+{
+    json_t *candidates;
+    json_t *request;
+
+    // TODO
+    // for req in reqs:
+    //    candidates += pib+ciblookup(req)
+
+    // for now, process only the first request
+    request = json_array_get(requests, 0);
+
+    candidates = profile_lookup(request);
+
+    // TODO CIB & PIB policy lookup
+
+    return candidates; // TODO free
+}
+
 void
 handle_request(uv_stream_t *client)
 {
@@ -63,9 +83,10 @@ handle_request(uv_stream_t *client)
         return;
     }
 
-    json_t *candidates = profile_lookup(request_json);
+    json_t *candidates = lookup(request_json);
 
-    // TODO CIB & PIB policy lookup
+    char *test = json_dumps(candidates, 0);
+    printf("\nhandle_request() got candidates: %s\n", test);
 
     response_buf.base = json_dumps(candidates, 0);
     response_buf.len = strlen(response_buf.base);
@@ -101,12 +122,12 @@ on_client_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buffer)
         return;
     }
     else {
-        printf("read: %s\n", buffer->base);
+        /* printf("read: %s\n", buffer->base); */
 
         strncpy(c_req->buffer + c_req->len, buffer->base, BUFSIZE - c_req->len);
         c_req->len += nread;
 
-        printf("buffer: %s (%zu bytes)\n", c_req->buffer, c_req->len);
+        /* printf("buffer: %s (%zu bytes)\n", c_req->buffer, c_req->len); */
     }
     free(buffer->base);
 
