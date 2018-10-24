@@ -12,7 +12,7 @@
 node_t *pib_profiles = NULL;
 node_t *pib_policies = NULL;
 
-/* TODO move subset & merge to node.c */
+/* TODO move subset & merge to pmhelper.c */
 
 /* check if a is a subset of b */
 int
@@ -94,6 +94,13 @@ pib_lookup(node_t *pib_list, json_t *input_props)
     json_t *candidate_updated_array;
     json_t *policy_match;
 
+    /* expand */
+    json_t *properties_expanded;
+    json_t *expanded_prop;
+    json_t *candidate_updated;
+    size_t index_2;
+    int replace;
+
     /* array variables */
     size_t index;
     json_t *candidate;
@@ -117,22 +124,17 @@ pib_lookup(node_t *pib_list, json_t *input_props)
             }
 
             /* no match field becomes a match by default */
-            if (!policy_match || subset(policy_match, candidate)) { //json_object_get(candidate, "properties"))) {
+            if (!policy_match || subset(policy_match, candidate)) {
                 printf("subset found for %s\n", current_policy->filename);
                 printf("merging...\n");
 
-                // without expand
-                //merge_properties(json_object_get(current_policy->json, "properties"), candidate, 1); // TODO MAGIC
+                properties_expanded = expand_json(json_object_get(current_policy->json, "properties"));
+                replace = replace_matched(current_policy->json);
 
-                // with expand
-                json_t *properties_expanded = expand_json(json_object_get(current_policy->json, "properties"));
-                size_t index_2;
-                json_t *expanded_prop;
-                int replace = replace_matched(current_policy->json);
                 json_array_foreach(properties_expanded, index_2, expanded_prop) {
                     printf("\n    ------ EXPANDED PROP #%d\n    >> VALUE: %s\n", index_2, json_dumps(expanded_prop, 0));
-                    /* copy candidate */
-                    json_t *candidate_updated = json_deep_copy(candidate); // TODO free
+
+                    candidate_updated = json_deep_copy(candidate); // TODO free
 
                     /* add merged copy to updated array */
                     merge_properties(expanded_prop, candidate_updated, replace);

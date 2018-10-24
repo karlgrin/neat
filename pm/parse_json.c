@@ -11,10 +11,10 @@ append_value(json_t *json, json_t *new_value)
         json_t *value;
         json_array_foreach(new_value, index, value) {
             json_array_append(json, value);
-        }      
+        }
     }
     else if(json_is_object(new_value)) {
-        json_array_append(json, new_value);
+        json_object_update(json, new_value);
     }
     else {
         write_log(__FILE__, __func__, "Failed to parse: \n%s", json_dumps(new_value, JSON_INDENT(3)));
@@ -38,14 +38,14 @@ expand_json_arrays(json_t* in_properties)
 
     json_array_foreach(in_properties, index1, value1) {
         temp1 = json_array();
-        json_array_foreach(value1, index2, value2) { 
-            json_array_foreach(result, index3, value3) {                 
-                temp2 = json_array();            
-                append_value(temp2, value3);                       
+        json_array_foreach(value1, index2, value2) {
+            json_array_foreach(result, index3, value3) {
+                temp2 = json_object();
+                append_value(temp2, value3);
                 append_value(temp2, value2);
                 json_array_append(temp1, temp2);
             }
-        }      
+        }
         result = temp1;
     }
     return result;
@@ -55,11 +55,11 @@ expand_json_arrays(json_t* in_properties)
 json_t*
 expand_json(json_t* in_properties)
 {
-    json_t *result;  
+    json_t *result;
     result = json_array();
 
     if(in_properties == NULL || json_is_null(in_properties)) {
-        return result; 
+        return result;
     }
     else if(json_is_object(in_properties)) {
         json_array_append(result, in_properties);
