@@ -114,7 +114,7 @@ pib_lookup(node_t *pib_list, json_t *input_props)
 
         if (policy_match) { printf("MATCH: %s\n", json_dumps(policy_match, 0)); }
 
-        printf("size of candidate_array is %d\n", json_array_size(candidate_array));
+        printf("size of candidate_array is %ld\n", json_array_size(candidate_array));
 
         json_array_foreach(candidate_array, index, candidate) {
 
@@ -132,14 +132,14 @@ pib_lookup(node_t *pib_list, json_t *input_props)
                 replace = replace_matched(current_policy->json);
 
                 json_array_foreach(properties_expanded, index_2, expanded_prop) {
-                    printf("\n    ------ EXPANDED PROP #%d\n    >> VALUE: %s\n", index_2, json_dumps(expanded_prop, 0));
+                    printf("\n    ------ EXPANDED PROP #%ld\n    >> VALUE: %s\n", index_2, json_dumps(expanded_prop, 0));
 
                     candidate_updated = json_deep_copy(candidate); // TODO free
 
                     /* add merged copy to updated array */
                     merge_properties(expanded_prop, candidate_updated, replace);
                     json_array_append_new(candidate_updated_array, candidate_updated);
-                    printf("size of candidate_updated_array is %d\n", json_array_size(candidate_updated_array));
+                    printf("size of candidate_updated_array is %ld\n", json_array_size(candidate_updated_array));
                 }
 
             }
