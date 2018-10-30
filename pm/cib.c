@@ -15,7 +15,7 @@
 #include "node.h"
 
 int CIB_DEFAULT_TIMEOUT = 10*60;
-node_t* cib_head = NULL;
+node_t* cib_nodes = NULL;
 
 void
 generate_cib_from_ifaces()
@@ -122,16 +122,81 @@ generate_cib_from_ifaces()
     printf("\n");
 }
 
+json_t *
+cib_lookup(json_t *input_props)
+{
+    node_t *current_node = NULL;
+    json_t *candidate_array = json_array();
+    json_t *candidates;
+    json_t *node_props;
+    json_t *immutable_input_props = json_array();
+
+    size_t index;
+    json_t *property;
+
+    json_array_append(candidate_array, input_props);
+    printf("\n---------- CIB LOOKUP ---------\n");
+
+    for(current_node = cib_nodes; current_node; current_node = current_node->next){
+        //If every IMMUTABLE value in input_props are in current_node->properties, continue
+        printf("\nNODE: %s\n", json_string_value(json_object_get(current_node->json, "uid")));
+        node_props = json_object_get(current_node->json, "properties");
+
+        //if (node_props) { printf("NODE PROPERTIES: \n%s\n", json_dumps(node_props, 0)); }
+        json_array_clear(immutable_input_props);
+        json_object_foreach(input_props, index, property){
+            if(json_integer_value(json_object_get(property, "precedence")) == 2){
+                json_array_append(immutable_input_props, property);
+            }
+        }
+        //printf("IMMUTABLE INPUT PROPS:\n%s", json_dumps(immutable_input_props, 0));
+        if(subset(node_props, immutable_input_props)){
+                printf("subset found for %s\n", current_node->filename);
+                continue;
+        } else {
+            /* FROM CIB.PY
+            candidate = e + input_properties
+            candidate.cib_node = e.cib_node
+            candidates.append(candidate)
+            */
+        }
+    }
+    printf("\nOUTPUT FROM CIB LOOKUP: %s\n", json_dumps(candidate_array, 0));
+    return candidate_array; //TODO: free
+}
+
 void
 cib_start()
 {
     char *path = new_string("%s/%s/%s", get_home_dir(), ".neat", CIB_DIR);
-    cib_head = read_modified_files(cib_head, path);
+    cib_nodes = read_modified_files(cib_nodes, path);
     free(path);
 }
 
 void
 cib_close()
 {
-    free_nodes(cib_head);
+    free_nodes(cib_nodes);
 }
+/*
+int main(int argc, char const *argv[])
+{
+    generate_cib_from_ifaces();
+    cib_start();
+    json_t *candidate, *cib_lookup_result;
+    size_t index, index2;
+    json_t *cib_candidates = json_array();
+    json_t *updated_requests = load_json_file("/home/samulars/profile_lookup.json");
+    //printf("%s\n", json_dumps(updated_requests, 0));
+    json_array_foreach(updated_requests, index, candidate){
+        cib_lookup_result = cib_lookup(candidate);
+        json_array_foreach(cib_lookup_result, index2, candidate){
+            if(!subset(cib_candidates, candidate) || json_array_size(cib_candidates) == 0){
+                printf("Candidate is not in cib_candidates! Adding...\n");
+                json_array_append(cib_candidates, candidate);
+            }
+        }
+    }
+    return 0;
+}
+*/

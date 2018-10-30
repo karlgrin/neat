@@ -78,3 +78,9 @@ expand_json(json_t* in_properties)
     write_log(__FILE__, __func__, "Error: unknown json structure");
     return result;
 }
+
+json_t *
+sort_json_array(json_t* array){
+
+    return array;
+}

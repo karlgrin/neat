@@ -14,6 +14,7 @@
 #include "pib.h"
 #include "cib.h"
 #include "pmhelper.h"
+#include "parse_json.h"
 
 #define PM_BACKLOG 128
 #define BUFSIZE 65536
@@ -47,21 +48,41 @@ make_pm_socket_path()
 json_t *
 lookup(const json_t *requests)
 {
-    json_t *candidates;
+    json_t *updated_requests;
     json_t *request;
+    json_t *candidate;
+    json_t *cib_candidates = json_array();
+    json_t *cib_lookup_result; //TODO RENAME
+    size_t index, index2;
 
     // TODO
     // for req in reqs:
     //    candidates += pib+ciblookup(req)
-
-    // for now, process only the first request
     request = json_array_get(requests, 0);
+    // for now, process only the first request
+    updated_requests = profile_lookup(request);
 
-    candidates = profile_lookup(request);
+    json_array_foreach(updated_requests, index, candidate){
+        cib_lookup_result = cib_lookup(candidate);
+        json_array_foreach(cib_lookup_result, index2, candidate){
+            if(!subset(cib_candidates, candidate) || json_array_size(cib_candidates) == 0){
+                printf("Candidate is not in cib_candidates! Adding...\n");
+                json_array_append(cib_candidates, candidate);
+            }
+        }
+    }
+    updated_requests = sort_json_array(cib_candidates);
 
-    // TODO CIB & PIB policy lookup
 
-    return candidates; // TODO free
+    /*
+    json_t *temp_candidates = json_array();
+    json_array_foreach(candidates, index, candidate){
+        json_array_extend(temp_candidates, policy_lookup(candidate));
+    }*/
+
+    // TODO PIB policy lookup
+
+    return cib_candidates; // TODO free
 }
 
 void
@@ -206,3 +227,4 @@ main(int argc, char **argv)
 
     return uv_run(loop, UV_RUN_DEFAULT);
 }
+
