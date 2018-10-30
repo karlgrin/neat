@@ -34,4 +34,7 @@ void node_set_property(node_t *node, const char *prop, json_t *new_value);
 void print_nodes(node_t* head);
 void print_node(node_t *node);
 
+int subset(json_t *prop_a, json_t *prop_b);
+void merge_properties(json_t *prop_a, json_t *prop_b, int should_overwrite);
+
 #endif
