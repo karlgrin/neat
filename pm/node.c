@@ -87,12 +87,40 @@ has_node(node_t *head, const char *file_path)
 node_t*
 add_node(node_t *head, node_t *node)
 {
+    node_t *current;
+    json_t *prio_obj;
+    int priority;
+    int curr_priority;
+
     if(node == NULL) { return head; }
     if(head == NULL) { return node; }
 
-    node_t *current = head;
-    while(current->next != NULL) { current = current->next; }
+    prio_obj = json_object_get(node->json, "priority");
+    if (!prio_obj) {
+        fprintf(stderr, "Error: no priority property defined\n");
+    }
+    priority = json_integer_value(prio_obj);
 
+    /* insert into sorted linked list by priority */
+
+    /* check head first */
+    current = head;
+    curr_priority = json_integer_value(json_object_get(current->json, "priority"));
+    if (priority < curr_priority) {
+        node->next = head;
+        head = node;
+        return head;
+    }
+    /* and the sandwiched case */
+    while(current->next != NULL) {
+        int next_priority = json_integer_value(json_object_get(current->next->json, "priority"));
+        if (priority < next_priority) {
+            break;
+        }
+        current = current->next;
+    }
+
+    node->next  = current->next;
     current->next = node;
     return head;
 }
