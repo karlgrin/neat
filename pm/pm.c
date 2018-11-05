@@ -65,7 +65,8 @@ lookup(const json_t *requests)
     json_array_foreach(updated_requests, index, candidate){
         cib_lookup_result = cib_lookup(candidate);
         json_array_foreach(cib_lookup_result, index2, candidate){
-            if(!subset(cib_candidates, candidate) || json_array_size(cib_candidates) == 0){
+            if(true){
+                //FIXME make sure candidates are not added multiple times
                 printf("Candidate is not in cib_candidates! Adding...\n");
                 json_array_append(cib_candidates, candidate);
             }
@@ -82,7 +83,7 @@ lookup(const json_t *requests)
 
     // TODO PIB policy lookup
 
-    return cib_candidates; // TODO free
+    return updated_requests; // TODO free
 }
 
 void
