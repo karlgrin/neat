@@ -157,3 +157,16 @@ write_json_file(const char* file_path, json_t *json)
         printf("Write file: %s\n", file_path);
     }
 }
+
+bool
+array_contains_value(json_t *array, json_t *value)
+{
+    size_t i;
+    json_t *elem;
+    json_array_foreach(array, i, elem) {
+        if (json_equal(elem, value)) {
+            return true;
+        }
+    }
+    return false;
+}

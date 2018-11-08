@@ -15,6 +15,7 @@ int main(void)
     RUN_TEST(test_write_json_file);
     RUN_TEST(test_file_is_modified);
     RUN_TEST(test_file_edit_time);
+    RUN_TEST(test_array_contains_value);
 
     printf("\n-----node.c------\n");
     RUN_TEST(test_node_init);

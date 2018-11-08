@@ -8,9 +8,6 @@
 #include <uv.h>
 #include <jansson.h>
 
-// TODO
-// should provide lookup functions
-// maybe also initalization of main pib/cib objects
 #include "pib.h"
 #include "cib.h"
 #include "pmhelper.h"
@@ -51,39 +48,46 @@ lookup(const json_t *requests)
     json_t *updated_requests;
     json_t *request;
     json_t *candidate;
+    json_t *candidates = json_array();
+    json_t *policy_candidates;
     json_t *cib_candidates = json_array();
     json_t *cib_lookup_result; //TODO RENAME
-    size_t index, index2;
+    size_t i, j, k;
 
-    // TODO
-    // for req in reqs:
-    //    candidates += pib+ciblookup(req)
-    request = json_array_get(requests, 0);
-    // for now, process only the first request
-    updated_requests = profile_lookup(request);
+    json_array_foreach(requests, i, request) {
 
-    json_array_foreach(updated_requests, index, candidate){
-        cib_lookup_result = cib_lookup(candidate);
-        json_array_foreach(cib_lookup_result, index2, candidate){
-            if(true){
-                //FIXME make sure candidates are not added multiple times
-                printf("Candidate is not in cib_candidates! Adding...\n");
-                json_array_append(cib_candidates, candidate);
+        /* Profile lookup */
+        updated_requests = profile_lookup(request);
+
+        /* CIB lookup */
+        json_array_foreach(updated_requests, j, candidate){
+            cib_lookup_result = cib_lookup(candidate);
+            json_array_foreach(cib_lookup_result, k, candidate){
+                if(!array_contains_value(cib_candidates, candidate)){
+                    printf("Candidate is not in cib_candidates! Adding...\n");
+                    json_array_append(cib_candidates, candidate);
+                }
+            }
+        }
+
+        /* Policy lookup */
+        json_array_foreach(cib_candidates, j, candidate) {
+            policy_candidates = policy_lookup(candidate);
+            json_array_foreach(policy_candidates, k, candidate){
+                if(!array_contains_value(candidates, candidate)){
+                    json_array_append(candidates, candidate);
+                }
             }
         }
     }
-    updated_requests = sort_json_array(cib_candidates);
 
+    // TODO implement sort
+    // candidates = sort_json_array(candidates);
 
-    /*
-    json_t *temp_candidates = json_array();
-    json_array_foreach(candidates, index, candidate){
-        json_array_extend(temp_candidates, policy_lookup(candidate));
-    }*/
+    // TODO limit number of candidates
+    // top_candidates = top_cand(candidates)
 
-    // TODO PIB policy lookup
-
-    return updated_requests; // TODO free
+    return candidates; // TODO free
 }
 
 void
@@ -228,4 +232,3 @@ main(int argc, char **argv)
 
     return uv_run(loop, UV_RUN_DEFAULT);
 }
-

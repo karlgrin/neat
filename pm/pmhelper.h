@@ -3,6 +3,7 @@
 
 #include <time.h>
 #include <jansson.h>
+#include<stdbool.h>
 
 #define FILENAME "ErrorLog.txt"
 
@@ -21,5 +22,6 @@ void clear_log();
 int file_is_modified(const char *path, time_t old_time);
 json_t* load_json_file(const char *file_path);
 void write_json_file(const char* file_path, json_t *json);
+bool array_contains_value(json_t *array, json_t *value);
 
 #endif
