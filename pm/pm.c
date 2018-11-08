@@ -18,6 +18,8 @@
 #define PM_SOCK_DIR ".neat"
 #define PM_SOCK_NAME "neat_pm_socket"
 
+#define NUM_CANDIDATES 10
+
 uv_loop_t *loop;
 const char *pm_socket_path;
 
@@ -81,11 +83,8 @@ lookup(const json_t *requests)
         }
     }
 
-    // TODO implement sort
-    // candidates = sort_json_array(candidates);
-
-    // TODO limit number of candidates
-    // top_candidates = top_cand(candidates)
+    candidates = sort_json_array(candidates);
+    candidates = limit_json_array(candidates, NUM_CANDIDATES);
 
     return candidates; // TODO free
 }
@@ -110,9 +109,6 @@ handle_request(uv_stream_t *client)
     }
 
     json_t *candidates = lookup(request_json);
-
-    char *test = json_dumps(candidates, 0);
-    printf("\nhandle_request() got candidates: %s\n", test);
 
     response_buf.base = json_dumps(candidates, 0);
     response_buf.len = strlen(response_buf.base);

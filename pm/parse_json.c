@@ -79,8 +79,66 @@ expand_json(json_t* in_properties)
     return result;
 }
 
-json_t *
-sort_json_array(json_t* array){
+/* return the sum of all property scores */
+/* TODO sum evaluated and not yet evaluated into separate sums (see def score in policy.py) */
+int
+property_score_sum(json_t *candidate)
+{
+    int sum = 0;
+    int score;
+    const char *key;
+    json_t *property;
+    json_t *score_obj;
+    json_object_foreach(candidate, key, property) {
+        score_obj = json_object_get(property, "score");
+        if (score_obj) {
+            score = json_integer_value(score_obj);
+            sum += score;
+        }
+    }
+    return sum;
+}
 
+int
+cmp_score(const void *json1, const void *json2)
+{
+    int score1 = property_score_sum(*((json_t **) json1));
+    int score2 = property_score_sum(*((json_t **) json2));
+
+    return score2 - score1;
+}
+
+json_t *
+sort_json_array(json_t *array)
+{
+    json_t *array2[json_array_size(array)];
+    json_t *item;
+    size_t i;
+
+    json_array_foreach(array, i, item) {
+        array2[i] = item;
+    }
+    qsort(array2, json_array_size(array), sizeof(json_t *), cmp_score);
+
+    for (i = 0; i < json_array_size(array); i++) {
+        json_array_set_new(array, i, array2[i]);
+    }
+    return array;
+}
+
+/* return the first n elements of array defined by limit */
+json_t *
+limit_json_array(json_t *array, const int limit)
+{
+    size_t arr_size = json_array_size(array);
+    size_t i;
+
+    if (arr_size <= limit) { return array; }
+
+    for (i = arr_size - 1; i >= limit; i--) {
+        if (json_array_remove(array, i) == -1) {
+            fprintf(stderr, "Error: cannot remove array element\n");
+        }
+    }
     return array;
 }
