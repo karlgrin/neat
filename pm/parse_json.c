@@ -111,19 +111,23 @@ cmp_score(const void *json1, const void *json2)
 json_t *
 sort_json_array(json_t *array)
 {
-    json_t *array2[json_array_size(array)];
+    size_t arr_size = json_array_size(array);
+    json_t *to_sort[arr_size];
+    json_t *result = json_array();
     json_t *item;
     size_t i;
 
     json_array_foreach(array, i, item) {
-        array2[i] = item;
+        to_sort[i] = item;
     }
-    qsort(array2, json_array_size(array), sizeof(json_t *), cmp_score);
 
-    for (i = 0; i < json_array_size(array); i++) {
-        json_array_set_new(array, i, array2[i]);
+    qsort(to_sort, arr_size, sizeof(json_t *), cmp_score);
+
+    for (i = 0; i < arr_size; i++) {
+        json_array_append_new(result, to_sort[i]);
     }
-    return array;
+
+    return result;
 }
 
 /* return the first n elements of array defined by limit */
@@ -132,8 +136,6 @@ limit_json_array(json_t *array, const int limit)
 {
     size_t arr_size = json_array_size(array);
     size_t i;
-
-    if (arr_size <= limit) { return array; }
 
     for (i = arr_size - 1; i >= limit; i--) {
         if (json_array_remove(array, i) == -1) {

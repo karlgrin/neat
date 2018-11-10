@@ -37,6 +37,8 @@ int main(void)
     printf("\n-----parse_json.c------\n");
     RUN_TEST(test_expand_json_array);
     RUN_TEST(test_expand_json);
+    RUN_TEST(test_sort_json_array);
+    RUN_TEST(test_limit_json_array);
 
     return UNITY_END();
 }
