@@ -131,7 +131,7 @@ cib_lookup(json_t *input_props)
     json_t *node_props;
     json_t *immutable_input_props = json_array();
 
-    size_t index;
+    const char *key;
     json_t *property;
 
     json_array_append(candidate_array, input_props);
@@ -144,7 +144,7 @@ cib_lookup(json_t *input_props)
 
         //if (node_props) { printf("NODE PROPERTIES: \n%s\n", json_dumps(node_props, 0)); }
         json_array_clear(immutable_input_props);
-        json_object_foreach(input_props, index, property){
+        json_object_foreach(input_props, key, property){
             if(json_integer_value(json_object_get(property, "precedence")) == 2){
                 json_array_append(immutable_input_props, property);
             }
