@@ -52,6 +52,8 @@ main() {
     if (ulfius_start_framework(&instance) == U_OK) {
     printf("Start framework on port %d\n", instance.port);
 
+    getchar();
+
     } else {
     fprintf(stderr, "Error starting framework\n");
     }
