@@ -31,17 +31,17 @@ typedef struct client_req {
 char *
 make_pm_socket_path()
 {
-    char pm_socket_path[PATH_MAX];
+    char path[PATH_MAX];
     struct stat st;
 
-    snprintf(pm_socket_path, PATH_MAX, "%s/%s/", get_home_dir(), PM_SOCK_DIR);
+    snprintf(path, PATH_MAX, "%s/%s/", get_home_dir(), PM_SOCK_DIR);
 
-    if (stat(pm_socket_path, &st) == -1) {
-        mkdir(pm_socket_path, 0700);
-        printf("created directory %s\n", pm_socket_path);
+    if (stat(path, &st) == -1) {
+        mkdir(path, 0700);
+        printf("created directory %s\n", path);
     }
 
-    return strncat(pm_socket_path, PM_SOCK_NAME, PATH_MAX - strlen(pm_socket_path));
+    return strncat(path, PM_SOCK_NAME, PATH_MAX - strlen(path));
 }
 
 json_t *
@@ -183,7 +183,7 @@ on_new_connection(uv_stream_t *pm_server, int status)
 }
 
 void
-close_pm(int sig)
+pm_close(int sig)
 {
     printf("\nClosing policy manager...\n");
     uv_fs_t req;
@@ -196,7 +196,7 @@ close_pm(int sig)
 
 
 int
-main(int argc, char **argv)
+pm_start(int argc, char **argv)
 {
     printf("--Start PM--\n\n");
     generate_cib_from_ifaces();
@@ -215,7 +215,7 @@ main(int argc, char **argv)
     loop = uv_default_loop();
     uv_pipe_init(loop, &pm_server, 0);
 
-    signal(SIGINT, close_pm);
+    signal(SIGINT, pm_close);
 
     if ((r = uv_pipe_bind(&pm_server, pm_socket_path)) != 0) {
         fprintf(stderr, "Bind error %s\n", uv_err_name(r));

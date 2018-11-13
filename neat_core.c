@@ -23,6 +23,7 @@
 #include <uv.h>
 #include <errno.h>
 #include <ifaddrs.h>
+ #include <pthread.h>
 
 #ifdef __linux__
 #include <net/if.h>
@@ -42,6 +43,7 @@
 #include "neat_json_helpers.h"
 #include "neat_unix_json_socket.h"
 #include "neat_pm_socket.h"
+#include "pm/pm.h"
 
 #if defined(USRSCTP_SUPPORT)
 #include "neat_usrsctp_internal.h"
@@ -117,11 +119,15 @@ const char *neat_tag_name[NEAT_TAG_LAST] = {
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
 
+pthread_t thread_id_pm; 
+
 //Intiailize the OS-independent part of the context, and call the OS-dependent
 //init function
 struct neat_ctx *
 neat_init_ctx()
 {
+    pthread_create(&thread_id_pm, NULL, pm_start, NULL);  //start policy manager
+
     struct neat_ctx *nc;
     struct neat_ctx *ctx = NULL;
 
@@ -198,6 +204,7 @@ neat_init_ctx()
 neat_error_code
 neat_start_event_loop(struct neat_ctx *nc, neat_run_mode run_mode)
 {
+    printf("ASTASR");
     if (run_mode == NEAT_RUN_DEFAULT)
         nt_log(nc, NEAT_LOG_DEBUG, "%s", __func__);
 
@@ -291,6 +298,9 @@ neat_free_ctx(struct neat_ctx *nc)
     struct neat_flow *flow, *prev_flow = NULL;
     nt_log(nc, NEAT_LOG_DEBUG, "%s", __func__);
 
+    pm_close(0);
+    pthread_join(thread_id_pm, NULL);
+    printf("threads joined");
     if (!nc) {
         return;
     }

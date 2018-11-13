@@ -127,7 +127,6 @@ cib_lookup(json_t *input_props)
 {
     node_t *current_node = NULL;
     json_t *candidate_array = json_array();
-    json_t *candidates;
     json_t *node_props;
     json_t *immutable_input_props = json_array();
 

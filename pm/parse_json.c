@@ -132,7 +132,7 @@ sort_json_array(json_t *array)
 
 /* return the first n elements of array defined by limit */
 json_t *
-limit_json_array(json_t *array, const int limit)
+limit_json_array(json_t *array, const unsigned int limit)
 {
     size_t arr_size = json_array_size(array);
     size_t i;

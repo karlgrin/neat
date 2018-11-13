@@ -1,6 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
 PROJECT(libneat)
 
+
 SET(BUILD_MAJOR "0")
 SET(BUILD_MINOR "0")
 SET(BUILD_PATCH "1~td161")
@@ -76,6 +77,15 @@ LIST(APPEND neat_sources
     neat_pm_socket.c
     neat_unix_json_socket.c
     tls-trust.c
+)
+
+LIST(APPEND neat_sources
+    pm/pmhelper.c 
+    pm/parse_json.c 
+    pm/node.c
+    pm/pib.c 
+    pm/cib.c 
+    pm/pm.c
 )
 
 # OS DEPENDENT
