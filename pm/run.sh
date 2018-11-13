@@ -1,4 +1,4 @@
 clear
-gcc pmhelper.c parse_json.c node.c pib.c cib.c pm.c -Wall -ggdb -o test -ljansson -luv
-./test
-rm test
+gcc parse_json.c pib.c node.c pmhelper.c rest.c -o rest -Wall -g -lulfius -ljansson
+./rest
+rm rest
