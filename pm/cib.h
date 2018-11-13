@@ -1,7 +1,9 @@
 #ifndef HEADER_CIB
 #define HEADER_CIB
 
-extern node_t* cib_noes;
+extern node_t* cib_nodes;
+
+json_t *get_cibnode_by_uid(const char *uid);
 
 void cib_start();
 void cib_close();
