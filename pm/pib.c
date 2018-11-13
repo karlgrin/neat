@@ -12,7 +12,20 @@
 node_t *pib_profiles = NULL;
 node_t *pib_policies = NULL;
 
-/* TODO move subset & merge to pmhelper.c */
+json_t *
+get_pibnode_by_uid (const char *uid)
+{
+    node_t *pib;
+    pib = get_node_by_uid(pib_profiles, uid);
+    if (pib) {
+        return pib->json;
+    }
+    pib = get_node_by_uid(pib_policies, uid);
+    if (pib) {
+        return pib->json;
+    }
+    return NULL;
+}
 
 int
 replace_matched(json_t *policy)

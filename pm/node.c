@@ -318,3 +318,21 @@ merge_properties(json_t *prop_a, json_t *prop_b, int should_overwrite)
     }
 }
 
+
+node_t *
+get_node_by_uid (node_t *head, const char *uid)
+{
+    char *current_uid;
+
+    node_t *current = head;
+    while(current != NULL) {
+        current_uid = json_object_get(current->json, "uid");
+        printf("current_uid = %s\n", current_uid);
+        printf("current json = %s\n", json_dumps(current->json, 0));
+        if(strcmp(current_uid, uid) == 0) {
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL;
+}

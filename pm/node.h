@@ -37,4 +37,6 @@ void print_node(node_t *node);
 int subset(json_t *prop_a, json_t *prop_b);
 void merge_properties(json_t *prop_a, json_t *prop_b, int should_overwrite);
 
+node_t *get_node_by_uid (node_t *head, const char *uid);
+
 #endif

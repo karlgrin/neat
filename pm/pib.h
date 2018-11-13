@@ -10,5 +10,6 @@ json_t *profile_lookup(json_t *);
 json_t *policy_lookup(json_t *);
 void pib_start();
 void pib_close();
+json_t *get_pibnode_by_uid (const char *uid);
 
 #endif
