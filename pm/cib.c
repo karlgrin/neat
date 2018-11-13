@@ -17,6 +17,17 @@
 int CIB_DEFAULT_TIMEOUT = 10*60;
 node_t* cib_nodes = NULL;
 
+json_t *
+get_cibnode_by_uid(const char *uid)
+{
+    node_t *cib;
+    cib = get_node_by_uid(cib_nodes, uid);
+    if (cib) {
+        return cib->json;
+    }
+    return NULL;
+}
+
 void
 generate_cib_from_ifaces()
 {

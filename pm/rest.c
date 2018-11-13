@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <ulfius.h>
-#include<jansson.h>
+#include <jansson.h>
 #include "pib.h"
 #include "cib.h"
 
@@ -17,9 +17,11 @@ callback_get_pib (const struct _u_request * request, struct _u_response * respon
 
     if (policy) {
         printf("found policy %s\n", json_dumps(policy, 0));
+        //TODO: SET RESPONSE TO JSON POLICY
     }
     else {
         printf("found no policy file\n");
+        //TODO: SET RESPONSE TO 404 NOT FOUND
     }
 
     return U_CALLBACK_CONTINUE;
@@ -57,6 +59,7 @@ main() {
     } else {
     fprintf(stderr, "Error starting framework\n");
     }
+    getchar();
     printf("End framework\n");
 
     ulfius_stop_framework(&instance);
