@@ -64,6 +64,8 @@ on_pm_close(void* data)
 static void
 on_pm_timeout(uv_timer_t* timer)
 {
+    printf("PM_timout!");
+    
     struct neat_pm_context *pm_context = timer->data;
 
     //nt_log(NEAT_LOG_DEBUG, "%s", __func__);

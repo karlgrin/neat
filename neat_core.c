@@ -204,7 +204,6 @@ neat_init_ctx()
 neat_error_code
 neat_start_event_loop(struct neat_ctx *nc, neat_run_mode run_mode)
 {
-    printf("ASTASR");
     if (run_mode == NEAT_RUN_DEFAULT)
         nt_log(nc, NEAT_LOG_DEBUG, "%s", __func__);
 
@@ -3816,9 +3815,9 @@ on_pm_reply_pre_resolve(struct neat_ctx *ctx, struct neat_flow *flow, json_t *js
         rc = NEAT_ERROR_OUT_OF_MEMORY;
         goto error;
     }
-
+   
     TAILQ_INIT(candidate_list);
-
+    printf("\nParse Json\n");
     json_array_foreach(json, i, value) {
         const char *address = NULL, *interface = NULL, *local_ip  = NULL;
         struct neat_he_candidate *candidate = NULL;
@@ -3828,16 +3827,16 @@ on_pm_reply_pre_resolve(struct neat_ctx *ctx, struct neat_flow *flow, json_t *js
 
         if ((candidate->pollable_socket = calloc(1, sizeof(struct neat_pollable_socket))) == NULL)
             goto loop_oom;
-
+        printf("\n%s\n", json_dumps(value, 2));
         if ((address = json_string_value(get_property(value, "domain_name", JSON_STRING))) == NULL)
              goto loop_error;
-
+        printf("address done\n");
         if ((interface = json_string_value(get_property(value, "interface", JSON_STRING))) == NULL)
             goto loop_error;
-
+      printf("interf done\n");
         if ((local_ip = json_string_value(get_property(value, "local_ip", JSON_STRING))) == NULL)
             goto loop_error;
-
+      printf("local_ip done\n");
         if ((candidate->pollable_socket->dst_address = strdup(address)) == NULL)
             goto loop_oom;
 
@@ -3850,7 +3849,7 @@ on_pm_reply_pre_resolve(struct neat_ctx *ctx, struct neat_flow *flow, json_t *js
         }
         if ((candidate->pollable_socket->src_address = strdup(local_ip)) == NULL)
             goto loop_oom;
-
+        printf("\nAddress: %s\n", address); //TT
         candidate->pollable_socket->port = flow->port;
         candidate->properties = value;
         json_incref(value);
@@ -4080,7 +4079,7 @@ send_properties_to_pm(neat_ctx *ctx, neat_flow *flow)
     }
     free (tmp);
     json_array_append(array, properties);
-
+    printf("\ntest1\n");
     nt_json_send_once(ctx, flow, socket_path, array, on_pm_reply_pre_resolve, on_pm_error);
 
 end:
@@ -4103,6 +4102,7 @@ neat_error_code
 neat_open(neat_ctx *ctx, neat_flow *flow, const char *name, uint16_t port,
           struct neat_tlv optional[], unsigned int opt_count)
 {
+    printf("\ntest4\n");
     int stream_count = 0;
     int group = 0;
     float priority = 0.5f;
@@ -4195,7 +4195,7 @@ neat_open(neat_ctx *ctx, neat_flow *flow, const char *name, uint16_t port,
             return NEAT_ERROR_OUT_OF_MEMORY;
         }
     }
-
+    printf("\ntest2\n");
 #if 1
     if (flow->webrtcEnabled) {
 #if defined(WEBRTC_SUPPORT)
