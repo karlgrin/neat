@@ -299,8 +299,8 @@ neat_free_ctx(struct neat_ctx *nc)
     nt_log(nc, NEAT_LOG_DEBUG, "%s", __func__);
 
     pm_close(0);
-    pthread_join(thread_id_pm, NULL);
-    printf("threads joined");
+    pthread_cancel(thread_id_pm);
+
     if (!nc) {
         return;
     }
@@ -3861,6 +3861,7 @@ on_pm_reply_pre_resolve(struct neat_ctx *ctx, struct neat_flow *flow, json_t *js
 loop_oom:
         rc = NEAT_ERROR_OUT_OF_MEMORY;
 loop_error:
+        printf("\nParse error of json\n");
         if (candidate->if_name)
             free(candidate->if_name);
         if (candidate->pollable_socket) {

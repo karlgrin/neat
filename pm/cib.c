@@ -119,7 +119,6 @@ generate_cib_from_ifaces()
     }
     json_decref(root);
     freeifaddrs(ifaddr);
-    printf("\n");
 }
 
 json_t *
@@ -134,7 +133,7 @@ cib_lookup(json_t *input_props)
     json_t *property;
 
     json_array_append(candidate_array, input_props);
-    printf("\n---------- CIB LOOKUP ---------\n");
+    //printf("\n---------- CIB LOOKUP ---------\n");
 
     for(current_node = cib_nodes; current_node; current_node = current_node->next){
         //If every IMMUTABLE value in input_props are in current_node->properties, continue
@@ -160,7 +159,7 @@ cib_lookup(json_t *input_props)
             */
         }
     }
-    printf("\nOUTPUT FROM CIB LOOKUP: %s\n", json_dumps(candidate_array, 0));
+    //printf("\nOUTPUT FROM CIB LOOKUP: \n%s\n", json_dumps(candidate_array, 0));
     return candidate_array; //TODO: free
 }
 

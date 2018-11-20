@@ -66,7 +66,7 @@ lookup(const json_t *requests)
             cib_lookup_result = cib_lookup(candidate);
             json_array_foreach(cib_lookup_result, k, candidate){
                 if(!array_contains_value(cib_candidates, candidate)){
-                    printf("Candidate is not in cib_candidates! Adding...\n");
+                    //printf("Candidate is not in cib_candidates! Adding...\n");
                     json_array_append(cib_candidates, candidate);
                 }
             }
@@ -98,8 +98,8 @@ handle_request(uv_stream_t *client)
     json_t *request_json;
     json_error_t json_error;
 
-    printf("finished reading\n");
-    printf("buffer = %s\n", client_req->buffer);
+    //printf("finished reading\n");
+    //printf("buffer = %s\n", client_req->buffer);
 
     request_json = json_loads(client_req->buffer, 0, &json_error);
 
@@ -115,8 +115,8 @@ handle_request(uv_stream_t *client)
 
     write_req = malloc(sizeof(uv_write_t));
     uv_write(write_req, client, &response_buf, 1, NULL);
-
-    printf("sent candidate list\n");
+    printf("\nPM result: \n%s\n", json_dumps(candidates, 0));
+    printf("\nPM sent candidates..\n");
 
     free(response_buf.base);
     json_decref(candidates);
@@ -173,7 +173,7 @@ on_new_connection(uv_stream_t *pm_server, int status)
     uv_pipe_init(loop, client, 0);
 
     if (uv_accept(pm_server, (uv_stream_t *) client) == 0) {
-        printf("accepted client request\n");
+        printf("\nAccepted client request\n");
         uv_read_start((uv_stream_t *) client, alloc_buffer, on_client_read);
     }
     else {
@@ -191,19 +191,16 @@ pm_close(int sig)
 
     pib_close();
     cib_close();
-    exit(0);
 }
 
 
 int
 pm_start(int argc, char **argv)
 {
-    printf("--Start PM--\n\n");
+    printf("\n\n--Start PM--\n\n");
     generate_cib_from_ifaces();
     cib_start();
     pib_start();
-
-    //print_nodes(pib_profiles);
 
     uv_pipe_t pm_server;
     int r;
