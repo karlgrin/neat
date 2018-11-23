@@ -45,8 +45,9 @@ make_pm_socket_path()
 }
 
 json_t *
-lookup(const json_t *requests)
+lookup(const json_t *reqs)
 {
+
     json_t *updated_requests;
     json_t *request;
     json_t *candidate;
@@ -56,6 +57,9 @@ lookup(const json_t *requests)
     json_t *cib_lookup_result; //TODO RENAME
     size_t i, j, k;
 
+    json_t* requests = process_special_properties(json_deep_copy(reqs));
+    printf("\nspecial prop:\n%s\n\n", json_dumps(requests, 0));
+    
     json_array_foreach(requests, i, request) {
 
         /* Profile lookup */
@@ -102,7 +106,7 @@ handle_request(uv_stream_t *client)
     //printf("buffer = %s\n", client_req->buffer);
 
     request_json = json_loads(client_req->buffer, 0, &json_error);
-
+    printf("\nPM request: \n%s\n", json_dumps(request_json, 0));
     if (!request_json) {
         fprintf(stderr, "error: on line %d: %s\n", json_error.line, json_error.text);
         return;

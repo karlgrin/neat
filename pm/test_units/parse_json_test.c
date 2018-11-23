@@ -85,3 +85,15 @@ void test_limit_json_array()
 
     json_decref(to_limit);
 }
+
+void test_process_special_properties()
+{
+    json_t *json = load_json_file(TEST_FILE_PATH_SP);
+    json_t* result = process_special_properties(json);
+    json_t *json_correct = load_json_file(TEST_FILE_PATH_SP_RESULT);
+
+    
+    TEST_ASSERT_NOT_EQUAL(0, json_equal(json_correct, result));
+
+    json_decref(json_correct); json_decref(json); json_decref(result);
+}
