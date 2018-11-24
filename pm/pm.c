@@ -44,6 +44,27 @@ make_pm_socket_path()
     return strncat(path, PM_SOCK_NAME, PATH_MAX - strlen(path));
 }
 
+bool
+pre_resolve(const json_t *requests)
+{
+    bool pre_resolve = false;
+    json_t *request;
+    size_t i;
+
+    json_array_foreach(requests, i, request) {
+        json_t *req_type = json_object_get(request, "__request_type");
+        if (req_type) {
+            const char *req_type_val = json_string_value(json_object_get(req_type, "value"));
+            if (!strcmp(req_type_val, "pre-resolve")) {
+                json_object_del(request, "__request_type");
+                pre_resolve = true;
+            }
+        }
+
+    }
+    return pre_resolve;
+}
+
 json_t *
 lookup(const json_t *reqs)
 {
@@ -59,7 +80,12 @@ lookup(const json_t *reqs)
 
     json_t* requests = process_special_properties(json_deep_copy(reqs));
     printf("\nspecial prop:\n%s\n\n", json_dumps(requests, 0));
-    
+
+    if (pre_resolve(requests)) {
+        printf("__request_type is pre-resolve, skipping lookup...\n");
+        return requests;
+    }
+
     json_array_foreach(requests, i, request) {
 
         /* Profile lookup */
