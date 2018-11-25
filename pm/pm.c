@@ -20,6 +20,8 @@
 
 #define NUM_CANDIDATES 10
 
+#define ARRAY_SIZE(array) (sizeof((array))/sizeof((array)[0]))
+
 uv_loop_t *loop;
 const char *pm_socket_path;
 
@@ -65,6 +67,41 @@ pre_resolve(const json_t *requests)
     return pre_resolve;
 }
 
+/* Adds the default values for `score' (0) and `evaluated' (False) to each property in each request.
+   Should be executed before the logic of the main lookup routine. */
+void
+add_default_values(json_t *request)
+{
+    json_t *value, *attr;
+    const char *key;
+    size_t n;
+    int i;
+
+    /* json values for default props */
+    char *default_props[] = { "score", "evaluated"};
+    char *default_types[] = { "i", "b" };
+    int  default_values[] = { 0, 0 };
+
+    json_object_foreach(request, key, value) {
+        for (i = 0; i < ARRAY_SIZE(default_props); i++) {
+
+            /* handle array of values */
+            if (json_is_array(value)) {
+                json_array_foreach(value, n, attr) {
+                    json_t *tmp_prop = json_pack("{sO}", key, attr);
+                    add_default_values(tmp_prop);
+                    json_decref(tmp_prop); // RISKY seems that attr is not dereferenced?
+                }
+                break;
+            }
+            /* add default property if not found */
+            if (json_object_get(request, default_props[i]) == NULL) {
+                json_object_set(value, default_props[i], json_pack(default_types[i], default_values[i]));
+            }
+        }
+    }
+}
+
 json_t *
 lookup(const json_t *reqs)
 {
@@ -78,8 +115,13 @@ lookup(const json_t *reqs)
     json_t *cib_lookup_result; //TODO RENAME
     size_t i, j, k;
 
+
     json_t* requests = process_special_properties(json_deep_copy(reqs));
     printf("\nspecial prop:\n%s\n\n", json_dumps(requests, 0));
+
+    json_array_foreach(requests, i, request) {
+        add_default_values(request);
+    }
 
     if (pre_resolve(requests)) {
         printf("__request_type is pre-resolve, skipping lookup...\n");
