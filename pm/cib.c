@@ -17,6 +17,24 @@
 int CIB_DEFAULT_TIMEOUT = 10*60;
 node_t* cib_nodes = NULL;
 
+void
+get_cib_list_aux(json_t *cib_array, node_t *head)
+{
+    if(head != NULL) {
+        json_array_append(cib_array, json_object_get(head->json, "uid"));
+        get_cib_list_aux(cib_array, head->next);
+    }
+}
+
+json_t *
+get_cib_list()
+{
+    json_t *cib_array = json_array();
+    get_cib_list_aux(cib_array, cib_nodes);
+    printf("\n%s\n", json_dumps(cib_array, 2));
+    return cib_array;
+}
+
 json_t *
 get_cibnode_by_uid(const char *uid)
 {
@@ -26,6 +44,12 @@ get_cibnode_by_uid(const char *uid)
         return cib->json;
     }
     return NULL;
+}
+
+void
+add_cib_node(node_t *node)
+{
+    add_node(cib_nodes, node);
 }
 
 void

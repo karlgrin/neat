@@ -322,7 +322,7 @@ merge_properties(json_t *prop_a, json_t *prop_b, int should_overwrite)
 node_t *
 get_node_by_uid (node_t *head, const char *uid)
 {
-    char *current_uid;
+    const char *current_uid;
 
     node_t *current = head;
     while(current != NULL) {

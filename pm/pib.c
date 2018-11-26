@@ -12,14 +12,34 @@
 node_t *pib_profiles = NULL;
 node_t *pib_policies = NULL;
 
+void
+get_pib_list_aux (json_t *pib_array, node_t *head)
+{
+    if(head != NULL) {
+        json_array_append(pib_array, json_object_get(head->json, "uid"));
+        get_pib_list_aux(pib_array, head->next);
+    }
+}
+
 json_t *
-get_pibnode_by_uid (const char *uid)
+get_pib_list ()
+{
+    json_t *pib_array = json_array();
+    get_pib_list_aux(pib_array, pib_policies);
+    printf("\n%s\n", json_dumps(pib_array, 2));
+    return pib_array;
+}
+
+void
+add_pib_node(node_t *node)
+{
+    add_node(pib_policies, node);
+}
+
+json_t *
+get_pibnode_by_uid(const char *uid)
 {
     node_t *pib;
-    pib = get_node_by_uid(pib_profiles, uid);
-    if (pib) {
-        return pib->json;
-    }
     pib = get_node_by_uid(pib_policies, uid);
     if (pib) {
         return pib->json;

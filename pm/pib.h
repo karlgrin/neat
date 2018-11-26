@@ -6,6 +6,8 @@
 extern node_t *pib_policies;
 extern node_t *pib_profiles;
 
+void add_pib_node(node_t *node);
+json_t *get_pib_list();
 json_t *profile_lookup(json_t *);
 json_t *policy_lookup(json_t *);
 void pib_start();
