@@ -1,4 +1,5 @@
 #include <jansson.h>
+#include <string.h>
 
 #include "parse_json.h"
 #include "pmhelper.h"
@@ -20,6 +21,7 @@ append_value(json_t *json, json_t *new_value)
         write_log(__FILE__, __func__, "Failed to parse: \n%s", json_dumps(new_value, JSON_INDENT(3)));
     }
 }
+
 
 
 //json array in och returnerar en json array
@@ -137,10 +139,110 @@ limit_json_array(json_t *array, const unsigned int limit)
     size_t arr_size = json_array_size(array);
     size_t i;
 
+    if(arr_size == 0) { return array; }
+    
     for (i = arr_size - 1; i >= limit; i--) {
         if (json_array_remove(array, i) == -1) {
             fprintf(stderr, "Error: cannot remove array element\n");
         }
     }
     return array;
+}
+
+json_t* 
+parse_local_endpoint(json_t* local_endpoint, json_t* element)
+{   
+    char *le_value = strdup(json_string_value(json_object_get(local_endpoint, "value")));
+
+    if(strchr(le_value, '@')) {
+        char * ip_value = strtok(le_value, "@");
+        char * interface_value = strtok(NULL, "@");
+            
+        json_t *local_ip = json_deep_copy(local_endpoint);
+        json_object_set(local_ip, "value", json_string(ip_value));
+        
+        json_t *interface = json_deep_copy(local_endpoint);
+        json_object_set(interface, "value", json_string(interface_value));
+
+        json_object_set(element, "interface", interface);
+        json_object_set(element, "local_ip", local_ip);
+        json_object_del(element, "local_endpoint");
+   }    
+   return element;
+}
+
+json_t* 
+parse_local_endpoint_array(json_t* local_endpoint, json_t* element)
+{   
+    size_t index, index2;
+    json_t *value, *value2;
+    json_t * my_return = json_array();
+
+    json_t * le = json_deep_copy(local_endpoint);
+    json_object_del(element, "local_endpoint");
+
+    //create a new element for every interface/local_ip
+    json_array_foreach(le, index, value) {
+        json_object_set(element, "local_endpoint", value);
+        json_t * temp = json_deep_copy(element);     
+        json_array_append(my_return, temp);              
+    } 
+
+    //parse the requests, local_endpoint is no longer a arrays
+    json_array_foreach(my_return, index2, value2) {
+        json_t *le_temp = json_object_get(value2, "local_endpoint");
+        if(le_temp) {
+            value2 = parse_local_endpoint(le_temp, value2);
+        }
+    }
+
+    return my_return;
+}
+
+json_t* 
+create_json_array(json_t* json) {   
+    if(json_is_array(json)) { return json; }
+    
+    json_t *root;
+    root = json_array();
+    json_array_append(root, json);
+    return root;
+}
+
+void
+append_json_arrays(json_t* root_array, json_t* array)
+{
+    size_t index;
+    json_t *value;
+
+    json_t * new_array = create_json_array(array);
+
+    json_array_foreach(new_array, index, value) { 
+        json_array_append(root_array, value);
+    }
+}
+
+json_t* 
+process_special_properties(json_t* req) 
+{
+    size_t index;
+    json_t *value;
+    json_t *root = create_json_array(req);
+    json_t *my_return = json_array();
+
+    json_array_foreach(root, index, value) {
+        json_t * local_endpoint = json_object_get(value, "local_endpoint");
+        if(local_endpoint) {
+            if(json_is_array(local_endpoint)) {
+                append_json_arrays(my_return, parse_local_endpoint_array(local_endpoint, value));  
+            }             
+            else {
+                append_json_arrays(my_return, parse_local_endpoint(local_endpoint, value)); 
+            }       
+        }
+        else {
+            json_array_append(my_return, value);
+        }
+    }    
+    return my_return;
 }

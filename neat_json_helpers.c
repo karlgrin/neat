@@ -163,6 +163,25 @@ skip:
     *stack_count = count;
 }
 
+
+json_t* 
+get_property_array(json_t *json, const char *key, json_type expected_type)
+{
+   size_t i;
+   json_t *value;
+   json_t *obj;
+	
+   json_array_foreach(json, i, value) {
+       if(json_is_object(value)) {	
+         obj = json_object_get(value, key);
+         if (json_typeof(obj) == expected_type) {      
+            return value;
+         }
+      }
+   }
+   return json;
+}
+
 json_t*
 get_property(json_t *json, const char *key, json_type expected_type)
 {
@@ -171,6 +190,10 @@ get_property(json_t *json, const char *key, json_type expected_type)
     if (!obj) {
         nt_log(NULL, NEAT_LOG_DEBUG, "Unable to find property with key \"%s\"", key);
         return NULL;
+    }
+
+    if(json_is_array(obj)) {	
+	    obj = get_property_array(obj, "value", expected_type);
     }
 
     obj = json_object_get(obj, "value");
