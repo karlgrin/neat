@@ -7,8 +7,10 @@
 #include <sys/stat.h>
 #include <uv.h>
 #include <jansson.h>
+#include <pthread.h>
 
 #include "pib.h"
+#include "rest.h"
 #include "cib.h"
 #include "pmhelper.h"
 #include "parse_json.h"
@@ -22,6 +24,7 @@
 
 uv_loop_t *loop;
 const char *pm_socket_path;
+pthread_t thread_id_rest;
 
 typedef struct client_req {
     char *buffer;
@@ -196,13 +199,14 @@ pm_close(int sig)
 
 
 int
-pm_start(int argc, char **argv)
+main(int argc, char **argv)
 {
     printf("--Start PM--\n\n");
     generate_cib_from_ifaces();
     cib_start();
     pib_start();
 
+    pthread_create(&thread_id_rest, NULL, rest_start, NULL);  //start policy manager
     //print_nodes(pib_profiles);
 
     uv_pipe_t pm_server;
