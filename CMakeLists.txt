@@ -80,11 +80,12 @@ LIST(APPEND neat_sources
 )
 
 LIST(APPEND neat_sources
-    pm/pmhelper.c 
-    pm/parse_json.c 
+    pm/pmhelper.c
+    pm/parse_json.c
     pm/node.c
-    pm/pib.c 
-    pm/cib.c 
+    pm/pib.c
+    pm/cib.c
+    pm/rest.c
     pm/pm.c
 )
 
@@ -305,6 +306,14 @@ ELSE()
     MESSAGE(STATUS "jansson found: " ${JANSSON_LIB})
 ENDIF()
 
+CHECK_INCLUDE_FILE(ulfius.h HAVE_ULFIUS_H)
+FIND_LIBRARY(ULFIUS_LIB ulfius)
+IF (NOT HAVE_ULFIUS_H OR NOT ULFIUS_LIB)
+    MESSAGE(FATAL_ERROR "ulfius.h not found - ulfius installed?")
+ELSE()
+    MESSAGE(STATUS "ulfius found: " ${ULFIUS_LIB})
+ENDIF()
+
 IF (WEBRTC_SUPPORT)
     SET(CMAKE_REQUIRED_INCLUDES ${CMAKE_REQUIRED_INCLUDES} ${RAWRTC_PREFIX}/include)
     SET(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} ${RAWRTC_PREFIX}/lib)
@@ -468,6 +477,7 @@ LIST(APPEND neat_libs
     ${UV_LIB}
     ${LDNS_LIB}
     ${JANSSON_LIB}
+    ${ULFIUS_LIB}
     )
 
 IF (OPENSSL_SUPPORT)

@@ -78,7 +78,7 @@ add_default_values(json_t *request)
     json_t *value, *attr;
     const char *key;
     size_t n;
-    int i;
+    uint i;
 
     /* json values for default props */
     char *default_props[] = { "score", "evaluated"};
@@ -270,7 +270,7 @@ pm_close(int sig)
 
 
 int
-main(int argc, char **argv)
+pm_start(int argc, char **argv)
 {
     printf("\n\n--Start PM--\n\n");
     generate_cib_from_ifaces();
