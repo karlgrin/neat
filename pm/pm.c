@@ -115,7 +115,6 @@ lookup(const json_t *reqs)
     json_t *cib_lookup_result; //TODO RENAME
     size_t i, j, k;
 
-
     json_t* requests = process_special_properties(json_deep_copy(reqs));
     printf("\nspecial prop:\n%s\n\n", json_dumps(requests, 0));
 
@@ -183,7 +182,8 @@ handle_request(uv_stream_t *client)
     json_t *candidates = lookup(request_json);
 
     response_buf.base = json_dumps(candidates, 0);
-    response_buf.len = strlen(response_buf.base);
+    response_buf.base[strlen(response_buf.base)] = '\n';
+    response_buf.len = strlen(response_buf.base + 1);
 
     write_req = malloc(sizeof(uv_write_t));
     uv_write(write_req, client, &response_buf, 1, NULL);
@@ -267,7 +267,7 @@ pm_close(int sig)
 
 
 int
-pm_start(int argc, char **argv)
+main(int argc, char **argv)
 {
     printf("\n\n--Start PM--\n\n");
     generate_cib_from_ifaces();

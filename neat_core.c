@@ -117,8 +117,8 @@ const char *neat_tag_name[NEAT_TAG_LAST] = {
     TAG_STRING(NEAT_TAG_CHANNEL_NAME)
 };
 
-pthread_t thread_id_pm; 
-bool pm_enabled = true;
+pthread_t thread_id_pm;
+bool pm_enabled = false;
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
 
@@ -126,9 +126,9 @@ bool pm_enabled = true;
 struct neat_ctx *
 neat_init_ctx()
 {
-    if(pm_enabled) {
-        pthread_create(&thread_id_pm, NULL, pm_start, NULL);  //start policy manager
-    }
+    /* if(pm_enabled) { */
+    /*     pthread_create(&thread_id_pm, NULL, pm_start, NULL);  //start policy manager */
+    /* } */
 
     struct neat_ctx *nc;
     struct neat_ctx *ctx = NULL;
@@ -3819,7 +3819,7 @@ on_pm_reply_pre_resolve(struct neat_ctx *ctx, struct neat_flow *flow, json_t *js
         rc = NEAT_ERROR_OUT_OF_MEMORY;
         goto error;
     }
-   
+
     TAILQ_INIT(candidate_list);
 
     printf("\nJson:\n %s\n", json_dumps(json, 0));
@@ -3835,13 +3835,13 @@ on_pm_reply_pre_resolve(struct neat_ctx *ctx, struct neat_flow *flow, json_t *js
 
         if ((address = json_string_value(get_property(value, "domain_name", JSON_STRING))) == NULL)
              goto loop_error;
-        
+
         if ((interface = json_string_value(get_property(value, "interface", JSON_STRING))) == NULL)
             goto loop_error;
-      
+
         if ((local_ip = json_string_value(get_property(value, "local_ip", JSON_STRING))) == NULL)
             goto loop_error;
-     
+
         if ((candidate->pollable_socket->dst_address = strdup(address)) == NULL)
             goto loop_oom;
 
