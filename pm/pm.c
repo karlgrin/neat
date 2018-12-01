@@ -75,7 +75,7 @@ add_default_values(json_t *request)
     json_t *value, *attr;
     const char *key;
     size_t n;
-    int i;
+    uint i;
 
     /* json values for default props */
     char *default_props[] = { "score", "evaluated"};
