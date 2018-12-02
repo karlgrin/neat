@@ -103,7 +103,7 @@ add_default_values(json_t *request)
 }
 
 json_t *
-lookup(const json_t *reqs)
+lookup(json_t *reqs)
 {
 
     json_t *updated_requests;
@@ -115,7 +115,10 @@ lookup(const json_t *reqs)
     json_t *cib_lookup_result; //TODO RENAME
     size_t i, j, k;
 
-    json_t* requests = process_special_properties(json_deep_copy(reqs));
+    json_t* req_expand = expand_properties(reqs);
+    printf("\nexpand prop:\n%s\n\n", json_dumps(req_expand, 0));
+    
+    json_t* requests = process_special_properties(json_deep_copy(req_expand));
     printf("\nspecial prop:\n%s\n\n", json_dumps(requests, 0));
 
     json_array_foreach(requests, i, request) {
@@ -267,9 +270,10 @@ pm_close(int sig)
 
 
 int
-main(int argc, char **argv)
+pm_start(void *vargp)
 {
     printf("\n\n--Start PM--\n\n");
+
     generate_cib_from_ifaces();
     cib_start();
     pib_start();

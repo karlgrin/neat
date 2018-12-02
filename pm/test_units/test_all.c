@@ -40,6 +40,7 @@ int main(void)
     RUN_TEST(test_sort_json_array);
     RUN_TEST(test_limit_json_array);
     RUN_TEST(test_process_special_properties);
+    RUN_TEST(test_expand_properties);
 
     return UNITY_END();
 }

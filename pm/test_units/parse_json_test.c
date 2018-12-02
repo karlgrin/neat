@@ -5,19 +5,17 @@
 #include "../parse_json.h"
 #include "../pmhelper.h"
 
-char *expand_result = "[[{\"interface\": \"enp0s3\", \"local_interface\": true}, {\"ip_version\": 4, \"local_ip\": \"10.0.2.15\"}, {\"test1\": 4, \"local_ip\": \"10.0.2.15\"}], [{\"interface\": \"enp0s3\", \"local_interface\": true}, {\"ip_version\": 6, \"local_ip\": \"fe80::9096:12f:5a38:d228%enp0s3\"}, {\"test1\": 4, \"local_ip\": \"10.0.2.15\"}], [{\"interface\": \"enp0s3\", \"local_interface\": true}, {\"ip_version\": 4, \"local_ip\": \"10.0.2.15\"}, {\"test2\": 6, \"local_ip\": \"fe80::9096:12f:5a38:d228%enp0s3\"}], [{\"interface\": \"enp0s3\", \"local_interface\": true}, {\"ip_version\": 6, \"local_ip\": \"fe80::9096:12f:5a38:d228%enp0s3\"}, {\"test2\": 6, \"local_ip\": \"fe80::9096:12f:5a38:d228%enp0s3\"}]]";
 
 void test_expand_json_array(void)
 {
-    json_t *json = load_json_file(TEST_FILE_PATH_CIB);
-
+    json_t *json = load_json_file(TEST_FILE_PATH_EXPAND_JSON_ARRAY);
     json_t *properties = json_object_get(json, "properties");
+    json_t *json_correct = load_json_file(TEST_FILE_PATH_SP_RESULT);
 
     if(json_is_array(properties)) {
-        json_t *ex = expand_json_arrays(properties);
-        char *s = json_dumps(ex, 0);
-        TEST_ASSERT_EQUAL_STRING(expand_result, s);
-        json_decref(json); json_decref(ex); free(s);
+        json_t* result = expand_json_arrays(properties);
+        TEST_ASSERT_NOT_EQUAL(0, json_equal(json_correct, result));
+        json_decref(json); json_decref(result);
     } else {
         TEST_FAIL();
     }
@@ -25,7 +23,7 @@ void test_expand_json_array(void)
 
 void test_expand_json(void)
 {
-    json_t *json = load_json_file(TEST_FILE_PATH);
+    json_t *json = load_json_file(TEST_FILE_PATH_EXPAND_JSON);
     json_t *ex = expand_json(json_object_get(json, "properties"));
 
     if(json_is_array(ex)) {
@@ -92,7 +90,17 @@ void test_process_special_properties()
     json_t* result = process_special_properties(json);
     json_t *json_correct = load_json_file(TEST_FILE_PATH_SP_RESULT);
 
-    
+    TEST_ASSERT_NOT_EQUAL(0, json_equal(json_correct, result));
+
+    json_decref(json_correct); json_decref(json); json_decref(result);
+}
+
+void test_expand_properties()
+{
+    json_t *json = load_json_file(TEST_FILE_PATH_EXPAND);
+    json_t* result = expand_properties(json);
+    json_t *json_correct = load_json_file(TEST_FILE_PATH_EXPAND_RESULT);
+
     TEST_ASSERT_NOT_EQUAL(0, json_equal(json_correct, result));
 
     json_decref(json_correct); json_decref(json); json_decref(result);

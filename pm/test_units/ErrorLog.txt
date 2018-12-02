@@ -63,3 +63,48 @@ Module: ../pmhelper.c
 Function: load_json_file
 Description:Error: failed to read json file: json_files/test2.cib
 
+Time: 2018-12-02 08:52:35.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/expand_json_array.json
+
+Time: 2018-12-02 08:56:54.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/expand_json_array.json
+
+Time: 2018-12-02 09:01:36.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/expand_json_array.json
+
+Time: 2018-12-02 09:03:18.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/expand_json_array.json
+
+Time: 2018-12-02 09:06:24.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/expand_json_array.json
+
+Time: 2018-12-02 09:06:51.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/expand_json_array.json
+
+Time: 2018-12-02 09:07:02.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/expand_json_array.json
+
+Time: 2018-12-02 09:08:05.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/expand_json_array.json
+
+Time: 2018-12-02 09:10:30.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/expand_json_array.json
+

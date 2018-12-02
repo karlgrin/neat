@@ -118,7 +118,8 @@ const char *neat_tag_name[NEAT_TAG_LAST] = {
 };
 
 pthread_t thread_id_pm;
-bool pm_enabled = false;
+bool pm_enabled = true;
+bool pm_active = false;
 
 #define MIN(a,b) (((a)<(b))?(a):(b))
 
@@ -126,9 +127,10 @@ bool pm_enabled = false;
 struct neat_ctx *
 neat_init_ctx()
 {
-    /* if(pm_enabled) { */
-    /*     pthread_create(&thread_id_pm, NULL, pm_start, NULL);  //start policy manager */
-    /* } */
+    if(pm_enabled && !pm_active) { 
+        pm_active = true;
+        pthread_create(&thread_id_pm, NULL, pm_start, NULL);  //start policy manager */
+    } 
 
     struct neat_ctx *nc;
     struct neat_ctx *ctx = NULL;
@@ -299,9 +301,10 @@ neat_free_ctx(struct neat_ctx *nc)
     struct neat_flow *flow, *prev_flow = NULL;
     nt_log(nc, NEAT_LOG_DEBUG, "%s", __func__);
 
-    if(pm_enabled) {
+    if(pm_enabled && pm_active) {
         pm_close(0);
         pthread_cancel(thread_id_pm);
+        pm_active = false;
     }
 
     if (!nc) {
@@ -4210,6 +4213,7 @@ neat_open(neat_ctx *ctx, neat_flow *flow, const char *name, uint16_t port,
         assert(false);
 #endif
     } else {
+        printf("Sending to PM..");
         send_properties_to_pm(ctx, flow);
     }
 #else

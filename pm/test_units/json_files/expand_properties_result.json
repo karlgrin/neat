@@ -1,0 +1,42 @@
+[
+  {
+    "port": {
+      "value": 80,
+      "precedence": 2
+    },
+    "domain_name": {
+      "value": "www.neat-project.org",
+      "precedence": 2
+    }
+  },
+  {
+    "port": {
+      "value": 80,
+      "precedence": 2
+    },
+    "domain_name": {
+      "value": "www.test.org",
+      "precedence": 3
+    }
+  },
+  {
+    "port": {
+      "value": 20,
+      "precedence": 3
+    },
+    "domain_name": {
+      "value": "www.neat-project.org",
+      "precedence": 2
+    }
+  },
+  {
+    "port": {
+      "value": 20,
+      "precedence": 3
+    },
+    "domain_name": {
+      "value": "www.test.org",
+      "precedence": 3
+    }
+  }
+]
