@@ -2,13 +2,10 @@
 #define NEAT_MULTI_PREFIX_H
 
 #include "neat_queue.h"
-#include <stdbool.h>
 
 #define RETVAL_SUCCESS  0
 #define RETVAL_FAILURE  1
 #define RETVAL_IGNORE   2
-
-extern bool pm_enabled;
 
 // Error cause code constants from sctp.h / FreeBSD
 // The actual codepoints are defined by RFC4960 sect. 3.3.10

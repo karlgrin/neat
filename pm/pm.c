@@ -116,10 +116,10 @@ lookup(json_t *reqs)
     size_t i, j, k;
 
     json_t* req_expand = expand_properties(reqs);
-    printf("\nexpand prop:\n%s\n\n", json_dumps(req_expand, 0));
+    //printf("\nexpand prop:\n%s\n\n", json_dumps(req_expand, 0));
     
     json_t* requests = process_special_properties(json_deep_copy(req_expand));
-    printf("\nspecial prop:\n%s\n\n", json_dumps(requests, 0));
+    //printf("\nspecial prop:\n%s\n\n", json_dumps(requests, 0));
 
     json_array_foreach(requests, i, request) {
         add_default_values(request);
@@ -270,7 +270,7 @@ pm_close(int sig)
 
 
 int
-pm_start(void *vargp)
+main(int argc, char *argv[])
 {
     printf("\n\n--Start PM--\n\n");
 
