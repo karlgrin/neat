@@ -1,58 +1,38 @@
 [  
-    [  
-       {  
-          "interface":"enp0s3",
-          "local_interface":true
+    {  
+       "interface":{  
+          "precedence":2,
+          "value":"enp0s3"
        },
-       {  
-          "ip_version":4,
-          "local_ip":"10.0.2.15"
+       "local_interface":{  
+          "precedence":2,
+          "value":true
        },
-       {  
-          "test1":4,
-          "local_ip":"10.0.2.15"
+       "ip_version":{  
+          "precedence":2,
+          "value":4
+       },
+       "local_ip":{  
+          "precedence":2,
+          "value":"10.0.2.15"
        }
-    ],
-    [  
-       {  
-          "interface":"enp0s3",
-          "local_interface":true
+    },
+    {  
+       "interface":{  
+          "precedence":2,
+          "value":"enp0s3"
        },
-       {  
-          "ip_version":6,
-          "local_ip":"fe80::9096:12f:5a38:d228%enp0s3"
+       "local_interface":{  
+          "precedence":2,
+          "value":true
        },
-       {  
-          "test1":4,
-          "local_ip":"10.0.2.15"
+       "ip_version":{  
+          "precedence":2,
+          "value":6
+       },
+       "local_ip":{  
+          "precedence":2,
+          "value":"fe80::9096:12f:5a38:d228%enp0s3"
        }
-    ],
-    [  
-       {  
-          "interface":"enp0s3",
-          "local_interface":true
-       },
-       {  
-          "ip_version":4,
-          "local_ip":"10.0.2.15"
-       },
-       {  
-          "test2":6,
-          "local_ip":"fe80::9096:12f:5a38:d228%enp0s3"
-       }
-    ],
-    [  
-       {  
-          "interface":"enp0s3",
-          "local_interface":true
-       },
-       {  
-          "ip_version":6,
-          "local_ip":"fe80::9096:12f:5a38:d228%enp0s3"
-       },
-       {  
-          "test2":6,
-          "local_ip":"fe80::9096:12f:5a38:d228%enp0s3"
-       }
-    ]
+    }
  ]

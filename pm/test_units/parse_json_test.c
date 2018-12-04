@@ -10,7 +10,7 @@ void test_expand_json_array(void)
 {
     json_t *json = load_json_file(TEST_FILE_PATH_EXPAND_JSON_ARRAY);
     json_t *properties = json_object_get(json, "properties");
-    json_t *json_correct = load_json_file(TEST_FILE_PATH_SP_RESULT);
+    json_t *json_correct = load_json_file(TEST_FILE_PATH_EXPAND_JSON_ARRAY_RESULT);
 
     if(json_is_array(properties)) {
         json_t* result = expand_json_arrays(properties);
