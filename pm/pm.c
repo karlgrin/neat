@@ -129,7 +129,8 @@ lookup(json_t *reqs)
         printf("__request_type is pre-resolve, skipping lookup...\n");
         return requests;
     }
-
+    requests = expand_values(json_deep_copy(requests));
+    
     json_array_foreach(requests, i, request) {
 
         /* Profile lookup */

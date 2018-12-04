@@ -1,0 +1,42 @@
+[
+    {
+      "transport": {
+        "value": "TCP",
+        "precedence": 1
+      },
+      "port": {
+        "value": 80,
+        "precedence": 2
+      }
+    },
+    {
+        "transport": {
+            "value": "SCTP",
+            "precedence": 1
+        },
+        "port": {
+            "value": 80,
+            "precedence": 2
+        }
+      },
+    {
+        "port": {
+            "value": 70,
+            "precedence": 2
+        },
+        "transport": {
+            "value": "TCP",
+            "precedence": 1
+        }
+    },
+    {
+        "port": {
+            "value": 70,
+            "precedence": 2
+        },
+        "transport": {
+            "value":"SCTP",
+            "precedence": 1
+        }
+    }
+]

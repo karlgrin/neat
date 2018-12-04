@@ -7,5 +7,6 @@ void test_sort_json_array();
 void test_limit_json_array();
 void test_process_special_properties();
 void test_expand_properties();
+void test_expand_value();
 
 #endif

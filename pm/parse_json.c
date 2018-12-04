@@ -228,14 +228,14 @@ expand_property(json_t* element, json_t* property_input, const char* key)
     json_array_foreach(property, index1, value) {
         json_t* temp = json_deep_copy(element);
         json_object_set(temp, key, value);
-        append_json_arrays(my_return, expand_element(temp));    //loop call
+        append_json_arrays(my_return, expand_element_property(temp));    //loop call
     }
 
     return my_return;
 }
 
 json_t*
-expand_element(json_t* element) 
+expand_element_property(json_t* element) 
 {
     const char *key;
     json_t *property;
@@ -265,7 +265,70 @@ expand_properties(json_t* req)
 
     json_array_foreach(root, index, element) {
         if(json_is_object(element)) {
-            append_json_arrays(my_return, expand_element(element));
+            append_json_arrays(my_return, expand_element_property(element));
+       }
+       else {
+           printf("PM: Wrong format on json, cant parse it!");
+       }
+    }    
+    return my_return;
+}
+
+json_t*
+expand_value(json_t* element, json_t* property, json_t* value_input, const char* key) 
+{
+    size_t index1;
+    json_t* v;
+    json_t* my_return = json_array();
+    json_t* value = json_deep_copy(value_input);
+
+    //create a new element for every element in the value
+    json_array_foreach(value, index1, v) {
+        json_t* temp_ele = json_deep_copy(element);
+        json_t* temp_prop = json_object_get(temp_ele, key);
+        json_object_set(temp_prop, "value", v);
+        json_object_set(temp_ele, key, temp_prop);
+        append_json_arrays(my_return, temp_ele);    //loop call
+    }
+
+    return my_return;
+}
+
+json_t*
+expand_element_value(json_t* element) 
+{
+    const char *key;
+    json_t *property;
+    json_t *my_return = json_array();
+
+    json_object_foreach(element, key, property) {
+        if(json_is_object(property)) {
+            json_t* value = json_object_get(property, "value");
+            if(value != 0 && json_is_array(value)) {
+                append_json_arrays(my_return, expand_value(element, property, value, key));
+                break;   //break here due to loop call in expand_value
+            }
+        }
+    }
+
+    if(json_array_size(my_return) == 0) {
+        json_array_append(my_return, element);
+    }
+    return my_return;
+}
+
+
+json_t* 
+expand_values(json_t* req) 
+{
+    size_t index;
+    json_t *element;
+    json_t *root = create_json_array(req);
+    json_t *my_return = json_array();
+
+    json_array_foreach(root, index, element) {
+        if(json_is_object(element)) {
+            append_json_arrays(my_return, expand_element_value(element));
        }
        else {
            printf("PM: Wrong format on json, cant parse it!");

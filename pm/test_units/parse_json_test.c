@@ -105,3 +105,15 @@ void test_expand_properties()
 
     json_decref(json_correct); json_decref(json); json_decref(result);
 }
+
+
+void test_expand_value(void)
+{
+    json_t *json = load_json_file(TEST_FILE_PATH_EXPAND_VALUE);
+    json_t *json_correct = load_json_file(TEST_FILE_PATH_EXPAND_VALUE_RESULT);
+    json_t* result = expand_values(json);
+
+    TEST_ASSERT_NOT_EQUAL(0, json_equal(json_correct, result));
+
+    json_decref(json); json_decref(result); json_decref(json_correct);
+}

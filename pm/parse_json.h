@@ -16,7 +16,11 @@ json_t* create_json_array(json_t* json);
 void append_json_arrays(json_t* root_array, json_t* array);
 
 json_t* expand_property(json_t* element, json_t* property_input, const char* key);
-json_t* expand_element(json_t* element);
+json_t* expand_element_property(json_t* element);
 json_t* expand_properties(json_t* req);
+
+json_t* expand_value(json_t* element, json_t* property, json_t* value_input, const char* key);
+json_t* expand_element_value(json_t* element);
+json_t* expand_values(json_t* req);
 
 #endif
