@@ -4,7 +4,9 @@
 extern char* TEST_FILE_PATH_NODE;
 
 extern char* TEST_FILE_PATH_EXPAND_JSON;
+
 extern char* TEST_FILE_PATH_EXPAND_JSON_ARRAY;
+extern char* TEST_FILE_PATH_EXPAND_JSON_ARRAY_RESULT;
 
 extern char* TEST_FILE_PATH_SP;
 extern char* TEST_FILE_PATH_SP_RESULT;
