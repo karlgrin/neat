@@ -23,7 +23,6 @@
 #include <uv.h>
 #include <errno.h>
 #include <ifaddrs.h>
- #include <pthread.h>
 
 #ifdef __linux__
 #include <net/if.h>
@@ -43,7 +42,6 @@
 #include "neat_json_helpers.h"
 #include "neat_unix_json_socket.h"
 #include "neat_pm_socket.h"
-#include "pm/pm.h"
 
 #if defined(USRSCTP_SUPPORT)
 #include "neat_usrsctp_internal.h"
@@ -117,19 +115,13 @@ const char *neat_tag_name[NEAT_TAG_LAST] = {
     TAG_STRING(NEAT_TAG_CHANNEL_NAME)
 };
 
-pthread_t thread_id_pm; 
-bool pm_enabled = true;
-
 #define MIN(a,b) (((a)<(b))?(a):(b))
 
-//Intiailize the OS-independent part of the context, and call the OS-dependent, init function
+//Intiailize the OS-independent part of the context, and call the OS-dependent
+//init function
 struct neat_ctx *
 neat_init_ctx()
 {
-    if(pm_enabled) {
-        pthread_create(&thread_id_pm, NULL, pm_start, NULL);  //start policy manager
-    }
-
     struct neat_ctx *nc;
     struct neat_ctx *ctx = NULL;
 
@@ -298,11 +290,6 @@ neat_free_ctx(struct neat_ctx *nc)
 {
     struct neat_flow *flow, *prev_flow = NULL;
     nt_log(nc, NEAT_LOG_DEBUG, "%s", __func__);
-
-    if(pm_enabled) {
-        pm_close(0);
-        pthread_cancel(thread_id_pm);
-    }
 
     if (!nc) {
         return;
@@ -3202,6 +3189,8 @@ on_pm_reply_post_resolve(neat_ctx *ctx, neat_flow *flow, json_t *json)
     struct neat_he_candidate *candidate = NULL;
     struct sockaddr *sa = NULL;
     struct sockaddr *da = NULL;
+      
+    printf("\nPost-Resolve-Json:\n %s\n\n", json_dumps(json,0));
 
     nt_log(ctx, NEAT_LOG_DEBUG, "%s", __func__);
 
@@ -3319,6 +3308,7 @@ on_candidates_resolved(neat_ctx *ctx, neat_flow *flow, struct neat_he_candidates
         socket_path = socket_path_buf;
     }
 
+    printf("\nPost-request-to-Pm:\n %s\n\n", json_dumps(array,0));
     nt_log(ctx, NEAT_LOG_DEBUG, "Sending post-resolve properties to PM");
     // buffer is freed by the PM interface
     nt_json_send_once(flow->ctx, flow, socket_path, array, on_pm_reply_post_resolve, on_pm_error);
@@ -3805,6 +3795,8 @@ on_pm_reply_pre_resolve(struct neat_ctx *ctx, struct neat_flow *flow, json_t *js
     json_t *value;
     struct neat_he_candidates *candidate_list;
 
+    printf("\nPre-Resolve-Json:\n %s\n\n", json_dumps(json,0));
+
     nt_log(ctx, NEAT_LOG_DEBUG, "%s", __func__);
 
 #if 0
@@ -3819,10 +3811,9 @@ on_pm_reply_pre_resolve(struct neat_ctx *ctx, struct neat_flow *flow, json_t *js
         rc = NEAT_ERROR_OUT_OF_MEMORY;
         goto error;
     }
-   
+
     TAILQ_INIT(candidate_list);
 
-    printf("\nJson:\n %s\n", json_dumps(json, 0));
     json_array_foreach(json, i, value) {
         const char *address = NULL, *interface = NULL, *local_ip  = NULL;
         struct neat_he_candidate *candidate = NULL;
@@ -3835,13 +3826,13 @@ on_pm_reply_pre_resolve(struct neat_ctx *ctx, struct neat_flow *flow, json_t *js
 
         if ((address = json_string_value(get_property(value, "domain_name", JSON_STRING))) == NULL)
              goto loop_error;
-        
+
         if ((interface = json_string_value(get_property(value, "interface", JSON_STRING))) == NULL)
             goto loop_error;
-      
+
         if ((local_ip = json_string_value(get_property(value, "local_ip", JSON_STRING))) == NULL)
             goto loop_error;
-     
+
         if ((candidate->pollable_socket->dst_address = strdup(address)) == NULL)
             goto loop_oom;
 
@@ -3854,7 +3845,7 @@ on_pm_reply_pre_resolve(struct neat_ctx *ctx, struct neat_flow *flow, json_t *js
         }
         if ((candidate->pollable_socket->src_address = strdup(local_ip)) == NULL)
             goto loop_oom;
-        printf("\nAddress: %s\n", address); //TT
+
         candidate->pollable_socket->port = flow->port;
         candidate->properties = value;
         json_incref(value);
@@ -3865,7 +3856,6 @@ on_pm_reply_pre_resolve(struct neat_ctx *ctx, struct neat_flow *flow, json_t *js
 loop_oom:
         rc = NEAT_ERROR_OUT_OF_MEMORY;
 loop_error:
-        printf("\nParse error of json\n");
         if (candidate->if_name)
             free(candidate->if_name);
         if (candidate->pollable_socket) {
@@ -4084,7 +4074,10 @@ send_properties_to_pm(neat_ctx *ctx, neat_flow *flow)
     }
     free (tmp);
     json_array_append(array, properties);
-    printf("\ncore_request: %s\n", json_dumps(array, 0));
+
+    printf("\nPre-request-to-Pm:\n %s\n\n", json_dumps(array,0));
+
+
     nt_json_send_once(ctx, flow, socket_path, array, on_pm_reply_pre_resolve, on_pm_error);
 
 end:

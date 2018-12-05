@@ -5,15 +5,15 @@
 
 void test_node_init(void)
 {
-    node_t *node = node_init(TEST_FILE_PATH);
+    node_t *node = node_init(TEST_FILE_PATH_NODE);
     TEST_ASSERT_NOT_NULL(node);
     free_node(node);
 }
 
 void test_update_node_content(void)
 {
-    json_t *json  = load_json_file(TEST_FILE_PATH);
-    node_t *node = node_init(TEST_FILE_PATH);
+    json_t *json  = load_json_file(TEST_FILE_PATH_NODE);
+    node_t *node = node_init(TEST_FILE_PATH_NODE);
     if(json != NULL) {
         update_node_content(node, json);
         TEST_ASSERT_EQUAL(json, node->json);
@@ -24,9 +24,9 @@ void test_update_node_content(void)
 
 void test_create_node(void)
 {
-    node_t *node = create_node(TEST_FILE_PATH);
+    node_t *node = create_node(TEST_FILE_PATH_NODE);
     if(node != NULL) {
-        TEST_ASSERT_EQUAL_STRING(TEST_FILE_PATH, node->filename);
+        TEST_ASSERT_EQUAL_STRING(TEST_FILE_PATH_NODE, node->filename);
         TEST_ASSERT_GREATER_THAN_INT(0, node->last_updated);
         TEST_ASSERT_NOT_NULL(node->json)
     }
@@ -186,7 +186,7 @@ void test_remove_node_2(void)
 void
 test_get_node_properties(void)
 {
-    node_t *node = create_node(TEST_FILE_PATH);
+    node_t *node = create_node(TEST_FILE_PATH_NODE);
     json_t* prop = json_object_get(node->json, "properties");
 
     node_t *node_null = NULL;
@@ -200,7 +200,7 @@ test_get_node_properties(void)
 void
 test_node_has_property(void)
 {
-    node_t *node = create_node(TEST_FILE_PATH);
+    node_t *node = create_node(TEST_FILE_PATH_NODE);
     json_t *RTT = node_has_property(node, "RTT");
     json_t *low_latency_interface = node_has_property(node, "low_latency_interface");
     json_t *is_wired_interface = node_has_property(node, "is_wired_interface");
@@ -216,7 +216,7 @@ test_node_has_property(void)
 void
 test_node_set_property(void)
 {
-    node_t *node = create_node(TEST_FILE_PATH);
+    node_t *node = create_node(TEST_FILE_PATH_NODE);
     json_t *RTT = node_has_property(node, "RTT");
     json_t* new_value = json_integer(2);
 
@@ -229,7 +229,7 @@ test_node_set_property(void)
 void 
 test_node_set_property_2(void) 
 {
-    node_t *node = create_node(TEST_FILE_PATH);
+    node_t *node = create_node(TEST_FILE_PATH_NODE);
 
     json_t* value_v = json_boolean(false);
     json_t* precedence_v = json_integer(2);

@@ -1,10 +1,20 @@
 #ifndef TEST_CONSTANTS
 #define TEST_CONSTANTS
 
-extern char* TEST_FILE_PATH;
-extern char* TEST_FILE_PATH_CIB;
+extern char* TEST_FILE_PATH_NODE;
+
+extern char* TEST_FILE_PATH_EXPAND_JSON;
+
+extern char* TEST_FILE_PATH_EXPAND_JSON_ARRAY;
+extern char* TEST_FILE_PATH_EXPAND_JSON_ARRAY_RESULT;
+
+extern char* TEST_FILE_PATH_EXPAND_VALUE;
+extern char* TEST_FILE_PATH_EXPAND_VALUE_RESULT;
+
 extern char* TEST_FILE_PATH_SP;
 extern char* TEST_FILE_PATH_SP_RESULT;
 
+extern char* TEST_FILE_PATH_EXPAND;
+extern char* TEST_FILE_PATH_EXPAND_RESULT;
 
 #endif

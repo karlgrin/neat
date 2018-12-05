@@ -187,15 +187,15 @@ def __convert_req(req):
 def process_request(reqs, num_candidates=10):
     """Process JSON requests from NEAT logic"""
     requests = []
-    
+
     # create initial set of candidates
     for r in reqs:
-        x = r.expand()
         requests.extend(r.expand())
 
     for r in requests:
         process_special_properties(r)
 
+    print('Received %d NEAT requests' % len(requests))
     for r in requests:
         logging.debug(str(r))
 

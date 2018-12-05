@@ -42,7 +42,7 @@ void test_file_exist(void)
 
 void test_load_json_file(void)
 {
-    json_t *json1 = load_json_file(TEST_FILE_PATH);
+    json_t *json1 = load_json_file(TEST_FILE_PATH_NODE);
 
     if(json1 == NULL)
         TEST_FAIL();
@@ -58,19 +58,19 @@ void test_load_json_file(void)
 
 void test_write_json_file(void)
 {
-    json_t *json = load_json_file(TEST_FILE_PATH);
+    json_t *json = load_json_file(TEST_FILE_PATH_NODE);
 
     if(json == NULL)
         TEST_FAIL();
 
-    int removed = remove(TEST_FILE_PATH);
+    int removed = remove(TEST_FILE_PATH_NODE);
 
-    if(removed == 0 && file_exist(TEST_FILE_PATH) != 0)
+    if(removed == 0 && file_exist(TEST_FILE_PATH_NODE) != 0)
         TEST_FAIL();
 
-    write_json_file(TEST_FILE_PATH, json);
+    write_json_file(TEST_FILE_PATH_NODE, json);
 
-    if(file_exist(TEST_FILE_PATH) != 1)
+    if(file_exist(TEST_FILE_PATH_NODE) != 1)
         TEST_FAIL();
 
     json_decref(json);
@@ -78,16 +78,16 @@ void test_write_json_file(void)
 
 void test_file_is_modified(void)
 {
-    if(file_is_modified(TEST_FILE_PATH, time(0)) != 0)
+    if(file_is_modified(TEST_FILE_PATH_NODE, time(0)) != 0)
         TEST_FAIL();
 
-    if(file_is_modified(TEST_FILE_PATH, 0) == 0)
+    if(file_is_modified(TEST_FILE_PATH_NODE, 0) == 0)
         TEST_FAIL();
 }
 
 void test_file_edit_time(void)
 {
-    if(file_edit_time(TEST_FILE_PATH) == 0)
+    if(file_edit_time(TEST_FILE_PATH_NODE) == 0)
         TEST_FAIL();
 }
 
