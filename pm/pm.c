@@ -19,6 +19,8 @@
 #define BUFSIZE 65536
 #define PM_SOCK_DIR ".neat"
 #define PM_SOCK_NAME "neat_pm_socket"
+#define CIB_SOCK_NAME "neat_cib_socket"
+#define PIB_SOCK_NAME "neat_pib_socket"
 
 #define NUM_CANDIDATES 10
 
@@ -26,6 +28,8 @@
 
 uv_loop_t *loop;
 const char *pm_socket_path;
+const char *cib_socket_path;
+const char *pib_socket_path;
 pthread_t thread_id_rest;
 
 typedef struct client_req {
@@ -33,10 +37,10 @@ typedef struct client_req {
     size_t len;
 } client_req_t;
 
-char *
+void
 make_pm_socket_path()
 {
-    char path[PATH_MAX];
+    char path[PATH_MAX], cib_path[PATH_MAX], pib_path[PATH_MAX];;
     struct stat st;
 
     snprintf(path, PATH_MAX, "%s/%s/", get_home_dir(), PM_SOCK_DIR);
@@ -46,7 +50,11 @@ make_pm_socket_path()
         printf("created directory %s\n", path);
     }
 
-    return strncat(path, PM_SOCK_NAME, PATH_MAX - strlen(path));
+    pm_socket_path = strncat(path, PM_SOCK_NAME, PATH_MAX - strlen(path));
+    snprintf(cib_path, PATH_MAX, "%s/%s/", get_home_dir(), PM_SOCK_DIR);
+    cib_socket_path = strncat(cib_path, CIB_SOCK_NAME, PATH_MAX - strlen(path));
+    snprintf(pib_path, PATH_MAX, "%s/%s/", get_home_dir(), PM_SOCK_DIR);
+    pib_socket_path = strncat(pib_path, PIB_SOCK_NAME, PATH_MAX - strlen(path));
 }
 
 bool
@@ -199,6 +207,27 @@ handle_request(uv_stream_t *client)
 }
 
 void
+handle_cib_request(uv_stream_t *client)
+{
+    client_req_t *client_req = (client_req_t *) client->data;
+    uv_buf_t response_buf;
+    uv_write_t *write_req;
+
+    json_t *request_json;
+    json_error_t json_error;
+
+    request_json = json_loads(client_req->buffer, 0, &json_error);
+    printf("\nCIB_socket request: \n%s\n", json_dumps(request_json, 0));
+    //TODO
+}
+
+void
+handle_pib_request(uv_stream_t *client)
+{
+    //TODO
+}
+
+void
 alloc_buffer(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buffer)
 {
     buffer->base = calloc(suggested_size, sizeof(char));
@@ -227,11 +256,40 @@ on_client_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buffer)
         /* printf("buffer: %s (%zu bytes)\n", c_req->buffer, c_req->len); */
     }
     free(buffer->base);
-
 }
 
 void
-on_new_connection(uv_stream_t *pm_server, int status)
+on_cib_socket_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buffer)
+{
+    client_req_t *c_req = (client_req_t *) client->data;
+
+    if (nread == UV_EOF) { /* -4095? */
+        handle_cib_request(client);
+    }
+    else if (nread < 0) {
+        printf("error on cib_socket read\n");
+        uv_close((uv_handle_t *) client, NULL);
+        return;
+    }
+    else {
+        /* printf("read: %s\n", buffer->base); */
+
+        strncpy(c_req->buffer + c_req->len, buffer->base, BUFSIZE - c_req->len);
+        c_req->len += nread;
+
+        /* printf("buffer: %s (%zu bytes)\n", c_req->buffer, c_req->len); */
+    }
+    free(buffer->base);
+}
+
+void
+on_pib_socket_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buffer)
+{
+    //TODO
+}
+
+void
+on_new_pm_connection(uv_stream_t *pm_server, int status)
 {
     uv_pipe_t *client;
 
@@ -254,7 +312,39 @@ on_new_connection(uv_stream_t *pm_server, int status)
     else {
         uv_close((uv_handle_t *) client, NULL);
     }
+}
 
+void
+on_new_cib_connection(uv_stream_t *cib_server, int status)
+{
+    //TODO
+    uv_pipe_t *client;
+
+    if (status == -1) {
+        fprintf(stderr, "new connection error\n");
+        return;
+    }
+
+    client = malloc(sizeof(uv_pipe_t));
+    client->data = malloc(sizeof(client_req_t)); /* stores json request */
+    ((client_req_t*) client->data)->buffer = malloc(BUFSIZE);
+    ((client_req_t*) client->data)->len = 0;
+
+    uv_pipe_init(loop, client, 0);
+
+    if (uv_accept(cib_server, (uv_stream_t *) client) == 0) {
+        printf("\nAccepted client request\n");
+        uv_read_start((uv_stream_t *) client, alloc_buffer, on_cib_socket_read);
+    }
+    else {
+        uv_close((uv_handle_t *) client, NULL);
+    }
+}
+
+void
+on_new_pib_connection(uv_stream_t *pib_server, int status)
+{
+    //TODO
 }
 
 void
@@ -263,6 +353,8 @@ pm_close(int sig)
     printf("\nClosing policy manager...\n");
     uv_fs_t req;
     uv_fs_unlink(loop, &req, pm_socket_path, NULL);
+    uv_fs_unlink(loop, &req, cib_socket_path, NULL);
+    uv_fs_unlink(loop, &req, pib_socket_path, NULL);
 
     pib_close();
     cib_close();
@@ -270,7 +362,7 @@ pm_close(int sig)
 
 
 int
-pm_start(int argc, char **argv)
+main(int argc, char **argv)
 {
     printf("\n\n--Start PM--\n\n");
     generate_cib_from_ifaces();
@@ -281,14 +373,20 @@ pm_start(int argc, char **argv)
     //print_nodes(pib_profiles);
 
     uv_pipe_t pm_server;
-    int r;
+    uv_pipe_t cib_server;
+    uv_pipe_t pib_server;
+    int r, s, t;
 
-    pm_socket_path = make_pm_socket_path();
+    make_pm_socket_path();
 
-    printf("\nsocket created in %s\n\n", pm_socket_path);
+    printf("\nsocket created in %s\n", pm_socket_path);
+    printf("\nsocket created in %s\n", cib_socket_path);
+    printf("\nsocket created in %s\n\n", pib_socket_path);
 
     loop = uv_default_loop();
     uv_pipe_init(loop, &pm_server, 0);
+    uv_pipe_init(loop, &cib_server, 0);
+    uv_pipe_init(loop, &pib_server, 0);
 
     signal(SIGINT, pm_close);
 
@@ -296,8 +394,26 @@ pm_start(int argc, char **argv)
         fprintf(stderr, "Bind error %s\n", uv_err_name(r));
         return 1;
     }
-    if ((r = uv_listen((uv_stream_t*) &pm_server, PM_BACKLOG, on_new_connection))) {
+    if ((r = uv_listen((uv_stream_t*) &pm_server, PM_BACKLOG, on_new_pm_connection))) {
         fprintf(stderr, "Listen error %s\n", uv_err_name(r));
+        return 2;
+    }
+
+    if ((s = uv_pipe_bind(&cib_server, cib_socket_path)) != 0) {
+        fprintf(stderr, "Bind error %s\n", uv_err_name(s));
+        return 1;
+    }
+    if ((s = uv_listen((uv_stream_t*) &cib_server, PM_BACKLOG, on_new_cib_connection))) {
+        fprintf(stderr, "Listen error %s\n", uv_err_name(s));
+        return 2;
+    }
+
+    if ((t = uv_pipe_bind(&pib_server, pib_socket_path)) != 0) {
+        fprintf(stderr, "Bind error %s\n", uv_err_name(t));
+        return 1;
+    }
+    if ((t = uv_listen((uv_stream_t*) &pib_server, PM_BACKLOG, on_new_pib_connection))) {
+        fprintf(stderr, "Listen error %s\n", uv_err_name(t));
         return 2;
     }
 
