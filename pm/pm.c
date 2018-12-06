@@ -20,6 +20,8 @@
 
 #define NUM_CANDIDATES 10
 
+#define PRECEDENCE_OPTIONAL 1
+
 #define ARRAY_SIZE(array) (sizeof((array))/sizeof((array)[0]))
 
 uv_loop_t *loop;
@@ -69,6 +71,8 @@ pre_resolve(const json_t *requests)
 
 /* Adds the default values for `score' (0) and `evaluated' (False) to each property in each request.
    Should be executed before the logic of the main lookup routine. */
+
+
 void
 add_default_values(json_t *request)
 {
@@ -78,9 +82,9 @@ add_default_values(json_t *request)
     uint i;
 
     /* json values for default props */
-    char *default_props[] = { "score", "evaluated"};
-    char *default_types[] = { "i", "b" };
-    int  default_values[] = { 0, 0 };
+    char *default_props[] = { "score", "evaluated", "precedence"};
+    char *default_types[] = { "i", "b", "i"};
+    int  default_values[] = { 0, 0, PRECEDENCE_OPTIONAL };
 
     json_object_foreach(request, key, value) {
         for (i = 0; i < ARRAY_SIZE(default_props); i++) {
@@ -116,21 +120,15 @@ lookup(json_t *reqs)
     size_t i, j, k;
 
     json_t* req_expand = expand_properties(reqs);
-    //printf("\nexpand prop:\n%s\n\n", json_dumps(req_expand, 0));
-    
-    json_t* requests = process_special_properties(json_deep_copy(req_expand));
-    //printf("\nspecial prop:\n%s\n\n", json_dumps(requests, 0));
 
-    json_array_foreach(requests, i, request) {
-        add_default_values(request);
-    }
+    json_t* requests = process_special_properties(json_deep_copy(req_expand));
 
     if (pre_resolve(requests)) {
         printf("__request_type is pre-resolve, skipping lookup...\n");
         return requests;
     }
     requests = expand_values(json_deep_copy(requests));
-    
+
     json_array_foreach(requests, i, request) {
 
         /* Profile lookup */
@@ -156,6 +154,10 @@ lookup(json_t *reqs)
                 }
             }
         }
+    }
+
+    json_array_foreach(candidates, i, request) {
+        add_default_values(request);
     }
 
     candidates = sort_json_array(candidates);
@@ -186,8 +188,7 @@ handle_request(uv_stream_t *client)
     json_t *candidates = lookup(request_json);
 
     response_buf.base = json_dumps(candidates, 0);
-    response_buf.base[strlen(response_buf.base)] = '\n';
-    response_buf.len = strlen(response_buf.base + 1);
+    response_buf.len = strlen(response_buf.base);
 
     write_req = malloc(sizeof(uv_write_t));
     uv_write(write_req, client, &response_buf, 1, NULL);
