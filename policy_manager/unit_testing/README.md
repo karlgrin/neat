@@ -9,11 +9,9 @@ $ cd ..
 $ git clone https://github.com/ThrowTheSwitch/Unity
 ```
 
-
-
 It can also be manually downloaded from: https://github.com/ThrowTheSwitch/Unity
 
-Unity has to be in the same folder as the NEAT folder.
+__Unity has to be in the same folder as the NEAT folder.
 
 ## Quick start
 
