@@ -1,5 +1,7 @@
 # Policy Manager
 
+This is a old version of the policy manager implemented in Python. We recommend that you use the new policy manager implemented in C. Go to the folder neat/policy_manager.
+
 ## Quick Start
 
 To start the policy manager simply run:
