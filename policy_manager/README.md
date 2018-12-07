@@ -3,7 +3,7 @@
 
 ## Build
 
-To build the policy manager run
+To build the policy manager:
 
 ```
 $ cd policy_manager
@@ -13,7 +13,7 @@ $ cmake ..
 $ make
 ```
 
-The policy manager can now be started with
+The policy manager can now be executed with
 
 ```
 $ ./pm
@@ -21,7 +21,7 @@ $ ./pm
 
 ## Install
 
-To install the policy manager run
+To install the policy manager:
 
 ```
 $ sudo make install
@@ -29,7 +29,7 @@ $ sudo make install
 
 This will install the policy manager in /usr/local/bin and create a new systemd service **neat_pm.service**.
 
-To start the policy manager run
+To start the policy manager:
 
 ```
 $ sudo systemctl start neat_pm
