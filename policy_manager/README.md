@@ -3,9 +3,8 @@
 
 ## Quick Start
 
-To build the policy manager.
+To **build** the policy manager, go into the /neat folder then run:
 
-Go into the /neat folder then run:
 ```
 $ cd policy_manager
 $ mkdir build
@@ -14,7 +13,7 @@ $ cmake ..
 $ make
 ```
 
-The policy manager can now be executed with
+The policy manager can now be **executed** with
 
 ```
 $ ./pm
