@@ -71,12 +71,10 @@ pre_resolve(const json_t *requests)
 
 /* Adds the default values for `score' (0) and `evaluated' (False) to each property in each request.
    Should be executed before the logic of the main lookup routine. */
-
-
 void
 add_default_values(json_t *request)
 {
-    json_t *value, *attr;
+    json_t *property, *attr;
     const char *key;
     size_t n;
     uint i;
@@ -86,12 +84,12 @@ add_default_values(json_t *request)
     char *default_types[] = { "i", "b", "i"};
     int  default_values[] = { 0, 0, PRECEDENCE_OPTIONAL };
 
-    json_object_foreach(request, key, value) {
+    json_object_foreach(request, key, property) {
         for (i = 0; i < ARRAY_SIZE(default_props); i++) {
 
             /* handle array of values */
-            if (json_is_array(value)) {
-                json_array_foreach(value, n, attr) {
+            if (json_is_array(property)) {
+                json_array_foreach(property, n, attr) {
                     json_t *tmp_prop = json_pack("{sO}", key, attr);
                     add_default_values(tmp_prop);
                     json_decref(tmp_prop); // RISKY seems that attr is not dereferenced?
@@ -99,8 +97,8 @@ add_default_values(json_t *request)
                 break;
             }
             /* add default property if not found */
-            if (json_object_get(request, default_props[i]) == NULL) {
-                json_object_set(value, default_props[i], json_pack(default_types[i], default_values[i]));
+            if (json_object_get(property, default_props[i]) == NULL) {
+                json_object_set(property, default_props[i], json_pack(default_types[i], default_values[i]));
             }
         }
     }
@@ -109,7 +107,6 @@ add_default_values(json_t *request)
 json_t *
 lookup(json_t *reqs)
 {
-
     json_t *updated_requests;
     json_t *request;
     json_t *candidate;
@@ -122,6 +119,10 @@ lookup(json_t *reqs)
     json_t* req_expand = expand_properties(reqs);
 
     json_t* requests = process_special_properties(json_deep_copy(req_expand));
+
+    json_array_foreach(requests, i, request) {
+        add_default_values(request);
+    }
 
     if (pre_resolve(requests)) {
         printf("__request_type is pre-resolve, skipping lookup...\n");
@@ -208,7 +209,7 @@ alloc_buffer(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buffer)
     if(buffer->base == NULL) {
         write_log(__FILE__, __func__, "Failed to allocate memory");
     }
-    
+
     buffer->len = suggested_size;
 }
 
