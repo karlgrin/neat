@@ -1,4 +1,4 @@
-# Test units to the policy manager
+# Unit tests to the policy manager
 
 ## Unity
 
