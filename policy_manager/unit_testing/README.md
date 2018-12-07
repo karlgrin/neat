@@ -12,7 +12,7 @@ You can download Unity here:  https://github.com/ThrowTheSwitch/Unity
 To **build** the unit tests to the policy manager:
 
 ```
-$ cd neat/policy_manager/unit_tests
+$ cd neat/policy_manager/unit_testing
 $ mkdir build
 $ cd build
 $ cmake ..
