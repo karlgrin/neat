@@ -2,17 +2,21 @@
 
 ## Unity
 
-The framework used to execute the unit tests is **Unity**. Download Unity in the same folder as you have the neat folder.
+The framework used to execute the unit tests is **Unity**. Download Unity with:
 
-You can download Unity here:  https://github.com/ThrowTheSwitch/Unity
-
+Go to the /neat folder then run:
+```
+$ cd ..
+$ git clone https://github.com/ThrowTheSwitch/Unity
+```
 
 ## Quick start
 
 To **build** the unit tests to the policy manager:
 
+Go to the /neat folder then run:
 ```
-$ cd neat/policy_manager/unit_testing
+$ cd policy_manager/unit_testing
 $ mkdir build
 $ cd build
 $ cmake ..
