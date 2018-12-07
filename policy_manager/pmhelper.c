@@ -6,7 +6,7 @@
 
 #include "pmhelper.h"
 
-#define FILENAME "ErrorLog.txt"
+#define LOG_FILENAME "ErrorLog.txt"
 
 char*
 new_string(char *string, ...)
@@ -96,7 +96,7 @@ write_log(const char* module, const char* func, const char *desc, ...)
     time_t now = time (0);
     strftime (time_buffer, 100, "%Y-%m-%d %H:%M:%S.000", localtime (&now));
 
-    FILE *fp = fopen(FILENAME, "a");
+    FILE *fp = fopen(LOG_FILENAME, "a");
     if(fp != NULL) {
         fprintf(fp, "Time: %s  \nModule: %s\nFunction: %s\nDescription:%s\n\n", time_buffer, module, func, desc_buffer);
         fclose(fp);
@@ -114,7 +114,7 @@ file_edit_time(const char *file_path)
 void
 clear_log()
 {
-    FILE *fp = fopen(FILENAME, "w");
+    FILE *fp = fopen(LOG_FILENAME, "w");
     if(fp != NULL) {
         fclose(fp);
     }

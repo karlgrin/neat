@@ -46,7 +46,7 @@ node_init(const char *file_path)
     node_t *node = calloc(1,sizeof(node_t));
 
     if(node == NULL) {
-        write_log(__FILE__, __func__, "Failed to calloc...");
+        write_log(__FILE__, __func__, "Failed to allocate memory");
         return NULL;
     }
 

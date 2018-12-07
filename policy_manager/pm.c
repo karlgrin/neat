@@ -204,6 +204,12 @@ void
 alloc_buffer(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buffer)
 {
     buffer->base = calloc(suggested_size, sizeof(char));
+
+    if(buffer->base == NULL) {
+        write_log(__FILE__, __func__, "Failed to allocate memory");
+        return NULL;
+    }
+    
     buffer->len = suggested_size;
 }
 
