@@ -19,7 +19,7 @@ The policy manager can now be executed with
 $ ./pm
 ```
 
-## Install
+# Install as a daemon
 
 To install the policy manager:
 
