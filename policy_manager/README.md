@@ -1,7 +1,7 @@
 
-# Quick start
+# Policy Manager
 
-## Build
+## Quick Start
 
 To build the policy manager:
 
@@ -19,9 +19,9 @@ The policy manager can now be executed with
 $ ./pm
 ```
 
-# Install as a daemon
+## Install as a daemon
 
-To install the policy manager:
+To install the policy manager as a daemon:
 
 ```
 $ sudo make install
