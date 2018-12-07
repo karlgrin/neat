@@ -13,7 +13,7 @@ https://unity3d.com/get-unity/download
 To **build** the unit tests to the policy manager:
 
 ```
-$ cd neat/policy_manager/test_units
+$ cd neat/policy_manager/unit_tests
 $ mkdir build
 $ cd build
 $ cmake ..
@@ -23,5 +23,5 @@ $ make
 The unit tests can now be **executed** with
 
 ```
-$ ./test_pm
+$ ./test
 ```
