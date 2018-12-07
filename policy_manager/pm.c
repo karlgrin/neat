@@ -289,14 +289,14 @@ main(int argc, char *argv[])
     uv_pipe_t pm_server;
     int r;
 
-    pm_socket_path = make_pm_socket_path();
-
-    printf("\nsocket created in %s\n\n", pm_socket_path);
-
     loop = uv_default_loop();
     uv_pipe_init(loop, &pm_server, 0);
 
     signal(SIGINT, pm_close);
+
+    pm_socket_path = make_pm_socket_path();
+    unlink(pm_socket_path);
+    printf("\nsocket created in %s\n\n", pm_socket_path);
 
     if ((r = uv_pipe_bind(&pm_server, pm_socket_path)) != 0) {
         fprintf(stderr, "Bind error %s\n", uv_err_name(r));
