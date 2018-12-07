@@ -1,6 +1,6 @@
 # Test units to the policy manager
 
-## Unity Framework
+## Unity
 
 The framework used to execute the unit tests is **Unity**. Download Unity in the same folder as you have the neat project.
 
