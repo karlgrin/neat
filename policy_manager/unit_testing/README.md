@@ -22,5 +22,5 @@ $ make
 The unit tests can now be **executed** with
 
 ```
-$ ./test
+$ ./test_pm
 ```
