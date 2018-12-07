@@ -3,8 +3,9 @@
 
 ## Quick Start
 
-To build the policy manager:
+To build the policy manager.
 
+Go into the /neat folder then run:
 ```
 $ cd policy_manager
 $ mkdir build
