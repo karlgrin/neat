@@ -113,3 +113,68 @@ Module: ../pmhelper.c
 Function: load_json_file
 Description:Error: failed to read json file: json_files/expand_json_array.json
 
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+

@@ -97,7 +97,7 @@ add_node(node_t *head, node_t *node)
 
     prio_obj = json_object_get(node->json, "priority");
     if (!prio_obj) {
-        printf("Error: no priority property defined\n");
+        write_log(__FILE__, __func__, "Error: no priority property defined");
     }
     priority = json_integer_value(prio_obj);
 
