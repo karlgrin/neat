@@ -6,7 +6,7 @@
 To build the policy manager run
 
 ```
-$ cd pm
+$ cd policy_manager
 $ mkdir build
 $ cd build
 $ cmake ..
