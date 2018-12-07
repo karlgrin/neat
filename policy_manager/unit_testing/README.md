@@ -1,8 +1,8 @@
-# Unit tests to the policy manager
+# Unit testing
 
 ## Unity
 
-The framework used to execute the unit tests is **Unity**. Download Unity in the same folder as you have the neat project.
+The framework used to execute the unit tests is **Unity**. Download Unity in the same folder as you have the neat folder.
 
 You can download Unity here:  https://github.com/ThrowTheSwitch/Unity
 
