@@ -4,7 +4,7 @@
 
 The framework used to execute the unit tests is **Unity**. Download Unity with:
 
-Go to the /neat folder then run:
+Go into the /neat folder then run:
 ```
 $ cd ..
 $ git clone https://github.com/ThrowTheSwitch/Unity
@@ -14,7 +14,7 @@ $ git clone https://github.com/ThrowTheSwitch/Unity
 
 To **build** the unit tests to the policy manager:
 
-Go to the /neat folder then run:
+Go into the /neat folder then run:
 ```
 $ cd policy_manager/unit_testing
 $ mkdir build
