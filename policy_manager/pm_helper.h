@@ -8,14 +8,14 @@
 #define FILENAME "ErrorLog.txt"
 
 extern char* NEAT_DIR;
-extern char* SOCKET_DIR;
+extern char* SOCKET_PATH;
 extern char* IB_DIR;
 extern char* CIB_DIR;
 extern char* PIB_DIR;
 extern char* PROFILE_DIR;
 extern char* POLICY_DIR;
 
-typedef enum { 
+typedef enum {
     LOG_NORMAL, LOG_ERROR, LOG_DEBUG, LOG_NEW_LINE
 } LOG_LEVEL;
 

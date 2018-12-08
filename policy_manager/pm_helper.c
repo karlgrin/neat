@@ -10,7 +10,7 @@
 #define LOG_FILENAME "Log.txt"
 
 char* NEAT_DIR;
-char* SOCKET_DIR;
+char* SOCKET_PATH;
 char* IB_DIR;
 char* CIB_DIR;
 char* PIB_DIR;
@@ -44,14 +44,14 @@ get_current_dir(){
     } else {
         write_log(__FILE__ , __func__, LOG_ERROR, "Unable to get current directory..");
         return "";
-    }  
+    }
 }
 
-int 
-create_folder(char* path) 
+int
+create_folder(char* path)
 {
     struct stat st = {0};
-    
+
     if (stat(path, &st) == -1) {
         if(mkdir(path, 0700) == -1) {
             write_log(__FILE__, __func__,LOG_ERROR, "Failed to create directory: %s, error message: %s", path, strerror(errno));
@@ -65,7 +65,7 @@ void
 create_folders()
 {
     NEAT_DIR    = new_string("%s/%s", get_home_dir(), ".neat/");
-    SOCKET_DIR  = new_string("%s%s", NEAT_DIR, "pm_socket");
+    SOCKET_PATH = new_string("%s%s", NEAT_DIR, "neat_pm_socket");
     IB_DIR      = new_string("%s%s", NEAT_DIR, "infobase/");
     CIB_DIR     = new_string("%s%s", IB_DIR, "cib/");
     PIB_DIR     = new_string("%s%s", IB_DIR, "pib/");
@@ -73,7 +73,6 @@ create_folders()
     POLICY_DIR  = new_string("%s%s", PIB_DIR, "policy/");
 
     create_folder(NEAT_DIR);
-    create_folder(SOCKET_DIR);
     create_folder(IB_DIR);
     create_folder(CIB_DIR);
     create_folder(PIB_DIR);
@@ -116,20 +115,20 @@ enable_log_file(bool enable)
         char* current_dir = get_current_dir();
         write_log(__FILE__, __func__, LOG_NORMAL, "Log messages: %s/%s\n", current_dir, LOG_FILENAME);
         free(current_dir);
-    }    
-    log_file_enabled = enable;   
+    }
+    log_file_enabled = enable;
 }
 
 void
 enable_debug_message(bool enable)
 {
-    debug_enabled = enable;   
+    debug_enabled = enable;
     if(enable)
-        write_log(__FILE__, __func__, LOG_NORMAL, "Debug mode: ON\n"); 
+        write_log(__FILE__, __func__, LOG_NORMAL, "Debug mode: ON\n");
 }
 
-void 
-write_log_file(const char* module, const char* func, LOG_LEVEL log_level, const char *desc) 
+void
+write_log_file(const char* module, const char* func, LOG_LEVEL log_level, const char *desc)
 {
     if(log_file_enabled == false || log_level == LOG_NEW_LINE) { return; }
 
@@ -140,10 +139,10 @@ write_log_file(const char* module, const char* func, LOG_LEVEL log_level, const 
 
      switch(log_level) {
         case LOG_NORMAL:
-         log_type = "NORMAL"; 
+         log_type = "NORMAL";
             break;
         case LOG_ERROR:
-            log_type ="ERROR"; 
+            log_type ="ERROR";
             break;
         case LOG_DEBUG:
             log_type ="DEBUG";
@@ -161,7 +160,7 @@ void
 write_log(const char* module, const char* func, LOG_LEVEL log_level, const char *desc, ...)
 {
     char desc_buffer[100];
-	va_list arglist;	
+	va_list arglist;
 	va_start(arglist, desc);
 	vsprintf(desc_buffer, desc, arglist);
 	va_end(arglist);

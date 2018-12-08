@@ -264,10 +264,10 @@ create_socket(){
 
     signal(SIGINT, pm_close);
 
-    unlink(SOCKET_DIR);
-    write_log(__FILE__, __func__, LOG_NORMAL, "Socket created in %s", SOCKET_DIR);
+    unlink(SOCKET_PATH);
+    write_log(__FILE__, __func__, LOG_NORMAL, "Socket created in %s", SOCKET_PATH);
 
-    if ((r = uv_pipe_bind(&pm_server, SOCKET_DIR)) != 0) {
+    if ((r = uv_pipe_bind(&pm_server, SOCKET_PATH)) != 0) {
         write_log(__FILE__, __func__, LOG_ERROR, "Socket bind error %s", uv_err_name(r));
         return 1;
     }
@@ -275,11 +275,11 @@ create_socket(){
         write_log(__FILE__, __func__, LOG_ERROR, "Socket listen error %s", uv_err_name(r));
         return 2;
     }
-   
+
     return uv_run(loop, UV_RUN_DEFAULT);
 }
 
-void 
+void
 parse_arguments(int argc, char *argv[])
 {
     int i;
@@ -289,26 +289,26 @@ parse_arguments(int argc, char *argv[])
         if(strcmp(input,"-debug") == 0) {
             enable_debug_message(true);
         }
-        else if(strcmp(input,"-log") == 0) {           
+        else if(strcmp(input,"-log") == 0) {
             enable_log_file(true);
         }
         else {
-            write_log(__FILE__, __func__, LOG_ERROR, "Unexpected input: %s", input); 
+            write_log(__FILE__, __func__, LOG_ERROR, "Unexpected input: %s", input);
         }
     }
 }
 
 int
 main(int argc, char *argv[])
-{  
+{
     write_log(__FILE__, __func__, LOG_NORMAL,"\n--Start PM--\n");
 
     parse_arguments(argc, argv);
     create_folders();
-    
+
     generate_cib_from_ifaces();
     cib_start();
     pib_start();
 
-    return create_socket();   
+    return create_socket();
 }
