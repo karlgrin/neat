@@ -4,6 +4,63 @@
 #include "parse_json.h"
 #include "pm_helper.h"
 
+#define ARRAY_SIZE(array) (sizeof((array))/sizeof((array)[0]))
+
+bool
+pre_resolve(const json_t *requests)
+{
+    bool pre_resolve = false;
+    json_t *request;
+    size_t i;
+
+    json_array_foreach(requests, i, request) {
+        json_t *req_type = json_object_get(request, "__request_type");
+        if (req_type) {
+            const char *req_type_val = json_string_value(json_object_get(req_type, "value"));
+            if (!strcmp(req_type_val, "pre-resolve")) {
+                json_object_del(request, "__request_type");
+                pre_resolve = true;
+            }
+        }
+
+    }
+    return pre_resolve;
+}
+
+void
+add_default_values(json_t *request)
+{
+    json_t *property, *attr;
+    const char *key;
+    size_t n;
+    unsigned int i;
+
+    /* json values for default props */
+    char *default_props[] = { "score", "evaluated", "precedence"};
+    char *default_types[] = { "i", "b", "i"};
+    int  default_values[] = { 0, 0, PRECEDENCE_OPTIONAL };
+
+    json_object_foreach(request, key, property) {
+        for (i = 0; i < ARRAY_SIZE(default_props); i++) {
+
+            /* handle array of values */
+            if (json_is_array(property)) {
+                json_array_foreach(property, n, attr) {
+                    json_t *tmp_prop = json_pack("{sO}", key, attr);
+                    add_default_values(tmp_prop);
+                    json_decref(tmp_prop); // RISKY seems that attr is not dereferenced?
+                }
+                break;
+            }
+            /* add default property if not found */
+            if (json_object_get(property, default_props[i]) == NULL) {
+                json_object_set(property, default_props[i], json_pack(default_types[i], default_values[i]));
+            }
+        }
+    }
+}
+
+
 void
 append_value(json_t *json, json_t *new_value)
 {
