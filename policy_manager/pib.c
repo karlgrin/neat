@@ -5,14 +5,14 @@
 
 #include "pib.h"
 #include "node.h"
-#include "pmhelper.h"
+#include "pm_helper.h"
 
 #include "parse_json.h"
 
 node_t *pib_profiles = NULL;
 node_t *pib_policies = NULL;
 
-/* TODO move subset & merge to pmhelper.c */
+/* TODO move subset & merge to pm_helper.c */
 
 int
 replace_matched(json_t *policy)
@@ -108,15 +108,8 @@ profile_lookup(json_t *input_props)
 void
 pib_start()
 {
-    char *path;
-
-    path = new_string("%s/%s/%s", get_home_dir(), ".neat", PROFILE_DIR);
-    pib_profiles = read_modified_files(pib_profiles, path);
-
-    path = new_string("%s/%s/%s", get_home_dir(), ".neat", POLICY_DIR);
-    pib_policies = read_modified_files(pib_policies, path);
-
-    free(path);
+    pib_profiles = read_modified_files(pib_profiles, PROFILE_DIR);
+    pib_policies = read_modified_files(pib_policies, POLICY_DIR);
 }
 
 void

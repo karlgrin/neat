@@ -5,7 +5,7 @@
 #include <time.h>
 #include <jansson.h>
 
-#include "pmhelper.h"
+#include "pm_helper.h"
 
 typedef struct node {
     char *filename;

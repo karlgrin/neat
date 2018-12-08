@@ -1,8 +1,8 @@
-#ifndef PMHELPER_TEST
-#define PMHELPER_TEST
+#ifndef PM_HELPER_TEST
+#define PM_HELPER_TEST
 
 #include "../../../Unity/src/unity.h"
-#include "../pmhelper.h"
+#include "../pm_helper.h"
 
 void test_new_string(void);
 void test_file_exist(void);

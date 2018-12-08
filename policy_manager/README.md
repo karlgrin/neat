@@ -19,6 +19,12 @@ The policy manager can now be **executed** with
 $ ./pm
 ```
 
+Possible **arguments** to PM:
+```
+-debug           (Print debug messages in the console)
+-log             (Write all log messages to file: Log.txt)
+```
+
 ## Install as a daemon
 
 To install the policy manager as a daemon:

@@ -3,7 +3,7 @@
 #include "../../../Unity/src/unity.h"
 #include "test_constants.h"
 #include "../parse_json.h"
-#include "../pmhelper.h"
+#include "../pm_helper.h"
 
 
 void test_expand_json_array(void)

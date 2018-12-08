@@ -1,14 +1,14 @@
 #include "../../../Unity/src/unity.h"
-#include "pmhelper_test.h"
+#include "pm_helper_test.h"
 #include "node_test.h"
 #include "parse_json_test.h"
 
 int main(void)
 {
     UNITY_BEGIN();
-    printf("   Start Unit Tests!\n");
+    printf("\n   Start Unit Tests!\n");
 
-    printf("\n-----pmhelper.c------\n");
+    printf("\n-----pm_helper.c------\n");
     RUN_TEST(test_new_string);
     RUN_TEST(test_file_exist);
     RUN_TEST(test_load_json_file);

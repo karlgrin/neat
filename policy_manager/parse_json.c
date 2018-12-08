@@ -2,7 +2,7 @@
 #include <string.h>
 
 #include "parse_json.h"
-#include "pmhelper.h"
+#include "pm_helper.h"
 
 void
 append_value(json_t *json, json_t *new_value)
@@ -18,7 +18,8 @@ append_value(json_t *json, json_t *new_value)
         json_object_update(json, new_value);
     }
     else {
-        write_log(__FILE__, __func__, "Failed to parse: \n%s", json_dumps(new_value, JSON_INDENT(3)));
+        write_log(__FILE__, __func__, LOG_ERROR, "Failed to parse json.");
+        write_log(__FILE__, __func__, LOG_DEBUG, "Failed to parse: \n%s", json_dumps(new_value, 0));
     }
 }
 
@@ -76,7 +77,7 @@ expand_json(json_t* in_properties)
             return in_properties;
         }
     }
-    write_log(__FILE__, __func__, "Error: unknown json structure");
+    write_log(__FILE__, __func__, LOG_ERROR, "Unknown json structure");
     return result;
 }
 
@@ -142,7 +143,7 @@ limit_json_array(json_t *array, const unsigned int limit)
     
     for (i = arr_size - 1; i >= limit; i--) {
         if (json_array_remove(array, i) == -1) {
-            fprintf(stderr, "Error: cannot remove array element\n");
+            write_log(__FILE__, __func__, LOG_ERROR, "Cannot remove array element in parsing..");
         }
     }
     return array;
@@ -268,7 +269,7 @@ expand_properties(json_t* req)
             append_json_arrays(my_return, expand_element_property(element));
        }
        else {
-           printf("PM: Wrong format on json, cant parse it!");
+            write_log(__FILE__, __func__, LOG_ERROR, "Wrong format on json, cant parse it!");
        }
     }    
     return my_return;
@@ -331,7 +332,7 @@ expand_values(json_t* req)
             append_json_arrays(my_return, expand_element_value(element));
        }
        else {
-           printf("PM: Wrong format on json, cant parse it!");
+            write_log(__FILE__, __func__, LOG_ERROR, "PM: Wrong format on json, cant parse it!");
        }
     }    
     return my_return;

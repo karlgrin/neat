@@ -4,7 +4,7 @@
 #include <jansson.h>
 #include <dirent.h>
 
-#include "pmhelper.h"
+#include "pm_helper.h"
 #include "node.h"
 
 void
@@ -46,7 +46,7 @@ node_init(const char *file_path)
     node_t *node = calloc(1,sizeof(node_t));
 
     if(node == NULL) {
-        write_log(__FILE__, __func__, "Failed to allocate memory");
+        write_log(__FILE__, __func__, LOG_ERROR, "Failed to allocate memory");
         return NULL;
     }
 
@@ -97,7 +97,7 @@ add_node(node_t *head, node_t *node)
 
     prio_obj = json_object_get(node->json, "priority");
     if (!prio_obj) {
-        write_log(__FILE__, __func__, "Error: no priority property defined");
+        write_log(__FILE__, __func__, LOG_DEBUG, "No priority property defined");
     }
     priority = json_integer_value(prio_obj);
 
@@ -179,13 +179,13 @@ void
 print_node(node_t *node)
 {
     if(node != NULL) {
-     printf("--------NODE----------\n");
+      write_log(__FILE__, __func__, LOG_NORMAL, "--------NODE----------\n");
         if(node->filename != NULL) {
-            printf("filename: %s\n", node->filename);
+             write_log(__FILE__, __func__, LOG_NORMAL, "filename: %s\n", node->filename);
         }
-        printf("last_updated: %s",ctime(&node->last_updated));
+        write_log(__FILE__, __func__, LOG_NORMAL, "last_updated: %s", ctime(&node->last_updated));
         char *json_string = json_dumps(node->json, JSON_INDENT(4));
-        printf("json: %s\n" , json_string);
+        write_log(__FILE__, __func__, LOG_NORMAL, "json: %s\n" , json_string);
         free(json_string);
     }
 }
@@ -198,13 +198,11 @@ update_node(node_t *head, char * file_path)
 
     if(node != NULL) {
         if(node->last_updated <= file_edit_time(file_path)) {
-            printf("Updating node content: %s \n", file_path);
             json_t *json = load_json_file(file_path);
             update_node_content(node, json);
         }
     }
     else {  //node does not exist, create it
-        printf("Create node: %s \n", file_path);
         head = add_node(head, create_node(file_path));
     }
     return head;
@@ -228,7 +226,7 @@ read_modified_files(node_t *head, const char *dir_path)
         closedir (dir);
         return head;
     } else {
-        write_log(__FILE__, __func__, "Error: Can't read the directory %s", dir_path);
+        write_log(__FILE__, __func__, LOG_ERROR, "Can't read the directory %s", dir_path);
     }
     return NULL;
 }
@@ -252,7 +250,7 @@ void
 node_set_property (node_t *node, const char *prop, json_t *new_value)
 {
     if(json_object_set(get_node_properties(node), prop, new_value) == -1) {
-        write_log(__FILE__,__func__, "Error: was unable to update property %s", prop);
+        write_log(__FILE__,__func__, LOG_ERROR, "Unable to update property %s", prop);
     }
 }
 
@@ -266,11 +264,8 @@ subset(json_t *prop_a, json_t *prop_b)
     json_t *value_a;
     json_t *value_b;
 
-    printf("\nSUBSET check between\n%s\nand\n%s\n\n", json_dumps(prop_a,0), json_dumps(prop_b,0));
-
+ 
     json_object_foreach(prop_a, key_a, value_prop_a) {
-        printf("checking if %s is a member of candidate... ", key_a);
-
         value_prop_b = json_object_get(prop_b, key_a);
 
         if (value_prop_b == NULL) {

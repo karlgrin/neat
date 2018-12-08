@@ -1,6 +1,6 @@
 #include "../../../Unity/src/unity.h"
 #include "test_constants.h"
-#include "../pmhelper.h"
+#include "../pm_helper.h"
 
 void test_new_string(void)
 {

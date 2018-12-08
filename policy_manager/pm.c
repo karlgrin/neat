@@ -10,16 +10,12 @@
 
 #include "pib.h"
 #include "cib.h"
-#include "pmhelper.h"
+#include "pm_helper.h"
 #include "parse_json.h"
 
 #define PM_BACKLOG 128
 #define BUFSIZE 65536
-#define PM_SOCK_DIR ".neat"
-#define PM_SOCK_NAME "neat_pm_socket"
-
 #define NUM_CANDIDATES 10
-
 #define PRECEDENCE_OPTIONAL 1
 
 #define ARRAY_SIZE(array) (sizeof((array))/sizeof((array)[0]))
@@ -32,21 +28,6 @@ typedef struct client_req {
     size_t len;
 } client_req_t;
 
-char *
-make_pm_socket_path()
-{
-    char path[PATH_MAX];
-    struct stat st;
-
-    snprintf(path, PATH_MAX, "%s/%s/", get_home_dir(), PM_SOCK_DIR);
-
-    if (stat(path, &st) == -1) {
-        mkdir(path, 0700);
-        printf("created directory %s\n", path);
-    }
-
-    return strncat(path, PM_SOCK_NAME, PATH_MAX - strlen(path));
-}
 
 bool
 pre_resolve(const json_t *requests)
@@ -125,7 +106,7 @@ lookup(json_t *reqs)
     }
 
     if (pre_resolve(requests)) {
-        printf("__request_type is pre-resolve, skipping lookup...\n");
+        write_log(__FILE__, __func__, LOG_DEBUG, "__request_type is pre-resolve, skipping lookup.");
         return requests;
     }
     requests = expand_values(json_deep_copy(requests));
@@ -140,7 +121,7 @@ lookup(json_t *reqs)
             cib_lookup_result = cib_lookup(candidate);
             json_array_foreach(cib_lookup_result, k, candidate){
                 if(!array_contains_value(cib_candidates, candidate)){
-                    //printf("Candidate is not in cib_candidates! Adding...\n");
+                    write_log(__FILE__, __func__, LOG_DEBUG, "Candidate is not in cib_candidates! Adding..");
                     json_array_append(cib_candidates, candidate);
                 }
             }
@@ -176,13 +157,12 @@ handle_request(uv_stream_t *client)
     json_t *request_json;
     json_error_t json_error;
 
-    //printf("finished reading\n");
-    //printf("buffer = %s\n", client_req->buffer);
-
     request_json = json_loads(client_req->buffer, 0, &json_error);
-    printf("\nPM request: \n%s\n", json_dumps(request_json, 0));
+    write_log(__FILE__, __func__, LOG_NORMAL, "Request received");
+    write_log(__FILE__, __func__, LOG_DEBUG, "Request: \n%s", json_dumps(request_json, 0));
+
     if (!request_json) {
-        fprintf(stderr, "error: on line %d: %s\n", json_error.line, json_error.text);
+        write_log(__FILE__, __func__, LOG_ERROR, "Error with request, json-error-text: %s", json_error.text);
         return;
     }
 
@@ -193,8 +173,9 @@ handle_request(uv_stream_t *client)
 
     write_req = malloc(sizeof(uv_write_t));
     uv_write(write_req, client, &response_buf, 1, NULL);
-    printf("\nPM result: \n%s\n", json_dumps(candidates, 0));
-    printf("\nPM sent candidates..\n");
+
+    write_log(__FILE__, __func__, LOG_DEBUG, "PM result: \n%s", json_dumps(candidates, 0));
+    write_log(__FILE__, __func__, LOG_NORMAL, "Request handled, sendig candidates");
 
     free(response_buf.base);
     json_decref(candidates);
@@ -207,7 +188,7 @@ alloc_buffer(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buffer)
     buffer->base = calloc(suggested_size, sizeof(char));
 
     if(buffer->base == NULL) {
-        write_log(__FILE__, __func__, "Failed to allocate memory");
+        write_log(__FILE__, __func__, LOG_ERROR, "Failed to allocate memory");
     }
 
     buffer->len = suggested_size;
@@ -222,20 +203,16 @@ on_client_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buffer)
         handle_request(client);
     }
     else if (nread < 0) {
-        printf("error on client read\n");
+        write_log(__FILE__, __func__, LOG_ERROR, "Socket client read failure");
         uv_close((uv_handle_t *) client, NULL);
         return;
     }
     else {
-        /* printf("read: %s\n", buffer->base); */
-
         strncpy(c_req->buffer + c_req->len, buffer->base, BUFSIZE - c_req->len);
         c_req->len += nread;
-
-        /* printf("buffer: %s (%zu bytes)\n", c_req->buffer, c_req->len); */
     }
-    free(buffer->base);
 
+    free(buffer->base);
 }
 
 void
@@ -244,7 +221,7 @@ on_new_connection(uv_stream_t *pm_server, int status)
     uv_pipe_t *client;
 
     if (status == -1) {
-        fprintf(stderr, "new connection error\n");
+        write_log(__FILE__, __func__, LOG_ERROR, "Socket new connection");
         return;
     }
 
@@ -256,7 +233,7 @@ on_new_connection(uv_stream_t *pm_server, int status)
     uv_pipe_init(loop, client, 0);
 
     if (uv_accept(pm_server, (uv_stream_t *) client) == 0) {
-        printf("\nAccepted client request\n");
+        write_log(__FILE__, __func__, LOG_NORMAL, "Accepted client request");
         uv_read_start((uv_stream_t *) client, alloc_buffer, on_client_read);
     }
     else {
@@ -268,7 +245,7 @@ on_new_connection(uv_stream_t *pm_server, int status)
 void
 pm_close(int sig)
 {
-    printf("\nClosing policy manager...\n");
+    write_log(__FILE__, __func__, LOG_NORMAL, "Closing policy manager...\n");
     uv_fs_t req;
     uv_fs_unlink(loop, &req, pm_socket_path, NULL);
 
@@ -276,16 +253,9 @@ pm_close(int sig)
     cib_close();
 }
 
-
+//this function never returns, see documentation "uv_run"
 int
-main(int argc, char *argv[])
-{
-    printf("\n\n--Start PM--\n\n");
-
-    generate_cib_from_ifaces();
-    cib_start();
-    pib_start();
-
+create_socket(){
     uv_pipe_t pm_server;
     int r;
 
@@ -294,18 +264,51 @@ main(int argc, char *argv[])
 
     signal(SIGINT, pm_close);
 
-    pm_socket_path = make_pm_socket_path();
-    unlink(pm_socket_path);
-    printf("\nsocket created in %s\n\n", pm_socket_path);
+    unlink(SOCKET_DIR);
+    write_log(__FILE__, __func__, LOG_NORMAL, "Socket created in %s", SOCKET_DIR);
 
-    if ((r = uv_pipe_bind(&pm_server, pm_socket_path)) != 0) {
-        fprintf(stderr, "Bind error %s\n", uv_err_name(r));
+    if ((r = uv_pipe_bind(&pm_server, SOCKET_DIR)) != 0) {
+        write_log(__FILE__, __func__, LOG_ERROR, "Socket bind error %s", uv_err_name(r));
         return 1;
     }
     if ((r = uv_listen((uv_stream_t*) &pm_server, PM_BACKLOG, on_new_connection))) {
-        fprintf(stderr, "Listen error %s\n", uv_err_name(r));
+        write_log(__FILE__, __func__, LOG_ERROR, "Socket listen error %s", uv_err_name(r));
         return 2;
     }
-
+   
     return uv_run(loop, UV_RUN_DEFAULT);
+}
+
+void 
+parse_arguments(int argc, char *argv[])
+{
+    int i;
+
+    for (i = 1; i < argc; i++) {
+        char* input = argv[i];
+        if(strcmp(input,"-debug") == 0) {
+            enable_debug_message(true);
+        }
+        else if(strcmp(input,"-log") == 0) {           
+            enable_log_file(true);
+        }
+        else {
+            write_log(__FILE__, __func__, LOG_ERROR, "Unexpected input: %s", input); 
+        }
+    }
+}
+
+int
+main(int argc, char *argv[])
+{  
+    write_log(__FILE__, __func__, LOG_NORMAL,"\n--Start PM--\n");
+
+    parse_arguments(argc, argv);
+    create_folders();
+    
+    generate_cib_from_ifaces();
+    cib_start();
+    pib_start();
+
+    return create_socket();   
 }
