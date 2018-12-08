@@ -21,7 +21,6 @@
 #define ARRAY_SIZE(array) (sizeof((array))/sizeof((array)[0]))
 
 uv_loop_t *loop;
-const char *pm_socket_path;
 
 typedef struct client_req {
     char *buffer;
@@ -247,11 +246,12 @@ pm_close(int sig)
 {
     write_log(__FILE__, __func__, LOG_NORMAL, "Closing policy manager...\n");
     uv_fs_t req;
-    uv_fs_unlink(loop, &req, pm_socket_path, NULL);
+    uv_fs_unlink(loop, &req, SOCKET_PATH, NULL);
 
     pib_close();
     cib_close();
 }
+
 
 //this function never returns, see documentation "uv_run"
 int
