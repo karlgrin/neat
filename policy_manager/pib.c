@@ -63,7 +63,7 @@ pib_lookup(node_t *pib_list, json_t *input_props)
 
             /* no match field becomes a match by default */
             if (!policy_match || subset(policy_match, candidate)) {
-                printf("subset found for %s\n", current_policy->filename);
+                printf("subset found for %s", current_policy->filename);
                 printf("merging...\n");
 
                 properties_expanded = expand_json(json_object_get(current_policy->json, "properties"));

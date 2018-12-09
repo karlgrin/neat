@@ -20,7 +20,7 @@ node_t* cib_nodes = NULL;
 void
 generate_cib_from_ifaces()
 {
-    write_log(__FILE__, __func__, LOG_NORMAL, "Generate CIB from interfaces:");
+    write_log(__FILE__, __func__, LOG_EVENT, "Generate CIB from interfaces:");
     
     struct ifaddrs *ifaddr, *interface;
     struct if_nameindex *if_nidxs, *iface;
@@ -113,11 +113,11 @@ generate_cib_from_ifaces()
 
         char* path = new_string("%s%s%s", CIB_DIR, json_object_iter_key(iter), ".cib");
         write_json_file(path, json_object_get(root, json_object_iter_key(iter)));
-        write_log(__FILE__, __func__, LOG_NORMAL, "%s", path);
+        write_log(__FILE__, __func__, LOG_EVENT, "%s", path);
 
         iter = json_object_iter_next(root, iter);
     }
-    write_log(__FILE__, __func__, LOG_NEW_LINE, "");  //just to make console look good
+    write_log(__FILE__, __func__, LOG_NEW_LINE, "\n");  //just to make console look good
     json_decref(root);
     freeifaddrs(ifaddr);
 }
@@ -147,7 +147,7 @@ cib_lookup(json_t *input_props)
         }
 
         if(subset(node_props, immutable_input_props)){
-            write_log(__FILE__, __func__, LOG_DEBUG, "Subset found for %s\n", current_node->filename);
+            //write_log(__FILE__, __func__, LOG_DEBUG, "Subset found for %s", current_node->filename);
             continue;
         } else {
             /* FROM CIB.PY

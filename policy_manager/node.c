@@ -179,13 +179,13 @@ void
 print_node(node_t *node)
 {
     if(node != NULL) {
-      write_log(__FILE__, __func__, LOG_NORMAL, "--------NODE----------\n");
+      write_log(__FILE__, __func__, LOG_EVENT, "--------NODE----------\n");
         if(node->filename != NULL) {
-             write_log(__FILE__, __func__, LOG_NORMAL, "filename: %s\n", node->filename);
+             write_log(__FILE__, __func__, LOG_EVENT, "filename: %s\n", node->filename);
         }
-        write_log(__FILE__, __func__, LOG_NORMAL, "last_updated: %s", ctime(&node->last_updated));
+        write_log(__FILE__, __func__, LOG_EVENT, "last_updated: %s", ctime(&node->last_updated));
         char *json_string = json_dumps(node->json, JSON_INDENT(4));
-        write_log(__FILE__, __func__, LOG_NORMAL, "json: %s\n" , json_string);
+        write_log(__FILE__, __func__, LOG_EVENT, "json: %s\n" , json_string);
         free(json_string);
     }
 }
@@ -283,7 +283,7 @@ subset(json_t *prop_a, json_t *prop_b)
             return 0;
         }
     }
-    printf("all properties are members. this is a subset (OK).\n");
+    //printf("all properties are members. this is a subset (OK).\n");
     return 1;
 }
 

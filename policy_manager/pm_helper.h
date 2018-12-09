@@ -16,7 +16,7 @@ extern char* PROFILE_DIR;
 extern char* POLICY_DIR;
 
 typedef enum {
-    LOG_NORMAL, LOG_ERROR, LOG_DEBUG, LOG_NEW_LINE
+    LOG_EVENT, LOG_ERROR, LOG_DEBUG, LOG_NEW_LINE
 } LOG_LEVEL;
 
 void enable_log_file(bool enable);

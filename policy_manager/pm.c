@@ -63,7 +63,7 @@ lookup(json_t *reqs)
             cib_lookup_result = cib_lookup(candidate);
             json_array_foreach(cib_lookup_result, k, candidate){
                 if(!array_contains_value(cib_candidates, candidate)){
-                    write_log(__FILE__, __func__, LOG_DEBUG, "Candidate is not in cib_candidates! Adding..");
+                    //write_log(__FILE__, __func__, LOG_DEBUG, "Candidate is not in cib_candidates! Adding..");
                     json_array_append(cib_candidates, candidate);
                 }
             }
@@ -100,8 +100,8 @@ handle_request(uv_stream_t *client)
     json_error_t json_error;
 
     request_json = json_loads(client_req->buffer, 0, &json_error);
-    write_log(__FILE__, __func__, LOG_NORMAL, "Request received");
-    write_log(__FILE__, __func__, LOG_DEBUG, "Request: \n%s", json_dumps(request_json, 0));
+    write_log(__FILE__, __func__, LOG_EVENT, "Request received");
+    write_log(__FILE__, __func__, LOG_DEBUG, "Request: \n%s\n", json_dumps(request_json, 0));
 
     if (!request_json) {
         write_log(__FILE__, __func__, LOG_ERROR, "Error with request, json-error-text: %s", json_error.text);
@@ -116,8 +116,8 @@ handle_request(uv_stream_t *client)
     write_req = malloc(sizeof(uv_write_t));
     uv_write(write_req, client, &response_buf, 1, NULL);
 
-    write_log(__FILE__, __func__, LOG_DEBUG, "PM result: \n%s", json_dumps(candidates, 0));
-    write_log(__FILE__, __func__, LOG_NORMAL, "Request handled, sendig candidates");
+    write_log(__FILE__, __func__, LOG_DEBUG, "PM result: \n%s\n", json_dumps(candidates, 0));
+    write_log(__FILE__, __func__, LOG_EVENT, "Request handled, sending candidates\n");
 
     free(response_buf.base);
     json_decref(candidates);
@@ -175,7 +175,7 @@ on_new_connection(uv_stream_t *pm_server, int status)
     uv_pipe_init(loop, client, 0);
 
     if (uv_accept(pm_server, (uv_stream_t *) client) == 0) {
-        write_log(__FILE__, __func__, LOG_NORMAL, "Accepted client request");
+        write_log(__FILE__, __func__, LOG_EVENT, "Accepted client request");
         uv_read_start((uv_stream_t *) client, alloc_buffer, on_client_read);
     }
     else {
@@ -187,7 +187,7 @@ on_new_connection(uv_stream_t *pm_server, int status)
 void
 pm_close(int sig)
 {
-    write_log(__FILE__, __func__, LOG_NORMAL, "Closing policy manager...\n");
+    write_log(__FILE__, __func__, LOG_EVENT, "Closing policy manager...\n");
     uv_fs_t req;
     uv_fs_unlink(loop, &req, SOCKET_PATH, NULL);
 
@@ -209,7 +209,7 @@ create_socket(){
     signal(SIGINT, pm_close);
 
     unlink(SOCKET_PATH);
-    write_log(__FILE__, __func__, LOG_NORMAL, "Socket created in %s", SOCKET_PATH);
+    write_log(__FILE__, __func__, LOG_EVENT, "Socket created in %s\n", SOCKET_PATH);
 
     if ((r = uv_pipe_bind(&pm_server, SOCKET_PATH)) != 0) {
         write_log(__FILE__, __func__, LOG_ERROR, "Socket bind error %s", uv_err_name(r));
@@ -245,7 +245,7 @@ parse_arguments(int argc, char *argv[])
 int
 main(int argc, char *argv[])
 {
-    write_log(__FILE__, __func__, LOG_NORMAL,"\n--Start PM--\n");
+    write_log(__FILE__, __func__, LOG_EVENT,"\n--Start PM--\n");
 
     parse_arguments(argc, argv);
     create_folders();

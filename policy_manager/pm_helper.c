@@ -83,7 +83,7 @@ create_folders()
 char*
 new_string(char *string, ...)
 {
-    char buffer[100];
+    char buffer[1000];
 	va_list arglist;
 
 	va_start(arglist, string);
@@ -113,7 +113,7 @@ enable_log_file(bool enable)
 {
     if(enable) {
         char* current_dir = get_current_dir();
-        write_log(__FILE__, __func__, LOG_NORMAL, "Log messages: %s/%s\n", current_dir, LOG_FILENAME);
+        write_log(__FILE__, __func__, LOG_EVENT, "Log messages: %s/%s\n", current_dir, LOG_FILENAME);
         free(current_dir);
     }
     log_file_enabled = enable;
@@ -124,57 +124,25 @@ enable_debug_message(bool enable)
 {
     debug_enabled = enable;
     if(enable)
-        write_log(__FILE__, __func__, LOG_NORMAL, "Debug mode: ON\n");
+        write_log(__FILE__, __func__, LOG_EVENT, "Debug mode: ON\n");
 }
 
 void
-write_log_file(const char* module, const char* func, LOG_LEVEL log_level, const char *desc)
+write_log(const char* module, const char* func, LOG_LEVEL log_level, const char* format, ...)
 {
-    if(log_file_enabled == false || log_level == LOG_NEW_LINE) { return; }
-
     char* log_type;
-    char time_buffer[100];
-    time_t now = time (0);
-    strftime (time_buffer, 100, "%Y-%m-%d %H:%M:%S.000", localtime (&now));
-
-     switch(log_level) {
-        case LOG_NORMAL:
-         log_type = "NORMAL";
-            break;
-        case LOG_ERROR:
-            log_type ="ERROR";
-            break;
-        case LOG_DEBUG:
-            log_type ="DEBUG";
-            break;
-    }
-
-    FILE *fp = fopen(LOG_FILENAME, "a");
-    if(fp != NULL) {
-        fprintf(fp, "Log Type: %s\nTime: %s  \nModule: %s\nFunction: %s\nDescription: %s\n\n", log_type, time_buffer, module, func, desc);
-        fclose(fp);
-    }
-}
-
-void
-write_log(const char* module, const char* func, LOG_LEVEL log_level, const char *desc, ...)
-{
-    char desc_buffer[100];
-	va_list arglist;
-	va_start(arglist, desc);
-	vsprintf(desc_buffer, desc, arglist);
-	va_end(arglist);
-
     switch(log_level) {
-        case LOG_NORMAL:
-            printf("%s\n", desc_buffer);
+        case LOG_EVENT:
+            log_type = "EVENT";
             break;
         case LOG_ERROR:
-            printf("\n[ERROR] %s\n\n", desc_buffer);
+            log_type = "ERROR";
+            printf("\n[ERROR] ");
             break;
         case LOG_DEBUG:
+            log_type = "DEBUG";
             if(debug_enabled) {
-                printf("[DEBUG] %s\n", desc_buffer);
+                printf("[DEBUG] ");
             }
             break;
         case LOG_NEW_LINE:
@@ -182,10 +150,41 @@ write_log(const char* module, const char* func, LOG_LEVEL log_level, const char 
             return;
     }
 
-   if(log_file_enabled) { write_log_file(module, func, log_level, desc_buffer); }
+    //write to console
+    if(log_level != LOG_DEBUG || debug_enabled) {
+        va_list argptr;
+        va_start(argptr, format);
+
+        vprintf(format, argptr);
+        printf("\n");
+        if(log_level == LOG_ERROR) { printf("\n"); }
+
+        va_end(argptr);
+    }
+
+    //write to log file
+    if(log_file_enabled) { 
+        FILE *fp = fopen(LOG_FILENAME, "a");
+        if(fp != NULL) {
+            va_list argptr;
+            va_start(argptr, format);
+
+            char time_buffer[100];
+            time_t now = time (0);
+            strftime (time_buffer, 100, "%Y-%m-%d %H:%M:%S.000", localtime (&now));
+
+            fprintf(fp, "Log Type: %s\nTime: %s  \nModule: %s\nFunction: %s\nDescription: ", log_type, time_buffer, module, func);
+            vfprintf(fp, format, argptr);
+            fprintf(fp, "\n\n");
+           
+            fclose(fp);
+            va_end(argptr);
+        }
+        else {
+            write_log(__FILE__ , __func__, LOG_ERROR, "Cannot access log file");
+        }         
+    }    
 }
-
-
 
 time_t
 file_edit_time(const char *file_path)
