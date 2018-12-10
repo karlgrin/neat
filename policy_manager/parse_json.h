@@ -29,7 +29,4 @@ json_t* expand_value(json_t* element, json_t* property, json_t* value_input, con
 json_t* expand_element_value(json_t* element);
 json_t* expand_values(json_t* req);
 
-void my_json_object_set(json_t* object, const char* key, json_t* value);
-void my_json_array_append(json_t *array, json_t *value);
-
 #endif

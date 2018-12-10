@@ -398,17 +398,3 @@ expand_values(json_t* req)
     }    
     return my_return;
 }
-
-void 
-my_json_object_set(json_t* object, const char* key, json_t* value) 
-{
-    json_object_set(object, key, value);
-    json_decref(value);
-}
-
-void
-my_json_array_append(json_t *array, json_t *value) 
-{
-    json_array_append(array, value);
-    json_decref(value);
-}
