@@ -1,0 +1,334 @@
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_6e6b0/fast"
+/usr/bin/make -f CMakeFiles/cmTC_6e6b0.dir/build.make CMakeFiles/cmTC_6e6b0.dir/build
+make[1]: Entering directory '/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_6e6b0.dir/CheckSymbolExists.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_6e6b0.dir/CheckSymbolExists.c.o   -c /home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTC_6e6b0
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_6e6b0.dir/link.txt --verbose=1
+/usr/bin/cc      -rdynamic CMakeFiles/cmTC_6e6b0.dir/CheckSymbolExists.c.o  -o cmTC_6e6b0 
+CMakeFiles/cmTC_6e6b0.dir/CheckSymbolExists.c.o: In function `main':
+CheckSymbolExists.c:(.text+0x1b): undefined reference to `pthread_create'
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_6e6b0.dir/build.make:97: recipe for target 'cmTC_6e6b0' failed
+make[1]: *** [cmTC_6e6b0] Error 1
+make[1]: Leaving directory '/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_6e6b0/fast' failed
+make: *** [cmTC_6e6b0/fast] Error 2
+
+File /home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_eeba3/fast"
+/usr/bin/make -f CMakeFiles/cmTC_eeba3.dir/build.make CMakeFiles/cmTC_eeba3.dir/build
+make[1]: Entering directory '/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_eeba3.dir/CheckFunctionExists.c.o
+/usr/bin/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_eeba3.dir/CheckFunctionExists.c.o   -c /usr/share/cmake-3.10/Modules/CheckFunctionExists.c
+Linking C executable cmTC_eeba3
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_eeba3.dir/link.txt --verbose=1
+/usr/bin/cc  -DCHECK_FUNCTION_EXISTS=pthread_create    -rdynamic CMakeFiles/cmTC_eeba3.dir/CheckFunctionExists.c.o  -o cmTC_eeba3 -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_eeba3.dir/build.make:97: recipe for target 'cmTC_eeba3' failed
+make[1]: *** [cmTC_eeba3] Error 1
+make[1]: Leaving directory '/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_eeba3/fast' failed
+make: *** [cmTC_eeba3/fast] Error 2
+
+
+Performing C SOURCE FILE Test HAVE_SA_LEN failed with the following output:
+Change Dir: /home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_15336/fast"
+/usr/bin/make -f CMakeFiles/cmTC_15336.dir/build.make CMakeFiles/cmTC_15336.dir/build
+make[1]: Entering directory '/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_15336.dir/src.c.o
+/usr/bin/cc   -DHAVE_SA_LEN   -o CMakeFiles/cmTC_15336.dir/src.c.o   -c /home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp/src.c
+/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp/src.c: In function ‘main’:
+/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp/src.c:7:39: error: ‘struct sockaddr’ has no member named ‘sa_len’
+    (void)sizeof(((struct sockaddr *)0)->sa_len);
+                                       ^~
+CMakeFiles/cmTC_15336.dir/build.make:65: recipe for target 'CMakeFiles/cmTC_15336.dir/src.c.o' failed
+make[1]: *** [CMakeFiles/cmTC_15336.dir/src.c.o] Error 1
+make[1]: Leaving directory '/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_15336/fast' failed
+make: *** [cmTC_15336/fast] Error 2
+
+Source file was:
+
+#include <sys/types.h>
+#include <sys/socket.h>
+
+int main()
+{
+   (void)sizeof(((struct sockaddr *)0)->sa_len);
+   return 0;
+}
+
+Performing C SOURCE FILE Test HAVE_SIN_LEN failed with the following output:
+Change Dir: /home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_f4809/fast"
+/usr/bin/make -f CMakeFiles/cmTC_f4809.dir/build.make CMakeFiles/cmTC_f4809.dir/build
+make[1]: Entering directory '/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_f4809.dir/src.c.o
+/usr/bin/cc   -DHAVE_SIN_LEN   -o CMakeFiles/cmTC_f4809.dir/src.c.o   -c /home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp/src.c
+/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp/src.c: In function ‘main’:
+/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp/src.c:7:44: error: ‘struct sockaddr_in’ has no member named ‘sin_len’; did you mean ‘sin_zero’?
+    (void)sizeof(((struct sockaddr_in *)0)->sin_len);
+                                            ^~~~~~~
+                                            sin_zero
+CMakeFiles/cmTC_f4809.dir/build.make:65: recipe for target 'CMakeFiles/cmTC_f4809.dir/src.c.o' failed
+make[1]: *** [CMakeFiles/cmTC_f4809.dir/src.c.o] Error 1
+make[1]: Leaving directory '/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_f4809/fast' failed
+make: *** [cmTC_f4809/fast] Error 2
+
+Source file was:
+
+#include <sys/types.h>
+#include <netinet/in.h>
+
+int main()
+{
+   (void)sizeof(((struct sockaddr_in *)0)->sin_len);
+   return 0;
+}
+
+Performing C SOURCE FILE Test HAVE_SIN6_LEN failed with the following output:
+Change Dir: /home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_23f58/fast"
+/usr/bin/make -f CMakeFiles/cmTC_23f58.dir/build.make CMakeFiles/cmTC_23f58.dir/build
+make[1]: Entering directory '/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_23f58.dir/src.c.o
+/usr/bin/cc   -DHAVE_SIN6_LEN   -o CMakeFiles/cmTC_23f58.dir/src.c.o   -c /home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp/src.c
+/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp/src.c: In function ‘main’:
+/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp/src.c:7:45: error: ‘struct sockaddr_in6’ has no member named ‘sin6_len’; did you mean ‘sin6_port’?
+    (void)sizeof(((struct sockaddr_in6 *)0)->sin6_len);
+                                             ^~~~~~~~
+                                             sin6_port
+CMakeFiles/cmTC_23f58.dir/build.make:65: recipe for target 'CMakeFiles/cmTC_23f58.dir/src.c.o' failed
+make[1]: *** [CMakeFiles/cmTC_23f58.dir/src.c.o] Error 1
+make[1]: Leaving directory '/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_23f58/fast' failed
+make: *** [cmTC_23f58/fast] Error 2
+
+Source file was:
+
+#include <sys/types.h>
+#include <netinet/in.h>
+
+int main()
+{
+   (void)sizeof(((struct sockaddr_in6 *)0)->sin6_len);
+   return 0;
+}
+
+Performing C SOURCE FILE Test HAVE_SS_LEN failed with the following output:
+Change Dir: /home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_142bf/fast"
+/usr/bin/make -f CMakeFiles/cmTC_142bf.dir/build.make CMakeFiles/cmTC_142bf.dir/build
+make[1]: Entering directory '/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_142bf.dir/src.c.o
+/usr/bin/cc   -DHAVE_SS_LEN   -o CMakeFiles/cmTC_142bf.dir/src.c.o   -c /home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp/src.c
+/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp/src.c: In function ‘main’:
+/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp/src.c:7:49: error: ‘struct sockaddr_storage’ has no member named ‘ss_len’; did you mean ‘__ss_align’?
+    (void)sizeof(((struct sockaddr_storage *)0)->ss_len);
+                                                 ^~~~~~
+                                                 __ss_align
+CMakeFiles/cmTC_142bf.dir/build.make:65: recipe for target 'CMakeFiles/cmTC_142bf.dir/src.c.o' failed
+make[1]: *** [CMakeFiles/cmTC_142bf.dir/src.c.o] Error 1
+make[1]: Leaving directory '/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_142bf/fast' failed
+make: *** [cmTC_142bf/fast] Error 2
+
+Source file was:
+
+#include <sys/types.h>
+#include <sys/socket.h>
+
+int main()
+{
+   (void)sizeof(((struct sockaddr_storage *)0)->ss_len);
+   return 0;
+}
+
+Determining size of struct bio_dgram_sctp_sndinfo failed with the following output:
+Change Dir: /home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_ad2f6/fast"
+/usr/bin/make -f CMakeFiles/cmTC_ad2f6.dir/build.make CMakeFiles/cmTC_ad2f6.dir/build
+make[1]: Entering directory '/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_ad2f6.dir/OPENSSL_DTLS.c.o
+/usr/bin/cc    -o CMakeFiles/cmTC_ad2f6.dir/OPENSSL_DTLS.c.o   -c /home/free/Downloads/neat/buid/CMakeFiles/CheckTypeSize/OPENSSL_DTLS.c
+/home/free/Downloads/neat/buid/CMakeFiles/CheckTypeSize/OPENSSL_DTLS.c:24:22: error: invalid application of ‘sizeof’ to incomplete type ‘struct bio_dgram_sctp_sndinfo’
+ #define SIZE (sizeof(struct bio_dgram_sctp_sndinfo))
+                      ^
+/home/free/Downloads/neat/buid/CMakeFiles/CheckTypeSize/OPENSSL_DTLS.c:26:12: note: in expansion of macro ‘SIZE’
+   ('0' + ((SIZE / 10000)%10)),
+            ^~~~
+/home/free/Downloads/neat/buid/CMakeFiles/CheckTypeSize/OPENSSL_DTLS.c:24:22: error: invalid application of ‘sizeof’ to incomplete type ‘struct bio_dgram_sctp_sndinfo’
+ #define SIZE (sizeof(struct bio_dgram_sctp_sndinfo))
+                      ^
+/home/free/Downloads/neat/buid/CMakeFiles/CheckTypeSize/OPENSSL_DTLS.c:27:12: note: in expansion of macro ‘SIZE’
+   ('0' + ((SIZE / 1000)%10)),
+            ^~~~
+/home/free/Downloads/neat/buid/CMakeFiles/CheckTypeSize/OPENSSL_DTLS.c:24:22: error: invalid application of ‘sizeof’ to incomplete type ‘struct bio_dgram_sctp_sndinfo’
+ #define SIZE (sizeof(struct bio_dgram_sctp_sndinfo))
+                      ^
+/home/free/Downloads/neat/buid/CMakeFiles/CheckTypeSize/OPENSSL_DTLS.c:28:12: note: in expansion of macro ‘SIZE’
+   ('0' + ((SIZE / 100)%10)),
+            ^~~~
+/home/free/Downloads/neat/buid/CMakeFiles/CheckTypeSize/OPENSSL_DTLS.c:24:22: error: invalid application of ‘sizeof’ to incomplete type ‘struct bio_dgram_sctp_sndinfo’
+ #define SIZE (sizeof(struct bio_dgram_sctp_sndinfo))
+                      ^
+/home/free/Downloads/neat/buid/CMakeFiles/CheckTypeSize/OPENSSL_DTLS.c:29:12: note: in expansion of macro ‘SIZE’
+   ('0' + ((SIZE / 10)%10)),
+            ^~~~
+/home/free/Downloads/neat/buid/CMakeFiles/CheckTypeSize/OPENSSL_DTLS.c:24:22: error: invalid application of ‘sizeof’ to incomplete type ‘struct bio_dgram_sctp_sndinfo’
+ #define SIZE (sizeof(struct bio_dgram_sctp_sndinfo))
+                      ^
+/home/free/Downloads/neat/buid/CMakeFiles/CheckTypeSize/OPENSSL_DTLS.c:30:12: note: in expansion of macro ‘SIZE’
+   ('0' +  (SIZE    % 10)),
+            ^~~~
+CMakeFiles/cmTC_ad2f6.dir/build.make:65: recipe for target 'CMakeFiles/cmTC_ad2f6.dir/OPENSSL_DTLS.c.o' failed
+make[1]: *** [CMakeFiles/cmTC_ad2f6.dir/OPENSSL_DTLS.c.o] Error 1
+make[1]: Leaving directory '/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_ad2f6/fast' failed
+make: *** [cmTC_ad2f6/fast] Error 2
+
+/home/free/Downloads/neat/buid/CMakeFiles/CheckTypeSize/OPENSSL_DTLS.c:
+#include <sys/types.h>
+#include <stdint.h>
+#include <stddef.h>
+#include "openssl/ssl.h"
+
+
+#undef KEY
+#if defined(__i386)
+# define KEY '_','_','i','3','8','6'
+#elif defined(__x86_64)
+# define KEY '_','_','x','8','6','_','6','4'
+#elif defined(__ppc__)
+# define KEY '_','_','p','p','c','_','_'
+#elif defined(__ppc64__)
+# define KEY '_','_','p','p','c','6','4','_','_'
+#elif defined(__aarch64__)
+# define KEY '_','_','a','a','r','c','h','6','4','_','_'
+#elif defined(__ARM_ARCH_7A__)
+# define KEY '_','_','A','R','M','_','A','R','C','H','_','7','A','_','_'
+#elif defined(__ARM_ARCH_7S__)
+# define KEY '_','_','A','R','M','_','A','R','C','H','_','7','S','_','_'
+#endif
+
+#define SIZE (sizeof(struct bio_dgram_sctp_sndinfo))
+char info_size[] =  {'I', 'N', 'F', 'O', ':', 's','i','z','e','[',
+  ('0' + ((SIZE / 10000)%10)),
+  ('0' + ((SIZE / 1000)%10)),
+  ('0' + ((SIZE / 100)%10)),
+  ('0' + ((SIZE / 10)%10)),
+  ('0' +  (SIZE    % 10)),
+  ']',
+#ifdef KEY
+  ' ','k','e','y','[', KEY, ']',
+#endif
+  '\0'};
+
+#ifdef __CLASSIC_C__
+int main(argc, argv) int argc; char *argv[];
+#else
+int main(int argc, char *argv[])
+#endif
+{
+  int require = 0;
+  require += info_size[argc];
+  (void)argv;
+  return require;
+}
+
+
+Determining if the include file rawrtc.h exists failed with the following output:
+Change Dir: /home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_a1092/fast"
+/usr/bin/make -f CMakeFiles/cmTC_a1092.dir/build.make CMakeFiles/cmTC_a1092.dir/build
+make[1]: Entering directory '/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_a1092.dir/CheckIncludeFile.c.o
+/usr/bin/cc  -I/include   -o CMakeFiles/cmTC_a1092.dir/CheckIncludeFile.c.o   -c /home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp/CheckIncludeFile.c
+/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp/CheckIncludeFile.c:1:10: fatal error: rawrtc.h: No such file or directory
+ #include <rawrtc.h>
+          ^~~~~~~~~~
+compilation terminated.
+CMakeFiles/cmTC_a1092.dir/build.make:65: recipe for target 'CMakeFiles/cmTC_a1092.dir/CheckIncludeFile.c.o' failed
+make[1]: *** [CMakeFiles/cmTC_a1092.dir/CheckIncludeFile.c.o] Error 1
+make[1]: Leaving directory '/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_a1092/fast' failed
+make: *** [cmTC_a1092/fast] Error 2
+
+
+Performing C SOURCE FILE Test HAVE_SCTP_SEND_FAILED_EVENT failed with the following output:
+Change Dir: /home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_7b101/fast"
+/usr/bin/make -f CMakeFiles/cmTC_7b101.dir/build.make CMakeFiles/cmTC_7b101.dir/build
+make[1]: Entering directory '/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_7b101.dir/src.c.o
+/usr/bin/cc  -I/include  -DHAVE_NETINET_SCTP_H -DHAVE_SCTP_SEND_FAILED_EVENT   -o CMakeFiles/cmTC_7b101.dir/src.c.o   -c /home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp/src.c
+/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp/src.c: In function ‘main’:
+/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp/src.c:6:53: error: dereferencing pointer to incomplete type ‘struct sctp_send_failed_event’
+    (void)sizeof(((struct sctp_send_failed_event *)0)->ssfe_error);
+                                                     ^~
+CMakeFiles/cmTC_7b101.dir/build.make:65: recipe for target 'CMakeFiles/cmTC_7b101.dir/src.c.o' failed
+make[1]: *** [CMakeFiles/cmTC_7b101.dir/src.c.o] Error 1
+make[1]: Leaving directory '/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_7b101/fast' failed
+make: *** [cmTC_7b101/fast] Error 2
+
+Source file was:
+
+#include <netinet/sctp.h>
+
+int main()
+{
+   (void)sizeof(((struct sctp_send_failed_event *)0)->ssfe_error);
+   return 0;
+}
+
+Determining if the include file RTIMULib.h exists failed with the following output:
+Change Dir: /home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_a5a18/fast"
+/usr/bin/make -f CMakeFiles/cmTC_a5a18.dir/build.make CMakeFiles/cmTC_a5a18.dir/build
+make[1]: Entering directory '/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_a5a18.dir/CheckIncludeFile.cxx.o
+/usr/bin/c++   -I/include   -o CMakeFiles/cmTC_a5a18.dir/CheckIncludeFile.cxx.o -c /home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx
+/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp/CheckIncludeFile.cxx:1:10: fatal error: RTIMULib.h: No such file or directory
+ #include <RTIMULib.h>
+          ^~~~~~~~~~~~
+compilation terminated.
+CMakeFiles/cmTC_a5a18.dir/build.make:65: recipe for target 'CMakeFiles/cmTC_a5a18.dir/CheckIncludeFile.cxx.o' failed
+make[1]: *** [CMakeFiles/cmTC_a5a18.dir/CheckIncludeFile.cxx.o] Error 1
+make[1]: Leaving directory '/home/free/Downloads/neat/buid/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_a5a18/fast' failed
+make: *** [cmTC_a5a18/fast] Error 2
+
+

@@ -1,0 +1,30 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/free/Downloads/neat/neat.h
+sys/types.h
+-
+netinet/in.h
+-
+uv.h
+-
+
+/home/free/Downloads/neat/tests/test_close.c
+stdlib.h
+-
+stdio.h
+-
+string.h
+-
+unistd.h
+-
+assert.h
+-
+../neat.h
+/home/free/Downloads/neat/neat.h
+

@@ -1,0 +1,12 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/free/Downloads/neat/examples/gyropi.cpp
+RTIMULib.h
+/home/free/Downloads/neat/examples/RTIMULib.h
+

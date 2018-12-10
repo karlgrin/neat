@@ -1,0 +1,7 @@
+{
+    "transport":
+    {
+        "value": ["UDP", "UDP-Lite"],
+        "precedence": 1
+    }
+}
