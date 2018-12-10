@@ -1,5 +1,20 @@
 
 # Policy Manager
+## Requirements
+**Note**: Developed and tested on Ubuntu 18.04 64-bit, Debian GNU/Linux 9 and...
+* `ljansson`
+* `libuv`
+* `libulfius-dev`
+* `libmicrohttpd-dev`
+* `unity`
+### Install requirements
+##### Packages
+| Prerequisite        | Install command           | 
+| ------------- |:-------------:|
+| If you **already have** the NEAT dependencies | `apt-get install libmicrohttpd-dev libulfius-dev` |
+| If you **don't have** the NEAT dependencies. | `apt-get install cmake libjansson-dev libuv1-dev libmicrohttpd-dev libulfius-dev` |
+##### Unity
+TODO: How to install Unity
 
 ## Quick Start
 
