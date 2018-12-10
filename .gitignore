@@ -9,4 +9,5 @@ pm/pib
 pm/build
 pm/ErrorLog.txt
 pm/test.out
+pm/neat_pm.service
 *.cib
