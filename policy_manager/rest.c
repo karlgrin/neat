@@ -108,9 +108,7 @@ callback_put_pib_node (const struct _u_request * request, struct _u_response * r
             snprintf(msg, 256, "PIB JSON object missing mandatory field");
             ulfius_set_string_body_response(response, 400, msg);
         } else {
-            node_t *node = node_init(path);
-            node->json = json_request;
-            add_pib_node(node, path);
+            add_pib_node(json_request);
         }
 
     } else {

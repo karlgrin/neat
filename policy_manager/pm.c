@@ -220,20 +220,14 @@ on_new_pm_connection(uv_stream_t *pm_server, int status)
 void
 handle_pib_request(uv_stream_t *client)
 {
-    /*client_req_t *client_req = (client_req_t *) client->data;
+    client_req_t *client_req = (client_req_t *) client->data;
     uv_buf_t response_buf;
     uv_write_t *write_req;
 
     json_t *request_json;
     json_error_t json_error;
-    char *path = new_string("%s/%s/%s", get_home_dir(), ".neat", PIB_DIR);
-    node_t *node = node_init(path);
     request_json = json_loads(client_req->buffer, 0, &json_error);
-    printf("%s\n", json_dumps(request_json, 2));
-    printf("Path to add json: %s\n", path);*/
-    /*node->json = json_array_get(request_json, 0);
-    add_pib_node(node, path);
-    */
+    add_pib_node(request_json);
 }
 
 void
@@ -302,7 +296,6 @@ handle_cib_request(uv_stream_t *client)
     char *uid = get_hash();
     request_json = json_loads(client_req->buffer, 0, &json_error);
     json_object_set(json_array_get(request_json, 0), "uid", json_string(uid));
-    printf("%s\n", json_dumps(request_json, 2));
     char *path = new_string("%s%s%s", CIB_DIR, uid, ".cib");
     node_t *node = node_init(path);
     printf("Path to add json: %s\n", path);

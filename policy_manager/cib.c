@@ -69,7 +69,6 @@ add_cib_node(node_t *node)
         double expiry = time(NULL) + CIB_DEFAULT_TIMEOUT;
         json_object_set(full_json, "expire", json_real(expiry));
     }
-    printf("NODE TO ADD: \n%s\n", json_dumps(full_json, 2));
     node->json = full_json;
     add_node(cib_nodes, node);
 }
@@ -78,7 +77,7 @@ void
 generate_cib_from_ifaces()
 {
     write_log(__FILE__, __func__, LOG_EVENT, "Generate CIB from interfaces:");
-    
+
     struct ifaddrs *ifaddr, *interface;
     struct if_nameindex *if_nidxs, *iface;
     int family, s, n;

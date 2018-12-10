@@ -31,12 +31,27 @@ get_pib_list ()
 }
 
 void
-add_pib_node(node_t *node, char *path)
+add_pib_node(json_t *json_for_node)
 {
     //Check uid, filename, time
+    const char *uid = json_string_value(json_object_get(json_for_node, "uid"));
+    if(uid == NULL){
+        uid = get_hash();
+        json_object_set(json_for_node, "uid", json_string(uid));
+    }
+    printf("Path to add policy: %s\n", new_string("%s%s%s", PIB_DIR, uid, ".policy"));
+    node_t *node = node_init(new_string("%s%s%s", PIB_DIR, uid, ".policy"));
+
+    if(json_object_get(json_for_node, "filename") == NULL){
+        json_object_set(json_for_node, "filename", json_string(new_string("%s.policy", uid)));
+    }
+
+    if(json_object_get(json_for_node, "time") == NULL){
+        json_object_set(json_for_node, "time", json_integer((int)time(NULL)));
+    }
+    node->json = json_for_node;
     add_node(pib_policies, node);
-    //write_json_file(path, node->json);
-    //free(path);
+    write_json_file(new_string("%s%s%s%s", PIB_DIR, "policy/", uid, ".policy"), node->json);
 }
 
 json_t *
