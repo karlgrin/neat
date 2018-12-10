@@ -29,4 +29,7 @@ json_t* expand_value(json_t* element, json_t* property, json_t* value_input, con
 json_t* expand_element_value(json_t* element);
 json_t* expand_values(json_t* req);
 
+int subset(json_t *prop_a, json_t *prop_b);
+void merge_properties(json_t *prop_a, json_t *prop_b, int should_overwrite);
+
 #endif
