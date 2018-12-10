@@ -211,27 +211,6 @@ handle_request(uv_stream_t *client)
 }
 
 void
-handle_cib_request(uv_stream_t *client)
-{
-    client_req_t *client_req = (client_req_t *) client->data;
-    uv_buf_t response_buf;
-    uv_write_t *write_req;
-
-    json_t *request_json;
-    json_error_t json_error;
-
-    request_json = json_loads(client_req->buffer, 0, &json_error);
-    printf("\nCIB_socket request: \n%s\n", json_dumps(request_json, 0));
-    //TODO
-}
-
-void
-handle_pib_request(uv_stream_t *client)
-{
-    //TODO
-}
-
-void
 alloc_buffer(uv_handle_t *handle, size_t suggested_size, uv_buf_t *buffer)
 {
     buffer->base = calloc(suggested_size, sizeof(char));
@@ -263,36 +242,6 @@ on_client_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buffer)
 }
 
 void
-on_cib_socket_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buffer)
-{
-    client_req_t *c_req = (client_req_t *) client->data;
-
-    if (nread == UV_EOF) { /* -4095? */
-        handle_cib_request(client);
-    }
-    else if (nread < 0) {
-        printf("error on cib_socket read\n");
-        uv_close((uv_handle_t *) client, NULL);
-        return;
-    }
-    else {
-        /* printf("read: %s\n", buffer->base); */
-
-        strncpy(c_req->buffer + c_req->len, buffer->base, BUFSIZE - c_req->len);
-        c_req->len += nread;
-
-        /* printf("buffer: %s (%zu bytes)\n", c_req->buffer, c_req->len); */
-    }
-    free(buffer->base);
-}
-
-void
-on_pib_socket_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buffer)
-{
-    //TODO
-}
-
-void
 on_new_pm_connection(uv_stream_t *pm_server, int status)
 {
     uv_pipe_t *client;
@@ -318,10 +267,132 @@ on_new_pm_connection(uv_stream_t *pm_server, int status)
     }
 }
 
+/*-----------------------*/
+/*----- PIB ACTIONS -----*/
+/*-----------------------*/
+
+void
+handle_pib_request(uv_stream_t *client)
+{
+    /*client_req_t *client_req = (client_req_t *) client->data;
+    uv_buf_t response_buf;
+    uv_write_t *write_req;
+
+    json_t *request_json;
+    json_error_t json_error;
+    char *path = new_string("%s/%s/%s", get_home_dir(), ".neat", PIB_DIR);
+    node_t *node = node_init(path);
+    request_json = json_loads(client_req->buffer, 0, &json_error);
+    printf("%s\n", json_dumps(request_json, 2));
+    printf("Path to add json: %s\n", path);*/
+    /*node->json = json_array_get(request_json, 0);
+    add_pib_node(node, path);
+    */
+}
+
+void
+on_pib_socket_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buffer)
+{
+    client_req_t *c_req = (client_req_t *) client->data;
+
+    if (nread == UV_EOF) { /* -4095? */
+        handle_pib_request(client);
+    }
+    else if (nread < 0) {
+        printf("error on pib_socket read\n");
+        uv_close((uv_handle_t *) client, NULL);
+        return;
+    }
+    else {
+        /* printf("read: %s\n", buffer->base); */
+
+        strncpy(c_req->buffer + c_req->len, buffer->base, BUFSIZE - c_req->len);
+        c_req->len += nread;
+
+        /* printf("buffer: %s (%zu bytes)\n", c_req->buffer, c_req->len); */
+    }
+    free(buffer->base);
+}
+
+void
+on_new_pib_connection(uv_stream_t *pib_server, int status)
+{
+    uv_pipe_t *client;
+
+    if (status == -1) {
+        fprintf(stderr, "new connection error\n");
+        return;
+    }
+
+    client = malloc(sizeof(uv_pipe_t));
+    client->data = malloc(sizeof(client_req_t)); /* stores json request */
+    ((client_req_t*) client->data)->buffer = malloc(BUFSIZE);
+    ((client_req_t*) client->data)->len = 0;
+
+    uv_pipe_init(loop, client, 0);
+
+    if (uv_accept(pib_server, (uv_stream_t *) client) == 0) {
+        printf("\nAccepted pib_socket request\n");
+        uv_read_start((uv_stream_t *) client, alloc_buffer, on_pib_socket_read);
+    }
+    else {
+        uv_close((uv_handle_t *) client, NULL);
+    }
+}
+
+/*-----------------------*/
+/*----- CIB ACTIONS -----*/
+/*-----------------------*/
+
+void
+handle_cib_request(uv_stream_t *client)
+{
+    client_req_t *client_req = (client_req_t *) client->data;
+    uv_buf_t response_buf;
+    uv_write_t *write_req;
+
+    json_t *request_json;
+    json_error_t json_error;
+    char *uid = get_hash();
+    request_json = json_loads(client_req->buffer, 0, &json_error);
+    json_object_set(json_array_get(request_json, 0), "uid", json_string(uid));
+    printf("%s\n", json_dumps(request_json, 2));
+    char *path = new_string("%s/%s/%s%s%s", get_home_dir(), ".neat", CIB_DIR, uid, ".cib");
+    node_t *node = node_init(path);
+    printf("Path to add json: %s\n", path);
+    node->json = json_array_get(request_json, 0);
+    add_cib_node(node);
+    write_json_file(path, node->json);
+    free(path);
+}
+
+void
+on_cib_socket_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buffer)
+{
+    client_req_t *c_req = (client_req_t *) client->data;
+
+    if (nread == UV_EOF) { /* -4095? */
+        handle_cib_request(client);
+    }
+    else if (nread < 0) {
+        printf("error on cib_socket read\n");
+        uv_close((uv_handle_t *) client, NULL);
+        return;
+    }
+    else {
+        /* printf("read: %s\n", buffer->base); */
+
+        strncpy(c_req->buffer + c_req->len, buffer->base, BUFSIZE - c_req->len);
+        c_req->len += nread;
+
+        /* printf("buffer: %s (%zu bytes)\n", c_req->buffer, c_req->len); */
+    }
+    free(buffer->base);
+}
+
 void
 on_new_cib_connection(uv_stream_t *cib_server, int status)
 {
-    //TODO
     uv_pipe_t *client;
 
     if (status == -1) {
@@ -337,18 +408,12 @@ on_new_cib_connection(uv_stream_t *cib_server, int status)
     uv_pipe_init(loop, client, 0);
 
     if (uv_accept(cib_server, (uv_stream_t *) client) == 0) {
-        printf("\nAccepted client request\n");
+        printf("\nAccepted cib_socket request\n");
         uv_read_start((uv_stream_t *) client, alloc_buffer, on_cib_socket_read);
     }
     else {
         uv_close((uv_handle_t *) client, NULL);
     }
-}
-
-void
-on_new_pib_connection(uv_stream_t *pib_server, int status)
-{
-    //TODO
 }
 
 void

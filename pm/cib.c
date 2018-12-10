@@ -49,6 +49,28 @@ get_cibnode_by_uid(const char *uid)
 void
 add_cib_node(node_t *node)
 {
+    //check uid, filename, description, priority, root, expire
+
+    json_t *full_json = node->json;
+    if(json_object_get(full_json, "uid") == NULL){
+        json_object_set(full_json, "uid", json_string(get_hash()));
+        json_object_set(full_json, "filename", json_string(new_string("%s.cib", get_hash())));
+    }
+    if(json_object_get(full_json, "description") == NULL){
+        json_object_set(full_json, "description", json_string(""));
+    }
+    if(json_object_get(full_json, "priority") == NULL){
+        json_object_set(full_json, "priority", json_integer(0));
+    }
+    if(json_object_get(full_json, "root") == NULL){
+        json_object_set(full_json, "root", json_boolean(false));
+    }
+    if(json_object_get(full_json, "expire") == NULL){
+        double expiry = time(NULL) + CIB_DEFAULT_TIMEOUT;
+        json_object_set(full_json, "expire", json_real(expiry));
+    }
+    printf("NODE TO ADD: \n%s\n", json_dumps(full_json, 2));
+    node->json = full_json;
     add_node(cib_nodes, node);
 }
 

@@ -31,9 +31,12 @@ get_pib_list ()
 }
 
 void
-add_pib_node(node_t *node)
+add_pib_node(node_t *node, char *path)
 {
+    //Check uid, filename, time
     add_node(pib_policies, node);
+    //write_json_file(path, node->json);
+    //free(path);
 }
 
 json_t *

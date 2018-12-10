@@ -2,11 +2,13 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <stdlib.h>
+#include <time.h>
 #include <pwd.h>
 
 #include "pmhelper.h"
 
 #define FILENAME "ErrorLog.txt"
+#define HASHLEN 30
 
 char*
 new_string(char *string, ...)
@@ -22,7 +24,7 @@ new_string(char *string, ...)
     char *result = calloc(1, len + 1); // +1 for the null-terminator
 
     if(result == NULL) {
-         write_log(__FILE__, __func__, "Error: failed to callloc..");
+         write_log(__FILE__, __func__, "Error: failed to calloc..");
          return NULL;
     }
 
@@ -169,4 +171,21 @@ array_contains_value(json_t *array, json_t *value)
         }
     }
     return false;
+}
+
+char *
+get_hash()
+{
+    char *hash = malloc((HASHLEN) * sizeof(char));
+    time_t t;
+    srandom((unsigned) time(&t));
+
+    const char *charset = "0123456789abcdef";
+
+    for (int i = 0; i < HASHLEN; i++) {
+        *hash = *(charset + (random() % 16));  // Following chars in range 0..15
+        hash++;
+    }
+    hash -= HASHLEN;
+    return hash;
 }
