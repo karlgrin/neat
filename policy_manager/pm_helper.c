@@ -61,16 +61,29 @@ create_folder(char* path)
     return 0;
 }
 
+void pm_helper_close()
+{
+    free(NEAT_DIR);    
+    free(SOCKET_PATH); 
+    free(IB_DIR);      
+    free(CIB_DIR);     
+    free(PIB_DIR);
+    free(PROFILE_DIR); 
+    free(POLICY_DIR);
+}
+
 void
 create_folders()
 {
     NEAT_DIR    = new_string("%s/%s", get_home_dir(), ".neat/");
-    SOCKET_PATH = new_string("%s%s", NEAT_DIR, "neat_pm_socket");
     IB_DIR      = new_string("%s%s", NEAT_DIR, "infobase/");
     CIB_DIR     = new_string("%s%s", IB_DIR, "cib/");
     PIB_DIR     = new_string("%s%s", IB_DIR, "pib/");
     PROFILE_DIR = new_string("%s%s", PIB_DIR, "profile/");
     POLICY_DIR  = new_string("%s%s", PIB_DIR, "policy/");
+
+    //Socket is now treated like a file
+    SOCKET_PATH = new_string("%s%s", NEAT_DIR, "neat_pm_socket");
 
     create_folder(NEAT_DIR);
     create_folder(IB_DIR);

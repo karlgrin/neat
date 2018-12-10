@@ -3,9 +3,7 @@
 
 #include <time.h>
 #include <jansson.h>
-#include<stdbool.h>
-
-#define FILENAME "ErrorLog.txt"
+#include <stdbool.h>
 
 extern char* NEAT_DIR;
 extern char* SOCKET_PATH;
@@ -15,6 +13,8 @@ extern char* PIB_DIR;
 extern char* PROFILE_DIR;
 extern char* POLICY_DIR;
 
+extern bool debug_enabled;
+
 typedef enum {
     LOG_EVENT, LOG_ERROR, LOG_DEBUG, LOG_NEW_LINE
 } LOG_LEVEL;
@@ -23,6 +23,7 @@ void enable_log_file(bool enable);
 void enable_debug_message(bool enable);
 void write_log(const char* module, const char* func, LOG_LEVEL log_level, const char *desc, ...);
 
+void pm_helper_close();
 int create_folder(char* path);
 void create_folders();
 char* new_string(char *string, ...);

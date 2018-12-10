@@ -50,7 +50,7 @@ pib_lookup(node_t *pib_list, json_t *input_props)
         candidate_updated_array = json_array();
         policy_match = json_object_get(current_policy->json, "match");
 
-        if (policy_match) { printf("MATCH: %s\n", json_dumps(policy_match, 0)); }
+        //if (policy_match) { printf("MATCH: %s\n", json_dumps(policy_match, 0)); }
 
         printf("size of candidate_array is %ld\n", json_array_size(candidate_array));
 

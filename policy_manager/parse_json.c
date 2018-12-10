@@ -76,7 +76,11 @@ append_value(json_t *json, json_t *new_value)
     }
     else {
         write_log(__FILE__, __func__, LOG_ERROR, "Failed to parse json.");
-        write_log(__FILE__, __func__, LOG_DEBUG, "Failed to parse: \n%s", json_dumps(new_value, 0));
+        if(debug_enabled) {
+            char* json_string = json_dumps(new_value, 0);
+            write_log(__FILE__, __func__, LOG_DEBUG, "Failed to parse: \n%s\n", json_string);
+            free(json_string);
+        }
     }
 }
 
@@ -393,4 +397,18 @@ expand_values(json_t* req)
        }
     }    
     return my_return;
+}
+
+void 
+my_json_object_set(json_t* object, const char* key, json_t* value) 
+{
+    json_object_set(object, key, value);
+    json_decref(value);
+}
+
+void
+my_json_array_append(json_t *array, json_t *value) 
+{
+    json_array_append(array, value);
+    json_decref(value);
 }

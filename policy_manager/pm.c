@@ -101,8 +101,12 @@ handle_request(uv_stream_t *client)
 
     request_json = json_loads(client_req->buffer, 0, &json_error);
     write_log(__FILE__, __func__, LOG_EVENT, "Request received");
-    write_log(__FILE__, __func__, LOG_DEBUG, "Request: \n%s\n", json_dumps(request_json, 0));
-
+    if(debug_enabled) {
+        char* json_string = json_dumps(request_json, 0);
+        write_log(__FILE__, __func__, LOG_DEBUG, "Request: \n%s\n", json_string);
+        free(json_string);
+    }
+    
     if (!request_json) {
         write_log(__FILE__, __func__, LOG_ERROR, "Error with request, json-error-text: %s", json_error.text);
         return;
@@ -116,8 +120,12 @@ handle_request(uv_stream_t *client)
     write_req = malloc(sizeof(uv_write_t));
     uv_write(write_req, client, &response_buf, 1, NULL);
 
-    write_log(__FILE__, __func__, LOG_DEBUG, "PM result: \n%s\n", json_dumps(candidates, 0));
     write_log(__FILE__, __func__, LOG_EVENT, "Request handled, sending candidates\n");
+    if(debug_enabled) {
+        char* json_string = json_dumps(candidates, 0);
+        write_log(__FILE__, __func__, LOG_DEBUG, "PM result: \n%s\n", json_string);
+        free(json_string);
+    }
 
     free(response_buf.base);
     json_decref(candidates);
@@ -189,11 +197,13 @@ pm_close(int sig)
 {
     write_log(__FILE__, __func__, LOG_EVENT, "Closing policy manager...\n");
     uv_fs_t req;
-    uv_fs_unlink(loop, &req, SOCKET_PATH, NULL);
+    uv_fs_unlink(loop, &req, SOCKET_PATH, NULL);  //bug, the loop is not freed inside the socket structure
 
     pib_close();
     cib_close();
-    exit(0);
+    pm_helper_close();
+
+    exit(sig);
 }
 
 
@@ -205,12 +215,12 @@ create_socket(){
 
     loop = uv_default_loop();
     uv_pipe_init(loop, &pm_server, 0);
-
+    
     signal(SIGINT, pm_close);
 
     unlink(SOCKET_PATH);
     write_log(__FILE__, __func__, LOG_EVENT, "Socket created in %s\n", SOCKET_PATH);
-
+    
     if ((r = uv_pipe_bind(&pm_server, SOCKET_PATH)) != 0) {
         write_log(__FILE__, __func__, LOG_ERROR, "Socket bind error %s", uv_err_name(r));
         return 1;
@@ -253,6 +263,6 @@ main(int argc, char *argv[])
     generate_cib_from_ifaces();
     cib_start();
     pib_start();
-
+    
     return create_socket();
 }

@@ -1,7 +1,7 @@
 #ifndef HEADER_CIB
 #define HEADER_CIB
 
-extern node_t* cib_noes;
+extern node_t* cib_nodes;
 
 void cib_start();
 void cib_close();
