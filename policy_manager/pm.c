@@ -24,8 +24,6 @@ typedef struct client_req {
     size_t len;
 } client_req_t;
 
-/* Adds the default values for `score' (0) and `evaluated' (False) to each property in each request.
-   Should be executed before the logic of the main lookup routine. */
 
 json_t *
 lookup(json_t *reqs)
@@ -106,7 +104,7 @@ handle_request(uv_stream_t *client)
         write_log(__FILE__, __func__, LOG_DEBUG, "Request: \n%s\n", json_string);
         free(json_string);
     }
-    
+
     if (!request_json) {
         write_log(__FILE__, __func__, LOG_ERROR, "Error with request, json-error-text: %s", json_error.text);
         return;
@@ -215,12 +213,12 @@ create_socket(){
 
     loop = uv_default_loop();
     uv_pipe_init(loop, &pm_server, 0);
-    
+
     signal(SIGINT, pm_close);
 
     unlink(SOCKET_PATH);
     write_log(__FILE__, __func__, LOG_EVENT, "Socket created in %s\n", SOCKET_PATH);
-    
+
     if ((r = uv_pipe_bind(&pm_server, SOCKET_PATH)) != 0) {
         write_log(__FILE__, __func__, LOG_ERROR, "Socket bind error %s", uv_err_name(r));
         return 1;
@@ -263,6 +261,6 @@ main(int argc, char *argv[])
     generate_cib_from_ifaces();
     cib_start();
     pib_start();
-    
+
     return create_socket();
 }

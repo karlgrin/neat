@@ -9,6 +9,12 @@
 #define MAX(a,b) (((a)>(b))?(a):(b))
 #define ARRAY_SIZE(array) (sizeof((array))/sizeof((array)[0]))
 
+typedef struct score_struct {
+    int evaluated;
+    int non_evaluated;
+} score_t;
+
+
 bool
 pre_resolve(const json_t *requests)
 {
@@ -63,21 +69,27 @@ add_default_values(json_t *request)
     }
 }
 
-/* return the sum of all property scores */
-/* TODO sum evaluated and not yet evaluated into separate sums (see def score in policy.py) */
-int
+score_t
 property_score_sum(json_t *candidate)
 {
-    int sum = 0;
+    score_t sum = {0};
     int score;
     const char *key;
     json_t *property;
     json_t *score_obj;
+    json_t *eval_obj;
+
     json_object_foreach(candidate, key, property) {
         score_obj = json_object_get(property, "score");
         if (score_obj) {
             score = json_integer_value(score_obj);
-            sum += score;
+            eval_obj = json_object_get(property, "evaluated");
+            if (eval_obj && json_is_true(eval_obj)) {
+                sum.evaluated += score;
+            }
+            else {
+                sum.non_evaluated += score;
+            }
         }
     }
     return sum;
@@ -86,10 +98,14 @@ property_score_sum(json_t *candidate)
 int
 cmp_score(const void *json1, const void *json2)
 {
-    int score1 = property_score_sum(*((json_t **) json1));
-    int score2 = property_score_sum(*((json_t **) json2));
+    score_t score1 = property_score_sum(*((json_t **) json1));
+    score_t score2 = property_score_sum(*((json_t **) json2));
 
-    return score2 - score1;
+    int evaluated_diff = score2.evaluated - score1.evaluated;
+    int non_evaluated_diff = score2.non_evaluated - score1.non_evaluated;
+
+    /* evaluated > non_evaluated */
+    return evaluated_diff ? evaluated_diff : non_evaluated_diff;
 }
 
 json_t *
