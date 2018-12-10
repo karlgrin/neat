@@ -47,30 +47,41 @@ get_cibnode_by_uid(const char *uid)
 }
 
 void
-add_cib_node(node_t *node)
+add_cib_node(json_t *json_for_node)
 {
     //check uid, filename, description, priority, root, expire
+    const char *uid = json_string_value(json_object_get(json_for_node, "uid"));
+    if(uid == NULL){
+        uid = get_hash();
+        json_object_set(json_for_node, "uid", json_string(uid));
+    }
 
-    json_t *full_json = node->json;
-    if(json_object_get(full_json, "uid") == NULL){
-        json_object_set(full_json, "uid", json_string(get_hash()));
-        json_object_set(full_json, "filename", json_string(new_string("%s.cib", get_hash())));
+    const char *filename = json_string_value(json_object_get(json_for_node, "filename"));
+    if(filename == NULL){
+        filename = new_string("%s.cib", uid);
+        json_object_set(json_for_node, "filename", json_string(filename));
     }
-    if(json_object_get(full_json, "description") == NULL){
-        json_object_set(full_json, "description", json_string(""));
+    char *path = new_string("%s%s", CIB_DIR, filename);
+    node_t *node = node_init(path);
+    printf("Path to add cib node: %s\n", path);
+
+    if(json_object_get(json_for_node, "description") == NULL){
+        json_object_set(json_for_node, "description", json_string(""));
     }
-    if(json_object_get(full_json, "priority") == NULL){
-        json_object_set(full_json, "priority", json_integer(0));
+    if(json_object_get(json_for_node, "priority") == NULL){
+        json_object_set(json_for_node, "priority", json_integer(0));
     }
-    if(json_object_get(full_json, "root") == NULL){
-        json_object_set(full_json, "root", json_boolean(false));
+    if(json_object_get(json_for_node, "root") == NULL){
+        json_object_set(json_for_node, "root", json_boolean(false));
     }
-    if(json_object_get(full_json, "expire") == NULL){
+    if(json_object_get(json_for_node, "expire") == NULL){
         double expiry = time(NULL) + CIB_DEFAULT_TIMEOUT;
-        json_object_set(full_json, "expire", json_real(expiry));
+        json_object_set(json_for_node, "expire", json_real(expiry));
     }
-    node->json = full_json;
+    node->json = json_for_node;
     add_node(cib_nodes, node);
+    write_json_file(path, node->json);
+    free(path);
 }
 
 void

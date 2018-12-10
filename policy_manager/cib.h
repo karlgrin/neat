@@ -6,7 +6,7 @@ extern node_t* cib_nodes;
 json_t *get_cib_list();
 
 json_t *get_cibnode_by_uid(const char *uid);
-void add_cib_node(node_t *node);
+void add_cib_node(json_t *json_for_node);
 
 void cib_start();
 void cib_close();

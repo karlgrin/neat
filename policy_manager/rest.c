@@ -13,7 +13,7 @@ callback_get_pib (const struct _u_request * request, struct _u_response * respon
     json_t *pib = get_pib_list();
 
     if (pib) {
-        printf("found cib \n%s\n", json_dumps(pib, 2));
+        printf("found pib \n%s\n", json_dumps(pib, 2));
         ulfius_set_json_body_response(response, 200, pib);
         //TODO: SET RESPONSE TO JSON POLICY
     }
@@ -125,18 +125,15 @@ callback_put_cib_node (const struct _u_request * request, struct _u_response * r
     json_error_t error;
     const char *uid = u_map_get(request->map_url, "uid");
     json_t *json_request = ulfius_get_json_body_request(request, &error);
-    char *path = new_string("%s/%s/%s/%s", get_home_dir(), ".neat", CIB_DIR, uid);
+    char *path = new_string("%s%s%s", CIB_DIR, uid, ".cib");
     if(json_request)
     {
-        printf("%s\n", json_dumps(json_request, 2));
         if(!json_object_get(json_request, "uid") || !json_object_get(json_request, "properties")){
             snprintf(msg, 256, "CIB JSON object missing mandatory field");
             ulfius_set_string_body_response(response, 400, msg);
         } else {
-            node_t *node = node_init(path);
-            add_cib_node(node);
+            add_cib_node(json_request);
         }
-        //TODO: put data into node and call add_node(cib, node)
     } else {
         snprintf(msg, 256, "JSON not found in body");
         ulfius_set_string_body_response(response, 400, msg);
