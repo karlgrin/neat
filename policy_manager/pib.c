@@ -12,6 +12,58 @@
 node_t *pib_profiles = NULL;
 node_t *pib_policies = NULL;
 
+void
+get_pib_list_aux (json_t *pib_array, node_t *head)
+{
+    if(head != NULL) {
+        json_array_append(pib_array, json_object_get(head->json, "uid"));
+        get_pib_list_aux(pib_array, head->next);
+    }
+}
+
+json_t *
+get_pib_list ()
+{
+    json_t *pib_array = json_array();
+    get_pib_list_aux(pib_array, pib_policies);
+    printf("\n%s\n", json_dumps(pib_array, 2));
+    return pib_array;
+}
+
+void
+add_pib_node(json_t *json_for_node)
+{
+    //Check uid, filename, time
+    const char *uid = json_string_value(json_object_get(json_for_node, "uid"));
+    if(uid == NULL){
+        uid = get_hash();
+        json_object_set(json_for_node, "uid", json_string(uid));
+    }
+    printf("Path to add policy: %s\n", new_string("%s%s%s", PIB_DIR, uid, ".policy"));
+    node_t *node = node_init(new_string("%s%s%s", PIB_DIR, uid, ".policy"));
+
+    if(json_object_get(json_for_node, "filename") == NULL){
+        json_object_set(json_for_node, "filename", json_string(new_string("%s.policy", uid)));
+    }
+
+    if(json_object_get(json_for_node, "time") == NULL){
+        json_object_set(json_for_node, "time", json_integer((int)time(NULL)));
+    }
+    node->json = json_for_node;
+    add_node(pib_policies, node);
+    write_json_file(new_string("%s%s%s%s", PIB_DIR, "policy/", uid, ".policy"), node->json);
+}
+
+json_t *
+get_pibnode_by_uid(const char *uid)
+{
+    node_t *pib;
+    pib = get_node_by_uid(pib_policies, uid);
+    if (pib) {
+        return pib->json;
+    }
+    return NULL;
+}
 /* TODO move subset & merge to pm_helper.c */
 
 int

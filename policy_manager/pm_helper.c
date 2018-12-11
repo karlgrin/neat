@@ -8,6 +8,7 @@
 #include "pm_helper.h"
 
 #define LOG_FILENAME "Log.txt"
+#define HASHLEN 30
 
 char* NEAT_DIR;
 char* SOCKET_PATH;
@@ -176,7 +177,7 @@ write_log(const char* module, const char* func, LOG_LEVEL log_level, const char*
     }
 
     //write to log file
-    if(log_file_enabled) { 
+    if(log_file_enabled) {
         FILE *fp = fopen(LOG_FILENAME, "a");
         if(fp != NULL) {
             va_list argptr;
@@ -189,14 +190,14 @@ write_log(const char* module, const char* func, LOG_LEVEL log_level, const char*
             fprintf(fp, "Log Type: %s\nTime: %s  \nModule: %s\nFunction: %s\nDescription: ", log_type, time_buffer, module, func);
             vfprintf(fp, format, argptr);
             fprintf(fp, "\n\n");
-           
+
             fclose(fp);
             va_end(argptr);
         }
         else {
             write_log(__FILE__ , __func__, LOG_ERROR, "Cannot access log file");
-        }         
-    }    
+        }
+    }
 }
 
 time_t
@@ -262,4 +263,21 @@ array_contains_value(json_t *array, json_t *value)
         }
     }
     return false;
+}
+
+char *
+get_hash()
+{
+    char *hash = malloc((HASHLEN) * sizeof(char));
+    time_t t;
+    srandom((unsigned) time(&t));
+
+    const char *charset = "0123456789abcdef";
+
+    for (int i = 0; i < HASHLEN; i++) {
+        *hash = *(charset + (random() % 16));  // Following chars in range 0..15
+        hash++;
+    }
+    hash -= HASHLEN;
+    return hash;
 }

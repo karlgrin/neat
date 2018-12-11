@@ -28,6 +28,7 @@ int create_folder(char* path);
 void create_folders();
 char* new_string(char *string, ...);
 int file_exist(const char * file_path);
+char *get_home_dir();
 
 time_t file_edit_time(const char *file_path);
 void clear_log_file();
@@ -35,5 +36,6 @@ int file_is_modified(const char *path, time_t old_time);
 json_t* load_json_file(const char *file_path);
 void write_json_file(const char* file_path, json_t *json);
 bool array_contains_value(json_t *array, json_t *value);
+char *get_hash();
 
 #endif

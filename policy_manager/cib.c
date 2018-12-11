@@ -18,6 +18,73 @@
 node_t* cib_nodes = NULL;
 
 void
+get_cib_list_aux(json_t *cib_array, node_t *head)
+{
+    if(head != NULL) {
+        json_array_append(cib_array, json_object_get(head->json, "uid"));
+        get_cib_list_aux(cib_array, head->next);
+    }
+}
+
+json_t *
+get_cib_list()
+{
+    json_t *cib_array = json_array();
+    get_cib_list_aux(cib_array, cib_nodes);
+    printf("\n%s\n", json_dumps(cib_array, 2));
+    return cib_array;
+}
+
+json_t *
+get_cibnode_by_uid(const char *uid)
+{
+    node_t *cib;
+    cib = get_node_by_uid(cib_nodes, uid);
+    if (cib) {
+        return cib->json;
+    }
+    return NULL;
+}
+
+void
+add_cib_node(json_t *json_for_node)
+{
+    //check uid, filename, description, priority, root, expire
+    const char *uid = json_string_value(json_object_get(json_for_node, "uid"));
+    if(uid == NULL){
+        uid = get_hash();
+        json_object_set(json_for_node, "uid", json_string(uid));
+    }
+
+    const char *filename = json_string_value(json_object_get(json_for_node, "filename"));
+    if(filename == NULL){
+        filename = new_string("%s.cib", uid);
+        json_object_set(json_for_node, "filename", json_string(filename));
+    }
+    char *path = new_string("%s%s", CIB_DIR, filename);
+    node_t *node = node_init(path);
+    printf("Path to add cib node: %s\n", path);
+
+    if(json_object_get(json_for_node, "description") == NULL){
+        json_object_set(json_for_node, "description", json_string(""));
+    }
+    if(json_object_get(json_for_node, "priority") == NULL){
+        json_object_set(json_for_node, "priority", json_integer(0));
+    }
+    if(json_object_get(json_for_node, "root") == NULL){
+        json_object_set(json_for_node, "root", json_boolean(false));
+    }
+    if(json_object_get(json_for_node, "expire") == NULL){
+        double expiry = time(NULL) + CIB_DEFAULT_TIMEOUT;
+        json_object_set(json_for_node, "expire", json_real(expiry));
+    }
+    node->json = json_for_node;
+    add_node(cib_nodes, node);
+    write_json_file(path, node->json);
+    free(path);
+}
+
+void
 generate_cib_from_ifaces()
 {
     write_log(__FILE__, __func__, LOG_EVENT, "Generate CIB from interfaces:");

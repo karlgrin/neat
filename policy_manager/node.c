@@ -253,3 +253,79 @@ node_set_property (node_t *node, const char *prop, json_t *new_value)
         write_log(__FILE__,__func__, LOG_ERROR, "Unable to update property %s", prop);
     }
 }
+
+/* check if a is a subset of b */
+int
+subset(json_t *prop_a, json_t *prop_b)
+{
+    const char *key_a;
+    json_t *value_prop_a;
+    json_t *value_prop_b;
+    json_t *value_a;
+    json_t *value_b;
+
+
+    json_object_foreach(prop_a, key_a, value_prop_a) {
+        value_prop_b = json_object_get(prop_b, key_a);
+
+        if (value_prop_b == NULL) {
+            printf("it's not, this is therefore not a subset (FAIL)\n");
+            return 0;
+        }
+        value_b = json_object_get(value_prop_b, "value");
+        value_a = json_object_get(value_prop_a, "value");
+
+        if (json_equal(value_a, value_b)) {
+            printf("it is (same key and value)\n");
+        }
+        else {
+            printf("it's not (same key, but different value)\n");
+            return 0;
+        }
+    }
+    //printf("all properties are members. this is a subset (OK).\n");
+    return 1;
+}
+
+/* merge properties in prop_a into prop_b */
+void
+merge_properties(json_t *prop_a, json_t *prop_b, int should_overwrite)
+{
+    const char *key;
+    json_t *value;
+
+    json_object_foreach(prop_a, key, value) {
+        json_t *found_prop = json_object_get(prop_b, key);
+
+        if (found_prop) {
+            printf("found prop %s", key);
+            if (!should_overwrite) {
+                printf(", but it's write protected\n");
+                continue;
+            }
+            printf(", setting { %s : %s } to %s\n", key, json_dumps(found_prop, 0), json_dumps(value, 0));
+            json_object_set(prop_b, key, value);
+        }
+        else {
+            printf("didn't find property %s adding it as a new value\n", key);
+            json_object_set(prop_b, key, value);
+        }
+    }
+}
+
+
+node_t *
+get_node_by_uid (node_t *head, const char *uid)
+{
+    const char *current_uid;
+
+    node_t *current = head;
+    while(current != NULL) {
+        current_uid = json_string_value(json_object_get(current->json, "uid"));
+        if(strcmp(current_uid, uid) == 0) {
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL;
+}
