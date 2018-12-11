@@ -16,7 +16,7 @@
 
 ## Quick Start
 
-Start with copying the **PIB files** to the backend folder. To copy the already existing PIb files to backend, go to /neat folder then run:
+Start with copying the **PIB files** to the backend folder. To copy the already existing PIB files to backend, go to /neat folder then run:
 
 ```
 $ mkdir -p ~/.neat/infobase/pib/profile
