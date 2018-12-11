@@ -6,17 +6,25 @@
 * `libuv`
 * `libulfius-dev`
 * `libmicrohttpd-dev`
-* `unity`
+
 ### Install requirements
 ##### Packages
 | Prerequisite        | Install command           | 
 | ------------- |:-------------:|
 | If you **already have** the NEAT dependencies | `apt-get install libmicrohttpd-dev libulfius-dev` |
 | If you **don't have** the NEAT dependencies. | `apt-get install cmake libjansson-dev libuv1-dev libmicrohttpd-dev libulfius-dev` |
-##### Unity
-TODO: How to install Unity
 
 ## Quick Start
+
+Start with copying the **PIB files** to backend folder, go into the /neat folder then run:
+
+```
+#copy the pib files to backend folder
+$ mkdir -p ~/.neat/infobase/pib/profile
+$ mkdir -p ~/.neat/infobase/pib/policy
+$ cp policy_manager/pib/*.profile ~/.neat/infobase/pib/profile
+$ cp policy_manager/pib/*.policy ~/.neat/infobase/pib/policy
+```
 
 To **build** the policy manager, go into the /neat folder then run:
 
