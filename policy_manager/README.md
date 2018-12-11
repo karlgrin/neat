@@ -21,8 +21,8 @@ Start with copying the **PIB files** to the backend folder. To copy the already 
 ```
 $ mkdir -p ~/.neat/infobase/pib/profile
 $ mkdir -p ~/.neat/infobase/pib/policy
-$ cp policy_manager/pib/*.profile ~/.neat/infobase/pib/profile
-$ cp policy_manager/pib/*.policy ~/.neat/infobase/pib/policy
+$ cp policy_manager/json_examples/pib/*.profile ~/.neat/infobase/pib/profile
+$ cp policy_manager/json_examples/pib/*.policy ~/.neat/infobase/pib/policy
 ```
 
 To **build** the policy manager, go into the /neat folder then run:
