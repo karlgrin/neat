@@ -12,6 +12,7 @@ extern char* CIB_DIR;
 extern char* PIB_DIR;
 extern char* PROFILE_DIR;
 extern char* POLICY_DIR;
+extern int CIB_DEFAULT_TIMEOUT;
 
 extern bool debug_enabled;
 

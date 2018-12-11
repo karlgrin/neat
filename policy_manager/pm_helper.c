@@ -18,6 +18,8 @@ char* PIB_DIR;
 char* PROFILE_DIR;
 char* POLICY_DIR;
 
+int CIB_DEFAULT_TIMEOUT = 60*10;
+
 bool debug_enabled = false;
 bool log_file_enabled = false;
 
@@ -64,12 +66,12 @@ create_folder(char* path)
 
 void pm_helper_close()
 {
-    free(NEAT_DIR);    
-    free(SOCKET_PATH); 
-    free(IB_DIR);      
-    free(CIB_DIR);     
+    free(NEAT_DIR);
+    free(SOCKET_PATH);
+    free(IB_DIR);
+    free(CIB_DIR);
     free(PIB_DIR);
-    free(PROFILE_DIR); 
+    free(PROFILE_DIR);
     free(POLICY_DIR);
 }
 

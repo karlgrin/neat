@@ -358,7 +358,7 @@ on_new_cib_connection(uv_stream_t *cib_server, int status)
 void
 pm_close(int sig)
 {
-    write_log(__FILE__, __func__, LOG_EVENT, "Closing policy manager...\n");
+    write_log(__FILE__, __func__, LOG_EVENT, "\nClosing policy manager...\n");
     uv_fs_t req;
     uv_fs_unlink(loop, &req, pm_socket_path, NULL);
     uv_fs_unlink(loop, &req, cib_socket_path, NULL);
