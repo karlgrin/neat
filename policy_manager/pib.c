@@ -46,43 +46,43 @@ pib_lookup(node_t *pib_list, json_t *input_props)
     json_array_append(candidate_array, input_props);
 
     for (current_policy = pib_list; current_policy; current_policy = current_policy->next) {
-        printf("\n---------- POLICY %s ---------\n", current_policy->filename);
+        //printf("\n---------- POLICY %s ---------\n", current_policy->filename);
         candidate_updated_array = json_array();
         policy_match = json_object_get(current_policy->json, "match");
 
-        //if (policy_match) { printf("MATCH: %s\n", json_dumps(policy_match, 0)); }
+        //if (policy_match) { //printf("MATCH: %s\n", json_dumps(policy_match, 0)); }
 
-        printf("size of candidate_array is %ld\n", json_array_size(candidate_array));
+        //printf("size of candidate_array is %ld\n", json_array_size(candidate_array));
 
         json_array_foreach(candidate_array, index, candidate) {
 
             /* just for the debug print */
             if (!policy_match) {
-                printf("no match field found = default profile\n");
+                //printf("no match field found = default profile\n");
             }
 
             /* no match field becomes a match by default */
             if (!policy_match || subset(policy_match, candidate)) {
-                printf("subset found for %s", current_policy->filename);
-                printf("merging...\n");
+                //printf("subset found for %s", current_policy->filename);
+                //printf("merging...\n");
 
                 properties_expanded = expand_json(json_object_get(current_policy->json, "properties"));
                 replace = replace_matched(current_policy->json);
 
                 json_array_foreach(properties_expanded, index_2, expanded_prop) {
-                    printf("\n    ------ EXPANDED PROP #%ld\n    >> VALUE: %s\n", index_2, json_dumps(expanded_prop, 0));
+                    //printf("\n    ------ EXPANDED PROP #%ld\n    >> VALUE: %s\n", index_2, json_dumps(expanded_prop, 0));
 
                     candidate_updated = json_deep_copy(candidate); // TODO free
 
                     /* add merged copy to updated array */
                     merge_properties(expanded_prop, candidate_updated, replace);
                     json_array_append_new(candidate_updated_array, candidate_updated);
-                    printf("size of candidate_updated_array is %ld\n", json_array_size(candidate_updated_array));
+                    //printf("size of candidate_updated_array is %ld\n", json_array_size(candidate_updated_array));
                 }
 
             }
             else {
-                printf("subset not found for %s\n", current_policy->filename);
+                //printf("subset not found for %s\n", current_policy->filename);
                 json_array_append_new(candidate_updated_array, candidate);
             }
         }

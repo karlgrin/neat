@@ -6,9 +6,9 @@
 int main(void)
 {
     UNITY_BEGIN();
-    printf("\n   Start Unit Tests!\n");
+    //printf("\n   Start Unit Tests!\n");
 
-    printf("\n-----pm_helper.c------\n");
+    //printf("\n-----pm_helper.c------\n");
     RUN_TEST(test_new_string);
     RUN_TEST(test_file_exist);
     RUN_TEST(test_load_json_file);
@@ -17,7 +17,7 @@ int main(void)
     RUN_TEST(test_file_edit_time);
     RUN_TEST(test_array_contains_value);
 
-    printf("\n-----node.c------\n");
+    //printf("\n-----node.c------\n");
     RUN_TEST(test_node_init);
     RUN_TEST(test_update_node_content);
     RUN_TEST(test_create_node);
@@ -34,7 +34,7 @@ int main(void)
     RUN_TEST(test_node_set_property);
     RUN_TEST(test_node_set_property_2);
 
-    printf("\n-----parse_json.c------\n");
+    //printf("\n-----parse_json.c------\n");
     RUN_TEST(test_expand_json_array);
     RUN_TEST(test_expand_json);
     RUN_TEST(test_sort_json_array);

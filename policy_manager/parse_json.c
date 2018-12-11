@@ -433,21 +433,21 @@ subset(json_t *prop_a, json_t *prop_b)
         value_prop_b = json_object_get(prop_b, key_a);
 
         if (value_prop_b == NULL) {
-            printf("it's not, this is therefore not a subset (FAIL)\n");
+            //printf("it's not, this is therefore not a subset (FAIL)\n");
             return 0;
         }
         value_b = json_object_get(value_prop_b, "value");
         value_a = json_object_get(value_prop_a, "value");
 
         if (json_equal(value_a, value_b)) {
-            printf("it is (same key and value)\n");
+            //printf("it is (same key and value)\n");
         }
         else {
-            printf("it's not (same key, but different value)\n");
+            //printf("it's not (same key, but different value)\n");
             return 0;
         }
     }
-    //printf("all properties are members. this is a subset (OK).\n");
+    ////printf("all properties are members. this is a subset (OK).\n");
     return 1;
 }
 
@@ -461,7 +461,7 @@ merge_update_properties(json_t *prop_a, json_t *prop_b, bool evaluated)
     json_t *value_b = json_object_get(prop_b, "value");
 
     if (!value_b) {
-        printf("ERRRO: undefined: value_b should not be null\n");
+        //printf("ERRRO: undefined: value_b should not be null\n");
         return;
     }
 
@@ -512,7 +512,7 @@ merge_add_properties(json_t *prop_a, json_t *prop_b)
     json_t *precedence_prop_b_json = json_object_get(prop_b, "precedence");
 
     if (!precedence_prop_b_json) {
-        fprintf(stderr, "Error: no precedence attribute\n");
+        //fprintf(stderr, "Error: no precedence attribute\n");
         return;
     }
     int precedence_prop_b = json_integer_value(precedence_prop_b_json);
@@ -535,7 +535,7 @@ merge_properties(json_t *prop_a, json_t *prop_b, int should_overwrite)
     const char *key;
     json_t *value;
 
-    printf("\nMERGING: \n%s%\n\n AND \n\n%s\n\n", json_dumps(prop_a, 0), json_dumps(prop_b, 0));
+    ////printf("\nMERGING: \n%s%\n\n AND \n\n%s\n\n", json_dumps(prop_a, 0), json_dumps(prop_b, 0));
 
     json_object_foreach(prop_a, key, value) {
 
