@@ -8,15 +8,18 @@
 #include "pm_helper.h"
 
 #define LOG_FILENAME "Log.txt"
-#define HASHLEN 30
 
-char* NEAT_DIR;
+char* neat_dir;
 char* SOCKET_PATH;
-char* IB_DIR;
-char* CIB_DIR;
-char* PIB_DIR;
-char* PROFILE_DIR;
-char* POLICY_DIR;
+char* ib_dir;
+char* cib_dir;
+char* pib_dir;
+char* profile_dir;
+char* policy_dir;
+
+char* pm_socket_path;
+char* cib_socket_path;
+char* pib_socket_path;
 
 int CIB_DEFAULT_TIMEOUT = 60*10;
 
@@ -64,37 +67,52 @@ create_folder(char* path)
     return 0;
 }
 
-void pm_helper_close()
-{
-    free(NEAT_DIR);
-    free(SOCKET_PATH);
-    free(IB_DIR);
-    free(CIB_DIR);
-    free(PIB_DIR);
-    free(PROFILE_DIR);
-    free(POLICY_DIR);
-}
-
 void
 create_folders()
 {
-    NEAT_DIR    = new_string("%s/%s", get_home_dir(), ".neat/");
-    IB_DIR      = new_string("%s%s", NEAT_DIR, "infobase/");
-    CIB_DIR     = new_string("%s%s", IB_DIR, "cib/");
-    PIB_DIR     = new_string("%s%s", IB_DIR, "pib/");
-    PROFILE_DIR = new_string("%s%s", PIB_DIR, "profile/");
-    POLICY_DIR  = new_string("%s%s", PIB_DIR, "policy/");
+    neat_dir    = new_string("%s/%s", get_home_dir(), ".neat/");
+    ib_dir      = new_string("%s%s", neat_dir, "infobase/");
+    cib_dir     = new_string("%s%s", ib_dir, "cib/");
+    pib_dir     = new_string("%s%s", ib_dir, "pib/");
+    profile_dir = new_string("%s%s", pib_dir, "profile/");
+    policy_dir  = new_string("%s%s", pib_dir, "policy/");
 
-    //Socket is now treated like a file
-    SOCKET_PATH = new_string("%s%s", NEAT_DIR, "neat_pm_socket");
-
-    create_folder(NEAT_DIR);
-    create_folder(IB_DIR);
-    create_folder(CIB_DIR);
-    create_folder(PIB_DIR);
-    create_folder(PROFILE_DIR);
-    create_folder(POLICY_DIR);
+    create_folder(neat_dir);
+    create_folder(ib_dir);
+    create_folder(cib_dir);
+    create_folder(pib_dir);
+    create_folder(profile_dir);
+    create_folder(policy_dir);
 }
+
+void pm_helper_close()
+{
+    free(neat_dir);
+    free(SOCKET_PATH);
+    free(ib_dir);
+    free(cib_dir);
+    free(pib_dir);
+    free(profile_dir);
+    free(policy_dir);
+}
+
+void create_socket_paths() {
+    pm_socket_path  = new_string("%s%s", neat_dir, "neat_pm_socket");
+    cib_socket_path = new_string("%s%s", neat_dir, "neat_cib_socket");
+    pib_socket_path = new_string("%s%s", neat_dir, "neat_pib_socket");
+
+    write_log(__FILE__, __func__, LOG_EVENT, "Socket created in %s", pm_socket_path);
+    write_log(__FILE__, __func__, LOG_EVENT, "Socket created in %s", cib_socket_path);
+    write_log(__FILE__, __func__, LOG_EVENT, "Socket created in %s", pib_socket_path);
+    write_log(__FILE__, __func__, LOG_NEW_LINE, "\n");
+}
+
+void start_pm_helper() 
+{
+    create_folders();
+    create_socket_paths();
+}
+
 
 char*
 new_string(char *string, ...)
@@ -270,16 +288,17 @@ array_contains_value(json_t *array, json_t *value)
 char *
 get_hash()
 {
-    char *hash = malloc((HASHLEN) * sizeof(char));
+    int hash_length = 30;
+    char *hash = malloc((hash_length) * sizeof(char));
     time_t t;
     srandom((unsigned) time(&t));
 
     const char *charset = "0123456789abcdef";
 
-    for (int i = 0; i < HASHLEN; i++) {
+    for (int i = 0; i < hash_length; i++) {
         *hash = *(charset + (random() % 16));  // Following chars in range 0..15
         hash++;
     }
-    hash -= HASHLEN;
+    hash -= hash_length;
     return hash;
 }

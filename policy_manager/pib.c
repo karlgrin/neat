@@ -26,7 +26,6 @@ get_pib_list ()
 {
     json_t *pib_array = json_array();
     get_pib_list_aux(pib_array, pib_policies);
-    printf("\n%s\n", json_dumps(pib_array, 2));
     return pib_array;
 }
 
@@ -39,8 +38,12 @@ add_pib_node(json_t *json_for_node)
         uid = get_hash();
         json_object_set(json_for_node, "uid", json_string(uid));
     }
-    printf("Path to add policy: %s\n", new_string("%s%s%s", PIB_DIR, uid, ".policy"));
-    node_t *node = node_init(new_string("%s%s%s", PIB_DIR, uid, ".policy"));
+
+    char* path = new_string("%s%s%s", pib_dir, uid, ".policy");
+    write_log(__FILE__, __func__, LOG_DEBUG, "PIB node created in %s\n", path);
+ 
+    node_t *node = node_init(path);
+
 
     if(json_object_get(json_for_node, "filename") == NULL){
         json_object_set(json_for_node, "filename", json_string(new_string("%s.policy", uid)));
@@ -51,7 +54,8 @@ add_pib_node(json_t *json_for_node)
     }
     node->json = json_for_node;
     add_node(pib_policies, node);
-    write_json_file(new_string("%s%s%s%s", PIB_DIR, "policy/", uid, ".policy"), node->json);
+    write_json_file(path, node->json);
+    free(path);
 }
 
 json_t *
@@ -148,8 +152,8 @@ profile_lookup(json_t *input_props)
 void
 pib_start()
 {
-    pib_profiles = read_modified_files(pib_profiles, PROFILE_DIR);
-    pib_policies = read_modified_files(pib_policies, POLICY_DIR);
+    pib_profiles = read_modified_files(pib_profiles, profile_dir);
+    pib_policies = read_modified_files(pib_policies, policy_dir);
 }
 
 void

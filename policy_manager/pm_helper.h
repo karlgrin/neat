@@ -5,16 +5,20 @@
 #include <jansson.h>
 #include <stdbool.h>
 
-extern char* NEAT_DIR;
-extern char* SOCKET_PATH;
-extern char* IB_DIR;
-extern char* CIB_DIR;
-extern char* PIB_DIR;
-extern char* PROFILE_DIR;
-extern char* POLICY_DIR;
-extern int CIB_DEFAULT_TIMEOUT;
+extern char* neat_dir;
+extern char* ib_dir;
+extern char* cib_dir;
+extern char* pib_dir;
+extern char* profile_dir;
+extern char* policy_dir;
+
+extern char *pm_socket_path;
+extern char *cib_socket_path;
+extern char *pib_socket_path;
 
 extern bool debug_enabled;
+
+extern int CIB_DEFAULT_TIMEOUT;
 
 typedef enum {
     LOG_EVENT, LOG_ERROR, LOG_DEBUG, LOG_NEW_LINE
@@ -26,7 +30,7 @@ void write_log(const char* module, const char* func, LOG_LEVEL log_level, const 
 
 void pm_helper_close();
 int create_folder(char* path);
-void create_folders();
+void start_pm_helper();
 char* new_string(char *string, ...);
 int file_exist(const char * file_path);
 char *get_home_dir();

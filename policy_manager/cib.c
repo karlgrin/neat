@@ -59,9 +59,9 @@ add_cib_node(json_t *json_for_node)
         filename = new_string("%s.cib", uid);
         json_object_set(json_for_node, "filename", json_string(filename));
     }
-    char *path = new_string("%s%s", CIB_DIR, filename);
+    char *path = new_string("%s%s", cib_dir, filename);
     node_t *node = node_init(path);
-    write_log(__FILE__, __func__, LOG_DEBUG, "Path to add cib node: %s\n", path);
+    write_log(__FILE__, __func__, LOG_DEBUG, "CIB node created in %s", path);
 
     if(json_object_get(json_for_node, "description") == NULL){
         json_object_set(json_for_node, "description", json_string(""));
@@ -177,7 +177,7 @@ generate_cib_from_ifaces()
         json_object_set_new(json_object_get(root, json_object_iter_key(iter)), "root", json_boolean(true));
         json_object_set_new(json_object_get(root, json_object_iter_key(iter)), "uid", json_string(json_object_iter_key(iter)));
 
-        char* path = new_string("%s%s%s", CIB_DIR, json_object_iter_key(iter), ".cib");
+        char* path = new_string("%s%s%s", cib_dir, json_object_iter_key(iter), ".cib");
         write_json_file(path, json_object_get(root, json_object_iter_key(iter)));
         write_log(__FILE__, __func__, LOG_EVENT, "%s", path);
         free(path);
@@ -226,7 +226,7 @@ cib_lookup(json_t *input_props)
 void
 cib_start()
 {
-    cib_nodes = read_modified_files(cib_nodes, CIB_DIR);
+    cib_nodes = read_modified_files(cib_nodes, cib_dir);
 }
 
 void

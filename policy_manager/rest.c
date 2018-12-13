@@ -100,7 +100,7 @@ callback_put_pib_node (const struct _u_request * request, struct _u_response * r
     json_error_t error;
     const char *uid = u_map_get(request->map_url, "uid");
     json_t *json_request = ulfius_get_json_body_request(request, &error);
-    char *path = new_string("%s/%s/%s/%s", get_home_dir(), ".neat", POLICY_DIR, uid);
+    char *path = new_string("%s/%s/%s/%s", get_home_dir(), ".neat", policy_dir, uid);
     if(json_request)
     {
         printf("%s\n", json_dumps(json_request, 2));
@@ -125,7 +125,7 @@ callback_put_cib_node (const struct _u_request * request, struct _u_response * r
     json_error_t error;
     const char *uid = u_map_get(request->map_url, "uid");
     json_t *json_request = ulfius_get_json_body_request(request, &error);
-    char *path = new_string("%s%s%s", CIB_DIR, uid, ".cib");
+    char *path = new_string("%s%s%s", cib_dir, uid, ".cib");
     if(json_request)
     {
         if(!json_object_get(json_request, "uid") || !json_object_get(json_request, "properties")){
@@ -144,12 +144,11 @@ callback_put_cib_node (const struct _u_request * request, struct _u_response * r
 
 int
 rest_start(int argc, char **argv){
-    printf("-- Start REST API --\n\n");
     struct _u_instance instance;
 
     // Initialize instance with the port number
     if (ulfius_init_instance(&instance, PORT, NULL, NULL) != U_OK) {
-        fprintf(stderr, "Error ulfius_init_instance, abort\n");
+        write_log(__FILE__, __func__, LOG_ERROR, "REST API failure, ulfius_init_instance, abort\n");
         return(1);
     }
 
@@ -163,13 +162,11 @@ rest_start(int argc, char **argv){
 
     // Start the framework
     if (ulfius_start_framework(&instance) == U_OK) {
-        printf("Start framework on port %d\n", instance.port);
-        getchar();
+        write_log(__FILE__, __func__, LOG_EVENT, "Starting REST-API on port %d\n", instance.port);
     } else {
-        fprintf(stderr, "Error starting framework\n");
+        write_log(__FILE__, __func__, LOG_EVENT, "Failed to start REST-API");
     }
-    getchar();
-    printf("End framework\n");
+    printf("End framework\n");  //  end?
 
     ulfius_stop_framework(&instance);
     ulfius_clean_instance(&instance);

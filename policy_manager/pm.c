@@ -16,44 +16,17 @@
 #include "parse_json.h"
 
 #define PM_BACKLOG 128
-#define BUFSIZE 65536
-#define PM_SOCK_DIR ".neat"
-#define PM_SOCK_NAME "neat_pm_socket"
-#define CIB_SOCK_NAME "neat_cib_socket"
-#define PIB_SOCK_NAME "neat_pib_socket"
+#define PM_BUFSIZE 65536
 
 #define NUM_CANDIDATES 10
 
 uv_loop_t *loop;
-const char *pm_socket_path;
-const char *cib_socket_path;
-const char *pib_socket_path;
 pthread_t thread_id_rest;
 
 typedef struct client_req {
     char *buffer;
     size_t len;
 } client_req_t;
-
-void
-make_pm_socket_path()
-{
-    char path[PATH_MAX], cib_path[PATH_MAX], pib_path[PATH_MAX];;
-    struct stat st;
-
-    snprintf(path, PATH_MAX, "%s/%s/", get_home_dir(), PM_SOCK_DIR);
-
-    if (stat(path, &st) == -1) {
-        mkdir(path, 0700);
-        printf("created directory %s\n", path);
-    }
-
-    pm_socket_path = strncat(path, PM_SOCK_NAME, PATH_MAX - strlen(path));
-    snprintf(cib_path, PATH_MAX, "%s/%s/", get_home_dir(), PM_SOCK_DIR);
-    cib_socket_path = strncat(cib_path, CIB_SOCK_NAME, PATH_MAX - strlen(path));
-    snprintf(pib_path, PATH_MAX, "%s/%s/", get_home_dir(), PM_SOCK_DIR);
-    pib_socket_path = strncat(pib_path, PIB_SOCK_NAME, PATH_MAX - strlen(path));
-}
 
 json_t *
 lookup(json_t *reqs)
@@ -186,7 +159,7 @@ on_client_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buffer)
         return;
     }
     else {
-        strncpy(c_req->buffer + c_req->len, buffer->base, BUFSIZE - c_req->len);
+        strncpy(c_req->buffer + c_req->len, buffer->base, PM_BUFSIZE - c_req->len);
         c_req->len += nread;
     }
     free(buffer->base);
@@ -204,7 +177,7 @@ on_new_pm_connection(uv_stream_t *pm_server, int status)
 
     client = malloc(sizeof(uv_pipe_t));
     client->data = malloc(sizeof(client_req_t)); /* stores json request */
-    ((client_req_t*) client->data)->buffer = malloc(BUFSIZE);
+    ((client_req_t*) client->data)->buffer = malloc(PM_BUFSIZE);
     ((client_req_t*) client->data)->len = 0;
 
     uv_pipe_init(loop, client, 0);
@@ -251,7 +224,7 @@ on_pib_socket_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buffer)
     else {
         /* printf("read: %s\n", buffer->base); */
 
-        strncpy(c_req->buffer + c_req->len, buffer->base, BUFSIZE - c_req->len);
+        strncpy(c_req->buffer + c_req->len, buffer->base, PM_BUFSIZE - c_req->len);
         c_req->len += nread;
 
         /* printf("buffer: %s (%zu bytes)\n", c_req->buffer, c_req->len); */
@@ -271,7 +244,7 @@ on_new_pib_connection(uv_stream_t *pib_server, int status)
 
     client = malloc(sizeof(uv_pipe_t));
     client->data = malloc(sizeof(client_req_t)); /* stores json request */
-    ((client_req_t*) client->data)->buffer = malloc(BUFSIZE);
+    ((client_req_t*) client->data)->buffer = malloc(PM_BUFSIZE);
     ((client_req_t*) client->data)->len = 0;
 
     uv_pipe_init(loop, client, 0);
@@ -318,7 +291,7 @@ on_cib_socket_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buffer)
     else {
         /* printf("read: %s\n", buffer->base); */
 
-        strncpy(c_req->buffer + c_req->len, buffer->base, BUFSIZE - c_req->len);
+        strncpy(c_req->buffer + c_req->len, buffer->base, PM_BUFSIZE - c_req->len);
         c_req->len += nread;
 
         /* printf("buffer: %s (%zu bytes)\n", c_req->buffer, c_req->len); */
@@ -338,7 +311,7 @@ on_new_cib_connection(uv_stream_t *cib_server, int status)
 
     client = malloc(sizeof(uv_pipe_t));
     client->data = malloc(sizeof(client_req_t)); /* stores json request */
-    ((client_req_t*) client->data)->buffer = malloc(BUFSIZE);
+    ((client_req_t*) client->data)->buffer = malloc(PM_BUFSIZE);
     ((client_req_t*) client->data)->len = 0;
 
     uv_pipe_init(loop, client, 0);
@@ -371,27 +344,12 @@ pm_close(int sig)
 
 //this function never returns, see documentation "uv_run"
 int
-create_socket()
+create_sockets()
 {
-    printf("\n\n--Start PM--\n\n");
-
-    generate_cib_from_ifaces();
-    cib_start();
-    pib_start();
-
-    pthread_create(&thread_id_rest, NULL, rest_start, NULL);  //start policy manager
-    //print_nodes(pib_profiles);
-
     uv_pipe_t pm_server;
     uv_pipe_t cib_server;
     uv_pipe_t pib_server;
     int r, s, t;
-
-    make_pm_socket_path();
-
-    printf("\nsocket created in %s\n", pm_socket_path);
-    printf("\nsocket created in %s\n", cib_socket_path);
-    printf("\nsocket created in %s\n\n", pib_socket_path);
 
     loop = uv_default_loop();
     uv_pipe_init(loop, &pm_server, 0);
@@ -400,10 +358,11 @@ create_socket()
 
     signal(SIGINT, pm_close);
 
-    unlink(SOCKET_PATH);
-    write_log(__FILE__, __func__, LOG_EVENT, "Socket created in %s\n", SOCKET_PATH);
+    unlink(pm_socket_path);
+    unlink(cib_socket_path);
+    unlink(pib_socket_path);
 
-    if ((r = uv_pipe_bind(&pm_server, SOCKET_PATH)) != 0) {
+    if ((r = uv_pipe_bind(&pm_server, pm_socket_path)) != 0) {
         write_log(__FILE__, __func__, LOG_ERROR, "Socket bind error %s", uv_err_name(r));
         return 1;
     }
@@ -455,14 +414,16 @@ parse_arguments(int argc, char *argv[])
 int
 main(int argc, char *argv[])
 {
-    write_log(__FILE__, __func__, LOG_EVENT,"\n--Start PM--\n");
+    write_log(__FILE__, __func__, LOG_EVENT,"\n-- Policy Manager --\n");
 
     parse_arguments(argc, argv);
-    create_folders();
+    start_pm_helper();
 
     generate_cib_from_ifaces();
     cib_start();
     pib_start();
 
-    return create_socket();
+    pthread_create(&thread_id_rest, NULL, rest_start, NULL);  //start REST-API
+
+    return create_sockets(); 
 }
