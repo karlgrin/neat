@@ -55,9 +55,6 @@ make_pm_socket_path()
     pib_socket_path = strncat(pib_path, PIB_SOCK_NAME, PATH_MAX - strlen(path));
 }
 
-/* Adds the default values for `score' (0) and `evaluated' (False) to each property in each request.
-   Should be executed before the logic of the main lookup routine. */
-
 json_t *
 lookup(json_t *reqs)
 {
