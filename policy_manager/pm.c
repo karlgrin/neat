@@ -41,8 +41,10 @@ lookup(json_t *reqs)
     size_t i, j, k;
 
     json_t* req_expand = expand_properties(reqs);
+    json_decref(reqs);
 
-    json_t* requests = process_special_properties(json_deep_copy(req_expand));
+    json_t* requests = process_special_properties(req_expand);
+    json_decref(req_expand);
 
     json_array_foreach(requests, i, request) {
         add_default_values(request);

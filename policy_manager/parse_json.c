@@ -191,7 +191,7 @@ create_json_array(json_t* json) {
 
     json_t *root;
     root = json_array();
-    json_array_append(root, json);
+    json_array_append_new(root, json);
     return root;
 }
 
