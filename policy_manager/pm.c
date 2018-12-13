@@ -171,7 +171,7 @@ on_new_pm_connection(uv_stream_t *pm_server, int status)
     uv_pipe_t *client;
 
     if (status == -1) {
-        write_log(__FILE__, __func__, LOG_ERROR, "Socket new connection");
+        write_log(__FILE__, __func__, LOG_ERROR, "Socket new connection failure");
         return;
     }
 
@@ -191,9 +191,6 @@ on_new_pm_connection(uv_stream_t *pm_server, int status)
     }
 }
 
-/*-----------------------*/
-/*----- PIB ACTIONS -----*/
-/*-----------------------*/
 
 void
 handle_pib_request(uv_stream_t *client)
@@ -217,17 +214,13 @@ on_pib_socket_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buffer)
         handle_pib_request(client);
     }
     else if (nread < 0) {
-        printf("error on pib_socket read\n");
+        write_log(__FILE__, __func__, LOG_ERROR, "PIB socket read error");
         uv_close((uv_handle_t *) client, NULL);
         return;
     }
     else {
-        /* printf("read: %s\n", buffer->base); */
-
         strncpy(c_req->buffer + c_req->len, buffer->base, PM_BUFSIZE - c_req->len);
         c_req->len += nread;
-
-        /* printf("buffer: %s (%zu bytes)\n", c_req->buffer, c_req->len); */
     }
     free(buffer->base);
 }
@@ -238,7 +231,7 @@ on_new_pib_connection(uv_stream_t *pib_server, int status)
     uv_pipe_t *client;
 
     if (status == -1) {
-        fprintf(stderr, "new connection error\n");
+       write_log(__FILE__, __func__, LOG_ERROR, "PIB socket connection error");
         return;
     }
 
@@ -250,17 +243,13 @@ on_new_pib_connection(uv_stream_t *pib_server, int status)
     uv_pipe_init(loop, client, 0);
 
     if (uv_accept(pib_server, (uv_stream_t *) client) == 0) {
-        printf("\nAccepted pib_socket request\n");
+        write_log(__FILE__, __func__, LOG_EVENT, "Accepted PIB request");
         uv_read_start((uv_stream_t *) client, alloc_buffer, on_pib_socket_read);
     }
     else {
         uv_close((uv_handle_t *) client, NULL);
     }
 }
-
-/*-----------------------*/
-/*----- CIB ACTIONS -----*/
-/*-----------------------*/
 
 void
 handle_cib_request(uv_stream_t *client)
@@ -284,17 +273,13 @@ on_cib_socket_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buffer)
         handle_cib_request(client);
     }
     else if (nread < 0) {
-        printf("error on cib_socket read\n");
+        write_log(__FILE__, __func__, LOG_ERROR, "CIB socket read error");
         uv_close((uv_handle_t *) client, NULL);
         return;
     }
     else {
-        /* printf("read: %s\n", buffer->base); */
-
         strncpy(c_req->buffer + c_req->len, buffer->base, PM_BUFSIZE - c_req->len);
         c_req->len += nread;
-
-        /* printf("buffer: %s (%zu bytes)\n", c_req->buffer, c_req->len); */
     }
     free(buffer->base);
 }
@@ -305,7 +290,7 @@ on_new_cib_connection(uv_stream_t *cib_server, int status)
     uv_pipe_t *client;
 
     if (status == -1) {
-        fprintf(stderr, "new connection error\n");
+        write_log(__FILE__, __func__, LOG_ERROR, "CIB socket connection error\n");
         return;
     }
 
@@ -317,7 +302,7 @@ on_new_cib_connection(uv_stream_t *cib_server, int status)
     uv_pipe_init(loop, client, 0);
 
     if (uv_accept(cib_server, (uv_stream_t *) client) == 0) {
-        printf("\nAccepted cib_socket request\n");
+        write_log(__FILE__, __func__, LOG_EVENT, "Accepted CIB request\n");
         uv_read_start((uv_stream_t *) client, alloc_buffer, on_cib_socket_read);
     }
     else {
@@ -363,29 +348,29 @@ create_sockets()
     unlink(pib_socket_path);
 
     if ((r = uv_pipe_bind(&pm_server, pm_socket_path)) != 0) {
-        write_log(__FILE__, __func__, LOG_ERROR, "Socket bind error %s", uv_err_name(r));
+        write_log(__FILE__, __func__, LOG_ERROR, "PM socket bind error %s", uv_err_name(r));
         return 1;
     }
     if ((r = uv_listen((uv_stream_t*) &pm_server, PM_BACKLOG, on_new_pm_connection))) {
-        write_log(__FILE__, __func__, LOG_ERROR, "Socket listen error %s", uv_err_name(r));
+        write_log(__FILE__, __func__, LOG_ERROR, "PM socket listen error %s", uv_err_name(r));
         return 2;
     }
 
     if ((s = uv_pipe_bind(&cib_server, cib_socket_path)) != 0) {
-        fprintf(stderr, "Bind error %s\n", uv_err_name(s));
+        write_log(__FILE__, __func__, LOG_ERROR, "CIB socket bind error %s", uv_err_name(r));
         return 1;
     }
     if ((s = uv_listen((uv_stream_t*) &cib_server, PM_BACKLOG, on_new_cib_connection))) {
-        fprintf(stderr, "Listen error %s\n", uv_err_name(s));
+        write_log(__FILE__, __func__, LOG_ERROR, "CIB socket listen error %s", uv_err_name(r));
         return 2;
     }
 
     if ((t = uv_pipe_bind(&pib_server, pib_socket_path)) != 0) {
-        fprintf(stderr, "Bind error %s\n", uv_err_name(t));
+        write_log(__FILE__, __func__, LOG_ERROR, "PIB socket bind error %s", uv_err_name(r));
         return 1;
     }
     if ((t = uv_listen((uv_stream_t*) &pib_server, PM_BACKLOG, on_new_pib_connection))) {
-        fprintf(stderr, "Listen error %s\n", uv_err_name(t));
+        write_log(__FILE__, __func__, LOG_ERROR, "PIB socket listen error %s", uv_err_name(r));
         return 2;
     }
 
