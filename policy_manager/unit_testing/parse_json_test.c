@@ -51,12 +51,12 @@ void test_sort_json_array()
     json_t *result = json_array();
     json_t *result_elem;
     json_t *correct_elem;
-    json_t *to_sort = json_loads("[{\"quattor\" : { \"value\" : 1, \"score\" : 4 }}, "
-                                 " {\"duo\"     : { \"value\" : 1, \"score\" : 2 }}, "
-                                 " {\"tres\"    : { \"value\" : 1, \"score\" : 3 }}, "
-                                 " {\"unus\"    : { \"value\" : 1, \"score\" : 1 }}, "
-                                 " {\"quinque\" : { \"value\" : 1, \"score\" : 5 }}] ", 0, NULL);
-    int sorted_index[] = { 4, 0, 2, 1, 3 };
+    json_t *to_sort = json_loads("[{\"d\"    : { \"evaluated\" : true, \"score\" : 2 }, \"dd\" : { \"evaluated\" : false, \"score\": 5 }}, "
+                                 " {\"b\"    : { \"evaluated\" : true, \"score\" : 3 }, \"bb\" : { \"evaluated\" : false, \"score\": 5 }}, "
+                                 " {\"c\"    : { \"evaluated\" : true, \"score\" : 3 }, \"cc\" : { \"evaluated\" : false, \"score\": 4 }}, "
+                                 " {\"a\"    : { \"evaluated\" : true, \"score\" : 4 }, \"aa\" : { \"evaluated\" : false, \"score\": 2 }}, "
+                                 " {\"e\"    : { \"evaluated\" : true, \"score\" : 2 }, \"ee\" : { \"evaluated\" : false, \"score\": 1 }}] ", 0, NULL);
+    int sorted_index[] = { 3, 1, 2, 0, 4 };
 
     result = sort_json_array(to_sort);
 
