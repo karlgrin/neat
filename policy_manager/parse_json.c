@@ -57,7 +57,7 @@ add_default_values(json_t *request)
                 json_array_foreach(property, n, attr) {
                     json_t *tmp_prop = json_pack("{sO}", key, attr);
                     add_default_values(tmp_prop);
-                    json_decref(tmp_prop); // RISKY seems that attr is not dereferenced?
+                    json_decref(tmp_prop);
                 }
                 break;
             }
@@ -105,7 +105,7 @@ cmp_score(const void *json1, const void *json2)
     int non_evaluated_diff = score2.non_evaluated - score1.non_evaluated;
 
     /* evaluated > non_evaluated */
-    return evaluated_diff ? evaluated_diff : non_evaluated_diff;
+    return evaluated_diff != 0 ? evaluated_diff : non_evaluated_diff;
 }
 
 json_t *
@@ -433,27 +433,24 @@ subset(json_t *prop_a, json_t *prop_b)
         value_prop_b = json_object_get(prop_b, key_a);
 
         if (value_prop_b == NULL) {
-            //printf("it's not, this is therefore not a subset (FAIL)\n");
+            write_log(__FILE__, __func__, LOG_DEBUG, "Subset check returns false: does not contain key.");
             return 0;
         }
         value_b = json_object_get(value_prop_b, "value");
         value_a = json_object_get(value_prop_a, "value");
 
-        if (json_equal(value_a, value_b)) {
-            //printf("it is (same key and value)\n");
-        }
-        else {
-            //printf("it's not (same key, but different value)\n");
+        if (!json_equal(value_a, value_b)) {
+            write_log(__FILE__, __func__, LOG_DEBUG, "Subset check returns false: wrong value for key.");
             return 0;
         }
     }
-    ////printf("all properties are members. this is a subset (OK).\n");
+    write_log(__FILE__, __func__, LOG_DEBUG, "Subset check returns true: this is a subset.");
     return 1;
 }
 
 /* update prop_a with properties from prop_b */
 void
-merge_update_properties(json_t *prop_a, json_t *prop_b, bool evaluated)
+merge_do_update_properties(json_t *prop_a, json_t *prop_b, bool evaluated)
 {
     json_object_set(prop_a, "evaluated", json_pack("b", evaluated));
 
@@ -461,7 +458,7 @@ merge_update_properties(json_t *prop_a, json_t *prop_b, bool evaluated)
     json_t *value_b = json_object_get(prop_b, "value");
 
     if (!value_b) {
-        //printf("ERRRO: undefined: value_b should not be null\n");
+        write_log(__FILE__, __func__, LOG_ERROR, "value_b == NULL");
         return;
     }
 
@@ -507,25 +504,25 @@ merge_update_properties(json_t *prop_a, json_t *prop_b, bool evaluated)
 
 /* decide if reverse comparision is to be used */
 void
-merge_add_properties(json_t *prop_a, json_t *prop_b)
+merge_update_properties(json_t *prop_a, json_t *prop_b)
 {
     json_t *precedence_prop_b_json = json_object_get(prop_b, "precedence");
 
     if (!precedence_prop_b_json) {
-        //fprintf(stderr, "Error: no precedence attribute\n");
+        write_log(__FILE__, __func__, LOG_ERROR, "no precedence attribute");
         return;
     }
     int precedence_prop_b = json_integer_value(precedence_prop_b_json);
 
     if (precedence_prop_b == PRECEDENCE_BASE) {
         json_t *prop_b_copy = json_deep_copy(prop_b);
-        merge_update_properties(prop_b_copy, prop_a, false);
+        merge_do_update_properties(prop_b_copy, prop_a, false);
         json_object_update(prop_a, prop_b_copy);
         json_decref(prop_b_copy);
         return;
     }
 
-    merge_update_properties(prop_a, prop_b, true);
+    merge_do_update_properties(prop_a, prop_b, true);
 }
 
 /* merge properties in prop_a into prop_b */
@@ -546,7 +543,7 @@ merge_properties(json_t *prop_a, json_t *prop_b, int should_overwrite)
         }
         else {
             /* Update the property values */
-            merge_add_properties(found_prop, value);
+            merge_update_properties(found_prop, value);
         }
     }
 }

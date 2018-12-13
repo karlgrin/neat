@@ -41,7 +41,7 @@ add_pib_node(json_t *json_for_node)
 
     char* path = new_string("%s%s%s", pib_dir, uid, ".policy");
     write_log(__FILE__, __func__, LOG_DEBUG, "PIB node created in %s\n", path);
- 
+
     node_t *node = node_init(path);
 
 
@@ -101,7 +101,7 @@ pib_lookup(node_t *pib_list, json_t *input_props)
     json_array_append(candidate_array, input_props);
 
     for (current_policy = pib_list; current_policy; current_policy = current_policy->next) {
-        write_log(__FILE__, __func__, LOG_DEBUG,"\n---------- POLICY %s ---------\n", current_policy->filename);
+        write_log(__FILE__, __func__, LOG_DEBUG,"---------- POLICY %s ---------", current_policy->filename);
         candidate_updated_array = json_array();
         policy_match = json_object_get(current_policy->json, "match");
 
@@ -115,7 +115,7 @@ pib_lookup(node_t *pib_list, json_t *input_props)
                 replace = replace_matched(current_policy->json);
 
                 json_array_foreach(properties_expanded, index_2, expanded_prop) {
-                    write_log(__FILE__, __func__, LOG_DEBUG, "\n    ------ EXPANDED PROP #%ld of %s\n", index_2, current_policy->filename);
+                    write_log(__FILE__, __func__, LOG_DEBUG, "    ------ EXPANDED PROP #%ld of %s", index_2, current_policy->filename);
 
                     candidate_updated = json_deep_copy(candidate); // TODO free
 
