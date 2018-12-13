@@ -162,11 +162,11 @@ rest_start(int argc, char **argv){
 
     // Start the framework
     if (ulfius_start_framework(&instance) == U_OK) {
-        write_log(__FILE__, __func__, LOG_EVENT, "Starting REST-API on port %d\n", instance.port);
+        write_log(__FILE__, __func__, LOG_EVENT, "Starting REST-API on port %d", instance.port);
     } else {
         write_log(__FILE__, __func__, LOG_EVENT, "Failed to start REST-API");
     }
-    printf("End framework\n");  //  end?
+    write_log(__FILE__, __func__, LOG_EVENT,"Closing  REST-API..");
 
     ulfius_stop_framework(&instance);
     ulfius_clean_instance(&instance);
