@@ -13,15 +13,11 @@ callback_get_pib (const struct _u_request * request, struct _u_response * respon
     json_t *pib = get_pib_list();
 
     if (pib) {
-        printf("found pib \n%s\n", json_dumps(pib, 2));
         ulfius_set_json_body_response(response, 200, pib);
-        //TODO: SET RESPONSE TO JSON POLICY
     }
     else {
-        printf("found no pib file\n");
         snprintf(msg, 256, "pib not found");
         ulfius_set_string_body_response(response, 404, msg);
-        //TODO: SET RESPONSE TO 404 NOT FOUND
     }
 
     return U_CALLBACK_CONTINUE;
@@ -34,15 +30,11 @@ callback_get_cib (const struct _u_request * request, struct _u_response * respon
     json_t *cib = get_cib_list();
 
     if (cib) {
-        printf("found cib \n%s\n", json_dumps(cib, 2));
         ulfius_set_json_body_response(response, 200, cib);
-        //TODO: SET RESPONSE TO JSON POLICY
     }
     else {
-        printf("found no cib file\n");
         snprintf(msg, 256, "cib not found");
         ulfius_set_string_body_response(response, 404, msg);
-        //TODO: SET RESPONSE TO 404 NOT FOUND
     }
 
     return U_CALLBACK_CONTINUE;
@@ -58,15 +50,11 @@ callback_get_pib_node (const struct _u_request * request, struct _u_response * r
     json_t *policy = get_pibnode_by_uid(uid);
 
     if (policy) {
-        printf("found policy %s\n", json_dumps(policy, 0));
         ulfius_set_json_body_response(response, 200, policy);
-        //TODO: SET RESPONSE TO JSON POLICY
     }
     else {
-        printf("found no policy\n");
         snprintf(msg, 256, "%s not found", uid);
         ulfius_set_string_body_response(response, 404, msg);
-        //TODO: SET RESPONSE TO 404 NOT FOUND
     }
 
     return U_CALLBACK_CONTINUE;
@@ -80,15 +68,11 @@ callback_get_cib_node (const struct _u_request * request, struct _u_response * r
     json_t *cibnode = get_cibnode_by_uid(uid);
 
     if (cibnode) {
-        printf("found cib node %s\n", json_dumps(cibnode, 0));
         ulfius_set_json_body_response(response, 200, cibnode);
-        //TODO: SET RESPONSE TO JSON POLICY
     }
     else {
-        printf("found no cib node file\n");
         snprintf(msg, 256, "%s not found", uid);
         ulfius_set_string_body_response(response, 404, msg);
-        //TODO: SET RESPONSE TO 404 NOT FOUND
     }
 
     return U_CALLBACK_CONTINUE;
@@ -103,7 +87,6 @@ callback_put_pib_node (const struct _u_request * request, struct _u_response * r
     char *path = new_string("%s/%s/%s/%s", get_home_dir(), ".neat", policy_dir, uid);
     if(json_request)
     {
-        printf("%s\n", json_dumps(json_request, 2));
         if(!json_object_get(json_request, "uid") || !json_object_get(json_request, "properties")){
             snprintf(msg, 256, "PIB JSON object missing mandatory field");
             ulfius_set_string_body_response(response, 400, msg);
@@ -163,6 +146,7 @@ rest_start(int argc, char **argv){
     // Start the framework
     if (ulfius_start_framework(&instance) == U_OK) {
         write_log(__FILE__, __func__, LOG_EVENT, "Starting REST-API on port %d", instance.port);
+        getchar();
     } else {
         write_log(__FILE__, __func__, LOG_EVENT, "Failed to start REST-API");
     }
