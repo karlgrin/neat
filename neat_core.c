@@ -3189,8 +3189,6 @@ on_pm_reply_post_resolve(neat_ctx *ctx, neat_flow *flow, json_t *json)
     struct neat_he_candidate *candidate = NULL;
     struct sockaddr *sa = NULL;
     struct sockaddr *da = NULL;
-      
-    printf("\nPost-Resolve-Json:\n %s\n\n", json_dumps(json,0));
 
     nt_log(ctx, NEAT_LOG_DEBUG, "%s", __func__);
 
@@ -3308,7 +3306,6 @@ on_candidates_resolved(neat_ctx *ctx, neat_flow *flow, struct neat_he_candidates
         socket_path = socket_path_buf;
     }
 
-    printf("\nPost-request-to-Pm:\n %s\n\n", json_dumps(array,0));
     nt_log(ctx, NEAT_LOG_DEBUG, "Sending post-resolve properties to PM");
     // buffer is freed by the PM interface
     nt_json_send_once(flow->ctx, flow, socket_path, array, on_pm_reply_post_resolve, on_pm_error);
@@ -3795,8 +3792,6 @@ on_pm_reply_pre_resolve(struct neat_ctx *ctx, struct neat_flow *flow, json_t *js
     json_t *value;
     struct neat_he_candidates *candidate_list;
 
-    printf("\nPre-Resolve-Json:\n %s\n\n", json_dumps(json,0));
-
     nt_log(ctx, NEAT_LOG_DEBUG, "%s", __func__);
 
 #if 0
@@ -4074,9 +4069,6 @@ send_properties_to_pm(neat_ctx *ctx, neat_flow *flow)
     }
     free (tmp);
     json_array_append(array, properties);
-
-    printf("\nPre-request-to-Pm:\n %s\n\n", json_dumps(array,0));
-
 
     nt_json_send_once(ctx, flow, socket_path, array, on_pm_reply_pre_resolve, on_pm_error);
 
