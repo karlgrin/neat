@@ -321,12 +321,9 @@ pm_close(int sig)
     uv_fs_unlink(loop, &req, cib_socket_path, NULL);
     uv_fs_unlink(loop, &req, pib_socket_path, NULL);
 
-    rest_close();
     pib_close();
     cib_close();
     pm_helper_close();
-
-    pthread_cancel(thread_id_rest);
 
     exit(sig);
 }

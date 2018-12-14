@@ -25,7 +25,7 @@ $ cp policy_manager/json_examples/pib/*.profile ~/.neat/infobase/pib/profile
 $ cp policy_manager/json_examples/pib/*.policy ~/.neat/infobase/pib/policy
 ```
 
-To **build & run** the Policy Manager, go into the /neat folder then run:
+To **build & run** the policy manager, go into the /neat folder then run:
 
 ```
 $ cd policy_manager
@@ -35,7 +35,6 @@ $ cmake ..
 $ make
 $ ./pm
 ```
-Close the program with **ctrl  + c**
 
 Possible **arguments** to PM:
 ```

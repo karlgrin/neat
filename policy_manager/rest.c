@@ -5,7 +5,6 @@
 #include "cib.h"
 
 #define PORT 45888
-struct _u_instance instance;
 
 int
 callback_get_pib (const struct _u_request * request, struct _u_response * response, void * user_data) {
@@ -128,6 +127,7 @@ callback_put_cib_node (const struct _u_request * request, struct _u_response * r
 
 int
 rest_start(int argc, char **argv){
+    struct _u_instance instance;
 
     // Initialize instance with the port number
     if (ulfius_init_instance(&instance, PORT, NULL, NULL) != U_OK) {
@@ -150,13 +150,10 @@ rest_start(int argc, char **argv){
     } else {
         write_log(__FILE__, __func__, LOG_EVENT, "Failed to start REST-API");
     }
-    return 0;
-}
-
-void
-rest_close() {
     write_log(__FILE__, __func__, LOG_EVENT,"Closing  REST-API..");
 
     ulfius_stop_framework(&instance);
     ulfius_clean_instance(&instance);
+
+    return 0;
 }
