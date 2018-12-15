@@ -4,8 +4,6 @@
 #include "parse_json.h"
 #include "pm_helper.h"
 
-#define PRECEDENCE_BASE 0
-
 #define MAX(a,b) (((a)>(b))?(a):(b))
 #define ARRAY_SIZE(array) (sizeof((array))/sizeof((array)[0]))
 
@@ -448,9 +446,9 @@ subset(json_t *prop_a, json_t *prop_b)
     return 1;
 }
 
-/* update prop_a with properties from prop_b */
+/* update prop_a with values from prop_b */
 void
-merge_do_update_properties(json_t *prop_a, json_t *prop_b, bool evaluated)
+merge_do_update_property(json_t *prop_a, json_t *prop_b, bool evaluated)
 {
     json_object_set(prop_a, "evaluated", json_pack("b", evaluated));
 
@@ -491,6 +489,11 @@ merge_do_update_properties(json_t *prop_a, json_t *prop_b, bool evaluated)
         json_t *precedence_value_b_obj = json_object_get(prop_b, "precedence");
         int precedence_value_b = precedence_value_b_obj ? json_integer_value(precedence_value_b_obj) : 0;
 
+        if (precedence_value_a == PRECEDENCE_IMMUTABLE && precedence_value_b == PRECEDENCE_IMMUTABLE) {
+            write_log(__FILE__, __func__, LOG_ERROR, "immutable property");
+            return;
+        }
+
         if (precedence_value_b >= precedence_value_a) {
             json_t *score_prop_b = json_object_get(prop_b, "score");
             json_object_set(value_a, "score", score_prop_b ? score_prop_b : json_pack("i", 0));
@@ -504,7 +507,7 @@ merge_do_update_properties(json_t *prop_a, json_t *prop_b, bool evaluated)
 
 /* decide if reverse comparision is to be used */
 void
-merge_update_properties(json_t *prop_a, json_t *prop_b)
+merge_update_property(json_t *prop_a, json_t *prop_b)
 {
     json_t *precedence_prop_b_json = json_object_get(prop_b, "precedence");
 
@@ -516,13 +519,13 @@ merge_update_properties(json_t *prop_a, json_t *prop_b)
 
     if (precedence_prop_b == PRECEDENCE_BASE) {
         json_t *prop_b_copy = json_deep_copy(prop_b);
-        merge_do_update_properties(prop_b_copy, prop_a, false);
+        merge_do_update_property(prop_b_copy, prop_a, false);
         json_object_update(prop_a, prop_b_copy);
         json_decref(prop_b_copy);
         return;
     }
 
-    merge_do_update_properties(prop_a, prop_b, true);
+    merge_do_update_property(prop_a, prop_b, true);
 }
 
 /* merge properties in prop_a into prop_b */
@@ -543,7 +546,7 @@ merge_properties(json_t *prop_a, json_t *prop_b, int should_overwrite)
         }
         else {
             /* Update the property values */
-            merge_update_properties(found_prop, value);
+            merge_update_property(found_prop, value);
         }
     }
 }

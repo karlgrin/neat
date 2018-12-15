@@ -5,6 +5,10 @@
 #include <jansson.h>
 #include <stdbool.h>
 
+#define PRECEDENCE_BASE 0
+#define PRECEDENCE_OPTIONAL 1
+#define PRECEDENCE_IMMUTABLE 2
+
 extern char* neat_dir;
 extern char* ib_dir;
 extern char* cib_dir;
