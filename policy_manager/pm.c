@@ -54,6 +54,10 @@ lookup(json_t *reqs)
         write_log(__FILE__, __func__, LOG_DEBUG, "__request_type is pre-resolve, skipping lookup.");
         return requests;
     }
+    else  {
+	write_log(__FILE__, __func__, LOG_EVENT, "Starting lookup..");
+    }
+
     requests = expand_values(json_deep_copy(requests));
 
     json_array_foreach(requests, i, request) {
