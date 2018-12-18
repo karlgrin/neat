@@ -16,7 +16,7 @@ callback_get_pib (const struct _u_request * request, struct _u_response * respon
         ulfius_set_json_body_response(response, 200, pib);
     }
     else {
-        snprintf(msg, 256, "pib not found");
+        write_log(__FILE__, __func__, LOG_DEBUG, "REST-API: pib not found");
         ulfius_set_string_body_response(response, 404, msg);
     }
 
@@ -33,7 +33,7 @@ callback_get_cib (const struct _u_request * request, struct _u_response * respon
         ulfius_set_json_body_response(response, 200, cib);
     }
     else {
-        snprintf(msg, 256, "cib not found");
+        write_log(__FILE__, __func__, LOG_DEBUG, "REST-API: cib not found");
         ulfius_set_string_body_response(response, 404, msg);
     }
 
@@ -44,7 +44,7 @@ int
 callback_get_pib_node (const struct _u_request * request, struct _u_response * response, void * user_data) {
     char msg[256];
     const char *uid = u_map_get(request->map_url, "uid");
-    snprintf(msg, 256, "Request for pib uid %s", uid);
+    write_log(__FILE__, __func__, LOG_DEBUG, "REST-API: Request for pib uid %s", uid);
     ulfius_set_string_body_response(response, 200, msg);
 
     json_t *policy = get_pibnode_by_uid(uid);
@@ -53,7 +53,7 @@ callback_get_pib_node (const struct _u_request * request, struct _u_response * r
         ulfius_set_json_body_response(response, 200, policy);
     }
     else {
-        snprintf(msg, 256, "%s not found", uid);
+        write_log(__FILE__, __func__, LOG_DEBUG, "REST-API: pib with ID %s not found", uid);
         ulfius_set_string_body_response(response, 404, msg);
     }
 
@@ -71,7 +71,7 @@ callback_get_cib_node (const struct _u_request * request, struct _u_response * r
         ulfius_set_json_body_response(response, 200, cibnode);
     }
     else {
-        snprintf(msg, 256, "%s not found", uid);
+        write_log(__FILE__, __func__, LOG_DEBUG, "REST-API: node ID %s not found", uid);
         ulfius_set_string_body_response(response, 404, msg);
     }
 
@@ -88,14 +88,14 @@ callback_put_pib_node (const struct _u_request * request, struct _u_response * r
     if(json_request)
     {
         if(!json_object_get(json_request, "uid") || !json_object_get(json_request, "properties")){
-            snprintf(msg, 256, "PIB JSON object missing mandatory field");
+            write_log(__FILE__, __func__, LOG_ERROR, "REST-API: PIB JSON object missing mandatory field");
             ulfius_set_string_body_response(response, 400, msg);
         } else {
             add_pib_node(json_request);
         }
 
     } else {
-        snprintf(msg, 256, "JSON not found in body");
+        write_log(__FILE__, __func__, LOG_DEBUG,  "REST-API: JSON not found");
         ulfius_set_string_body_response(response, 400, msg);
     }
     free(path);
@@ -112,13 +112,13 @@ callback_put_cib_node (const struct _u_request * request, struct _u_response * r
     if(json_request)
     {
         if(!json_object_get(json_request, "uid") || !json_object_get(json_request, "properties")){
-            snprintf(msg, 256, "CIB JSON object missing mandatory field");
+            write_log(__FILE__, __func__, LOG_ERROR, "REST-API: CIB JSON object missing mandatory field");
             ulfius_set_string_body_response(response, 400, msg);
         } else {
             add_cib_node(json_request);
         }
     } else {
-        snprintf(msg, 256, "JSON not found in body");
+        write_log(__FILE__, __func__, LOG_ERROR, "REST-API: JSON not found");
         ulfius_set_string_body_response(response, 400, msg);
     }
     free(path);
@@ -148,9 +148,9 @@ rest_start(int argc, char **argv){
         write_log(__FILE__, __func__, LOG_EVENT, "Starting REST-API on port %d", instance.port);
         getchar();
     } else {
-        write_log(__FILE__, __func__, LOG_EVENT, "Failed to start REST-API");
+        write_log(__FILE__, __func__, LOG_ERROR, "Failed to start REST-API");
     }
-    write_log(__FILE__, __func__, LOG_EVENT,"Closing  REST-API..");
+    write_log(__FILE__, __func__, LOG_EVENT,"Closing  REST-API...\n");
 
     ulfius_stop_framework(&instance);
     ulfius_clean_instance(&instance);

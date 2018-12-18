@@ -535,8 +535,6 @@ merge_properties(json_t *prop_a, json_t *prop_b, int should_overwrite)
     const char *key;
     json_t *value;
 
-    ////printf("\nMERGING: \n%s%\n\n AND \n\n%s\n\n", json_dumps(prop_a, 0), json_dumps(prop_b, 0));
-
     json_object_foreach(prop_a, key, value) {
 
         json_t *found_prop = json_object_get(prop_b, key);
