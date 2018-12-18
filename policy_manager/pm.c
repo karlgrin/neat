@@ -152,7 +152,7 @@ on_client_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buffer)
 {
     client_req_t *c_req = (client_req_t *) client->data;
 
-    if (nread == UV_EOF) { /* -4095? */
+    if (nread == UV_EOF) {
         handle_request(client);
     }
     else if (nread < 0) {
@@ -212,7 +212,7 @@ on_pib_socket_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buffer)
 {
     client_req_t *c_req = (client_req_t *) client->data;
 
-    if (nread == UV_EOF) { /* -4095? */
+    if (nread == UV_EOF) {
         handle_pib_request(client);
     }
     else if (nread < 0) {
@@ -271,7 +271,7 @@ on_cib_socket_read(uv_stream_t *client, ssize_t nread, const uv_buf_t *buffer)
 {
     client_req_t *c_req = (client_req_t *) client->data;
 
-    if (nread == UV_EOF) { /* -4095? */
+    if (nread == UV_EOF) {
         handle_cib_request(client);
     }
     else if (nread < 0) {
@@ -412,5 +412,5 @@ main(int argc, char *argv[])
 
     pthread_create(&thread_id_rest, NULL, rest_start, NULL);  //start REST-API
 
-    return create_sockets(); 
+    return create_sockets();
 }

@@ -43,9 +43,9 @@ add_default_values(json_t *request)
     unsigned int i;
 
     /* json values for default props */
-    char *default_props[] = { "score", "evaluated", "precedence"};
-    char *default_types[] = { "i", "b", "i"};
-    int  default_values[] = { 0, 0, PRECEDENCE_OPTIONAL };
+    char *default_props[] = { "value", "score", "evaluated", "precedence"};
+    char *default_types[] = { "n", "i", "b", "i"};
+    int  default_values[] = { 0, 0, 0, PRECEDENCE_OPTIONAL };
 
     json_object_foreach(request, key, property) {
         for (i = 0; i < ARRAY_SIZE(default_props); i++) {
@@ -461,6 +461,7 @@ merge_do_update_property(json_t *prop_a, json_t *prop_b, bool evaluated)
     }
 
     /* null = match all */
+    /* TODO values are equal if a single values is within range or if both ranges overlap */
     if (value_a == NULL || json_equal(value_a, value_b)) {
 
         json_t *score_value_a_obj = json_object_get(prop_a, "score");
@@ -479,7 +480,7 @@ merge_do_update_property(json_t *prop_a, json_t *prop_b, bool evaluated)
 
         json_object_set(prop_a, "precedence", json_integer((int)MAX(precedence_value_a, precedence_value_b)));
 
-        /* value = value_match? */
+        /* TODO value = value_match */
 
     }
     else {

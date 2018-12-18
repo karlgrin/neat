@@ -199,6 +199,7 @@ cib_lookup(json_t *input_props)
     json_t *candidate_array = json_array();
     json_t *node_props;
     json_t *immutable_input_props = json_array();
+    json_t *candidate;
 
     const char *key;
     json_t *property;
@@ -211,7 +212,7 @@ cib_lookup(json_t *input_props)
 
         json_array_clear(immutable_input_props);
         json_object_foreach(input_props, key, property){
-            if(json_integer_value(json_object_get(property, "precedence")) == 2){
+            if(json_integer_value(json_object_get(property, "precedence")) == PRECEDENCE_IMMUTABLE){
                 json_array_append(immutable_input_props, property);
             }
         }
@@ -219,6 +220,10 @@ cib_lookup(json_t *input_props)
         if(subset(node_props, immutable_input_props)){
             continue;
         }
+        candidate = json_deep_copy(input_props);
+        merge_properties(node_props, candidate, 1);
+        json_array_append_new(candidate_array, candidate);
+
     }
     return candidate_array;
 }
