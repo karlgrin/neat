@@ -1,0 +1,36 @@
+[  
+  {  
+     "transport":{  
+        "value":[  
+           "TCP",
+           "SCTP"
+        ],
+        "precedence":1
+     },
+     "port":{  
+        "value":80,
+        "precedence":2
+     },
+     "local_endpoint": {  
+           "value":"127.0.0.1@lo",
+           "precedence":2
+      }
+  },
+  {  
+     "transport":{  
+        "value":[  
+           "TCP",
+           "SCTP"
+        ],
+        "precedence":1
+     },
+     "local_endpoint": {  
+         "value":"10.0.2.15@enp0s3",
+         "precedence":2
+      },
+     "port":{  
+        "value":80,
+        "precedence":2
+     }    
+  }
+]

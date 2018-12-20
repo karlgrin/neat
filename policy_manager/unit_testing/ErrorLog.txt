@@ -1,0 +1,180 @@
+Time: 2018-10-21 18:55:56.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: /home/free/Downloads/neat/policy/examples/cib/enp0s3.cib
+
+Time: 2018-10-21 18:56:09.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: /home/free/Downloads/neat/policy/examples/cib/enp0s3.cib
+
+Time: 2018-11-22 07:35:17.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/test.cib
+
+Time: 2018-11-22 07:49:57.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/test.cib
+
+Time: 2018-11-23 09:05:25.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/test2.cib
+
+Time: 2018-11-23 09:06:43.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/test2.cib
+
+Time: 2018-11-23 09:07:19.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/test2.cib
+
+Time: 2018-11-23 09:09:23.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/test2.cib
+
+Time: 2018-11-23 09:11:29.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/test2.cib
+
+Time: 2018-11-23 09:15:30.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/test2.cib
+
+Time: 2018-11-23 09:18:46.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/test2.cib
+
+Time: 2018-11-23 09:20:22.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/test2.cib
+
+Time: 2018-11-23 09:29:21.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/test2.cib
+
+Time: 2018-12-02 08:52:35.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/expand_json_array.json
+
+Time: 2018-12-02 08:56:54.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/expand_json_array.json
+
+Time: 2018-12-02 09:01:36.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/expand_json_array.json
+
+Time: 2018-12-02 09:03:18.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/expand_json_array.json
+
+Time: 2018-12-02 09:06:24.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/expand_json_array.json
+
+Time: 2018-12-02 09:06:51.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/expand_json_array.json
+
+Time: 2018-12-02 09:07:02.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/expand_json_array.json
+
+Time: 2018-12-02 09:08:05.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/expand_json_array.json
+
+Time: 2018-12-02 09:10:30.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/expand_json_array.json
+
+Time: 2018-12-04 18:34:43.000  
+Module: ../pmhelper.c
+Function: load_json_file
+Description:Error: failed to read json file: json_files/expand_json_array.json
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
+Time: 2018-12-07 09:45:44.000  
+Module: ../node.c
+Function: add_node
+Description:Error: no priority property defined
+
