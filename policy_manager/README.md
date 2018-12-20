@@ -1,7 +1,7 @@
 
 # Policy Manager
 ## Requirements
-**Note**: Developed and tested on Ubuntu 18.04 64-bit, Debian GNU/Linux 9 and...
+**Note**: Developed and tested on Ubuntu 18.04 64-bit and Debian GNU/Linux 9,
 * `ljansson`
 * `libuv`
 * `libulfius-dev`
